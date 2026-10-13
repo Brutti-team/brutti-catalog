@@ -1717,3 +1717,49 @@ tr:last-child td {
   .admin-app .table-footer,
   .admin-app .workspace-footer { font-size: 10px; }
 }
+
+
+/* Products readability pass: generous desktop type, unchanged table layout. */
+/* Only typography/legibility: no changes to spacing, widths, cards, colors or layout. */
+.admin-app .workspace-label { font-size: 12px; }
+.admin-app .nav-group-label { font-size: 11px; }
+.admin-app .nav-item { font-size: 15px; }
+.admin-app .sidebar-note p { font-size: 13px; }
+.admin-app .sidebar-note > span { font-size: 11px; }
+.admin-app .demo-banner p { font-size: 13px; }
+.admin-app .page-heading p { font-size: 14px; }
+
+.admin-app .table-panel .panel-heading h2 { font-size: 19px; }
+.admin-app .table-panel .panel-heading h2 > span { font-size: 12px; }
+.admin-app .table-panel .panel-heading p { font-size: 13px; }
+.admin-app .table-panel .text-button { font-size: 14px; }
+.admin-app .table-panel .search-input input { font-size: 14px; }
+.admin-app .table-panel .filters select { font-size: 14px; }
+.admin-app .table-panel th { font-size: 13px; font-weight: 600; }
+.admin-app .table-panel td { font-size: 15px; }
+.admin-app .table-panel .product-cell strong { font-size: 16px; font-weight: 600; }
+.admin-app .table-panel .product-cell small { font-size: 12px; }
+.admin-app .table-panel .featured-dot { font-size: 10px; }
+.admin-app .table-panel .status-badge { font-size: 13px; }
+.admin-app .table-panel .availability { font-size: 15px; }
+.admin-app .table-panel .price-cell { font-size: 15px; }
+.admin-app .table-panel .dropdown button { font-size: 14px; }
+.admin-app .table-panel .table-footer { font-size: 12px; }
+.admin-app .category-card-body > p { font-size: 14px; }
+
+@media (max-width: 600px) {
+  /* Fit narrow screens without sacrificing readable names, labels or controls. */
+  .admin-app .table-panel .panel-heading h2 { font-size: 17px; }
+  .admin-app .table-panel .panel-heading p { font-size: 12px; }
+  .admin-app .table-panel .text-button { font-size: 12px; }
+  .admin-app .table-panel .search-input input,
+  .admin-app .table-panel .filters select { font-size: 13px; }
+  .admin-app .table-panel th { font-size: 12px; }
+  .admin-app .table-panel td { font-size: 13px; }
+  .admin-app .table-panel .product-cell strong { font-size: 14px; }
+  .admin-app .table-panel .product-cell small { font-size: 11px; }
+  .admin-app .table-panel .status-badge,
+  .admin-app .table-panel .availability,
+  .admin-app .table-panel .price-cell { font-size: 12px; }
+  .admin-app .table-panel .table-footer { font-size: 11px; }
+}
