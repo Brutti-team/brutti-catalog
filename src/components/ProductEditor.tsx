@@ -104,7 +104,7 @@ export default function ProductEditor({
                   required
                   maxLength={120}
                   value={draft.name}
-                  placeholder="e.g. Senar Lounge Chair"
+                  placeholder="e.g. Kaanagan Open Concept Wardrobe"
                   onChange={(e) => update("name", e.target.value)}
                 />
               </label>
@@ -155,7 +155,7 @@ export default function ProductEditor({
                 />
               </label>
               <div className="section-label">
-                Dimensions <span className="muted">in centimetres</span>
+                Dimensions <span className="muted">in centimetres · 0 = unconfirmed draft</span>
               </div>
               <div className="field-trio">
                 {(["width", "depth", "height"] as const).map((key) => (
