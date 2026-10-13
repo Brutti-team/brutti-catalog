@@ -1,0 +1,1061 @@
+import SafeImage from "./components/SafeImage";
+import { useState, useEffect, useCallback, type FormEvent } from "react";
+import {
+  LayoutDashboard,
+  Package,
+  Layers,
+  ArrowUpRight,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  MoreHorizontal,
+  Pencil,
+  Copy,
+  Archive,
+  Trash2,
+  ChevronRight,
+  ArrowRight,
+  Leaf,
+  Menu,
+  X,
+  LogOut,
+  LoaderCircle,
+  RefreshCw,
+  CheckCircle2,
+  AlertCircle,
+  ShieldCheck,
+  ExternalLink,
+} from "lucide-react";
+import type { Product, Category, CatalogData } from "./lib/types";
+import {
+  isDemoMode,
+  loadCatalog,
+  saveProduct,
+  deleteProduct,
+  saveCategory,
+  deleteCategory,
+  resetDemo,
+  signIn,
+  signOut,
+  getAuthState,
+  subscribeAuth,
+} from "./lib/catalog";
+import ProductEditor from "./components/ProductEditor";
+import PublicCatalog from "./components/PublicCatalog";
+import Modal from "./components/Modal";
+
+type Tab = "overview" | "products" | "categories";
+const price = (n: number | null) =>
+  n === null
+    ? "On enquiry"
+    : new Intl.NumberFormat("en-MY", {
+        style: "currency",
+        currency: "MYR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(n);
+const label = (s: string) =>
+  s
+    .split("-")
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join(" ");
+function newProduct(categoryId = ""): Product {
+  return {
+    id: crypto.randomUUID(),
+    name: "",
+    sku: "",
+    categoryId,
+    description: "",
+    materials: "",
+    width: 0,
+    depth: 0,
+    height: 0,
+    price: null,
+    status: "draft",
+    availability: "available",
+    featured: false,
+    images: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export default function App() {
+  const [route, setRoute] = useState(window.location.hash || "#/admin");
+  const [tab, setTab] = useState<Tab>("overview");
+  const [data, setData] = useState<CatalogData>({
+    products: [],
+    categories: [],
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [auth, setAuth] = useState({
+    authenticated: false,
+    isAdmin: false,
+    email: "",
+  });
+  const [authLoading, setAuthLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
+  const [category, setCategory] = useState("all");
+  const [sort, setSort] = useState("recent");
+  const [editor, setEditor] = useState<Product | null>(null);
+  const [catEditor, setCatEditor] = useState<Category | null>(null);
+  const [catName, setCatName] = useState("");
+  const [catDescription, setCatDescription] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [toast, setToast] = useState("");
+  const [menu, setMenu] = useState<string | null>(null);
+  const [mobileNav, setMobileNav] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setData(await loadCatalog());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to load the catalog.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  const refreshAuth = useCallback(async () => {
+    try {
+      const a = await getAuthState();
+      setAuth({ ...a, email: a.email || "" });
+    } catch (e) {
+      setAuth({ authenticated: false, isAdmin: false, email: "" });
+      setError(e instanceof Error ? e.message : "Unable to verify access.");
+    } finally {
+      setAuthLoading(false);
+    }
+  }, []);
+  useEffect(() => {
+    const fn = () => setRoute(window.location.hash || "#/admin");
+    window.addEventListener("hashchange", fn);
+    return () => window.removeEventListener("hashchange", fn);
+  }, []);
+  useEffect(() => {
+    void refresh();
+    void refreshAuth();
+    const unsub = subscribeAuth(() => {
+      void refreshAuth();
+      void refresh();
+    });
+    return unsub;
+  }, [refresh, refreshAuth]);
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(""), 4000);
+    return () => clearTimeout(id);
+  }, [toast]);
+  const navigate = (dest: string) => {
+    window.location.hash = dest;
+    setMobileNav(false);
+  };
+  const switchTab = (next: Tab) => {
+    setTab(next);
+    setMobileNav(false);
+    setSearch("");
+    setStatus("all");
+    setCategory("all");
+    setMenu(null);
+  };
+  async function persist(p: Product) {
+    await saveProduct(p);
+    await refresh();
+    setToast(`${p.name} saved`);
+  }
+  async function action(fn: () => Promise<unknown>, message: string) {
+    setBusy(true);
+    setActionError("");
+    try {
+      await fn();
+      await refresh();
+      setToast(message);
+    } catch (e) {
+      setActionError(
+        e instanceof Error
+          ? e.message
+          : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setBusy(false);
+      setMenu(null);
+    }
+  }
+  function editCategory(c: Category) {
+    setCatEditor(c);
+    setCatName(c.name);
+    setCatDescription(c.description);
+    setActionError("");
+  }
+  async function submitCategory(e: FormEvent) {
+    e.preventDefault();
+    if (!catEditor) return;
+    setBusy(true);
+    setActionError("");
+    try {
+      await saveCategory({
+        ...catEditor,
+        name: catName.trim(),
+        description: catDescription.trim(),
+      });
+      await refresh();
+      setCatEditor(null);
+      setToast("Category saved");
+    } catch (e) {
+      setActionError(
+        e instanceof Error ? e.message : "Unable to save category.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  const publicRoute =
+    route.startsWith("#/catalog") || route.startsWith("#/product/");
+  if (publicRoute)
+    return (
+      <>
+        <PublicCatalog
+          products={data.products}
+          categories={data.categories}
+          loading={loading}
+          error={error}
+          onRetry={() => void refresh()}
+          onAdmin={() => navigate("/admin")}
+        />
+        {toast && (
+          <div className="toast" role="status">
+            <CheckCircle2 size={17} />
+            {toast}
+          </div>
+        )}
+      </>
+    );
+  if (authLoading)
+    return (
+      <div className="access-page">
+        <LoaderCircle className="spin" />
+        <p>Preparing your workspace…</p>
+      </div>
+    );
+  if (!auth.isAdmin && !isDemoMode)
+    return (
+      <Login
+        setupError={error}
+        authenticated={auth.authenticated}
+        onSuccess={async () => {
+          await refreshAuth();
+          await refresh();
+        }}
+        onCatalog={() => navigate("/catalog")}
+      />
+    );
+  const stats = [
+    {
+      title: "Total products",
+      value: data.products.length,
+      detail: "Thoughtfully made, beautifully presented",
+      icon: Package,
+    },
+    {
+      title: "Published",
+      value: data.products.filter((p) => p.status === "published").length,
+      detail: "Live in your public collection",
+      icon: CheckCircle2,
+    },
+    {
+      title: "Drafts",
+      value: data.products.filter((p) => p.status === "draft").length,
+      detail: "A little more care before sharing",
+      icon: Pencil,
+    },
+    {
+      title: "Categories",
+      value: data.categories.length,
+      detail: "A place for every piece",
+      icon: Layers,
+    },
+  ];
+  const filtered = data.products
+    .filter((p) => {
+      const needle = search.toLowerCase();
+      return (
+        `${p.name} ${p.sku} ${p.materials}`.toLowerCase().includes(needle) &&
+        (status === "all" || p.status === status) &&
+        (category === "all" || p.categoryId === category)
+      );
+    })
+    .sort((a, b) =>
+      sort === "name"
+        ? a.name.localeCompare(b.name)
+        : sort === "price"
+          ? (a.price ?? Infinity) - (b.price ?? Infinity)
+          : b.updatedAt.localeCompare(a.updatedAt),
+    );
+  return (
+    <div className="admin-app">
+      <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
+        <a
+          href="#/admin"
+          className="brand"
+          onClick={() => switchTab("overview")}
+        >
+          brutti<span>™</span>
+        </a>
+        <div className="workspace-label">
+          CATALOG WORKSPACE <span>01</span>
+        </div>
+        <nav aria-label="Admin navigation">
+          <span className="nav-group-label">MANAGE</span>
+          {(
+            [
+              { id: "overview", text: "Overview", icon: LayoutDashboard },
+              { id: "products", text: "Products", icon: Package },
+              { id: "categories", text: "Categories", icon: Layers },
+            ] as const
+          ).map((n) => (
+            <button
+              key={n.id}
+              className={`nav-item ${tab === n.id ? "active" : ""}`}
+              onClick={() => switchTab(n.id)}
+            >
+              <n.icon size={19} />
+              {n.text}
+              {n.id === "products" && (
+                <span className="nav-count">{data.products.length}</span>
+              )}
+            </button>
+          ))}
+          <span className="nav-group-label nav-group-second">EXPLORE</span>
+          <button className="nav-item" onClick={() => navigate("/catalog")}>
+            <ArrowUpRight size={19} />
+            Public catalog
+            <ExternalLink size={13} className="nav-trailing" />
+          </button>
+        </nav>
+        <div className="sidebar-bottom">
+          <div className="sidebar-note">
+            <Leaf size={21} />
+            <h3>Made with purpose.</h3>
+            <p>
+              Honest materials.
+              <br />
+              Thoughtful craftsmanship.
+              <br />A story in every piece.
+            </p>
+            <span>BENUa BRUTTI SDN. BHD.</span>
+          </div>
+          <div className="account">
+            <div className="avatar">BB</div>
+            <div>
+              <strong>
+                {isDemoMode ? "Brutti Studio" : "Catalog administrator"}
+              </strong>
+              <span>{isDemoMode ? "Demo workspace" : auth.email}</span>
+            </div>
+            {!isDemoMode && (
+              <button
+                title="Sign out"
+                aria-label="Sign out"
+                onClick={() => {
+                  void signOut().catch((e) =>
+                    setActionError(
+                      e instanceof Error ? e.message : "Sign out failed.",
+                    ),
+                  );
+                }}
+              >
+                <LogOut size={16} />
+              </button>
+            )}
+          </div>
+        </div>
+      </aside>
+      {mobileNav && (
+        <button
+          className="nav-backdrop"
+          aria-label="Close navigation"
+          onClick={() => setMobileNav(false)}
+        />
+      )}
+      <main className="admin-main">
+        <header className="topbar">
+          <div className="breadcrumbs">
+            <button
+              className="icon-button mobile-menu"
+              aria-label={mobileNav ? "Close navigation" : "Open navigation"}
+              onClick={() => setMobileNav(!mobileNav)}
+            >
+              {mobileNav ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            <span>Workspace</span>
+            <ChevronRight size={13} />
+            <strong>{label(tab)}</strong>
+          </div>
+          <div className="topbar-actions">
+            <span className="connection-pill">
+              <span />
+              {isDemoMode ? "Demo mode" : "Supabase connected"}
+            </span>
+            <button
+              className="catalog-link"
+              onClick={() => navigate("/catalog")}
+            >
+              View catalog <ArrowUpRight size={15} />
+            </button>
+          </div>
+        </header>
+        <div className="admin-content">
+          {isDemoMode && (
+            <div className="demo-banner">
+              <div>
+                <span className="demo-dot" />
+                <p>
+                  <strong>You’re exploring a demo.</strong> Sample products and
+                  changes are stored in this browser. This workspace has no
+                  secure authentication.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Reset demo products and categories? Your local changes will be removed.",
+                    )
+                  )
+                    void action(resetDemo, "Demo restored");
+                }}
+                disabled={busy}
+                aria-label="Reset demo data"
+              >
+                <RefreshCw size={14} />
+                <span>Reset demo</span>
+              </button>
+            </div>
+          )}
+          <div className="page-heading">
+            <div>
+              <span className="eyebrow">YOUR CATALOG, CONSIDERED</span>
+              <h1>
+                {tab === "overview"
+                  ? "A home for every piece."
+                  : tab === "products"
+                    ? "Your collection."
+                    : "Made to belong."}
+              </h1>
+              <p>
+                {tab === "overview"
+                  ? "A little overview of what’s crafted, curated, and ready to share."
+                  : tab === "products"
+                    ? "Manage the pieces that tell your story."
+                    : "Organise your collection into thoughtful categories."}
+              </p>
+            </div>
+            <button
+              className="button primary"
+              disabled={loading || busy}
+              onClick={() =>
+                tab === "categories"
+                  ? editCategory({
+                      id: crypto.randomUUID(),
+                      name: "",
+                      description: "",
+                    })
+                  : setEditor(newProduct(data.categories[0]?.id))
+              }
+            >
+              <Plus size={17} />
+              {tab === "categories" ? "Add category" : "Add product"}
+            </button>
+          </div>
+          {(error || actionError) && !catEditor && (
+            <div className="notice error" role="alert">
+              <AlertCircle size={18} />
+              <span>{error || actionError}</span>
+              {error && (
+                <button onClick={() => void refresh()}>Try again</button>
+              )}
+            </div>
+          )}
+          {tab === "overview" && (
+            <>
+              <div className="stats-grid">
+                {stats.map((s) => (
+                  <article className="stat-card" key={s.title}>
+                    <div>
+                      <span>{s.title}</span>
+                      <s.icon size={17} />
+                    </div>
+                    <strong>{loading ? "—" : s.value}</strong>
+                    <p>{s.detail}</p>
+                  </article>
+                ))}
+              </div>
+              <div className="collection-banner">
+                <div>
+                  <span className="eyebrow">
+                    CRAFTED HERE. SHARED EVERYWHERE.
+                  </span>
+                  <h2>
+                    Good design deserves
+                    <br />
+                    to be discovered.
+                  </h2>
+                  <p>
+                    Your collection, beautifully presented.
+                    <br />
+                    See what your customers will see.
+                  </p>
+                  <button onClick={() => navigate("/catalog")}>
+                    Explore your catalog <ArrowRight size={17} />
+                  </button>
+                </div>
+                <SafeImage
+                  src="/images/hero.jpg"
+                  alt="Warm, considered furniture in a natural interior"
+                />
+                <div className="banner-caption">
+                  THE BRUTTI COLLECTION <span>EST. IN SABAH</span>
+                </div>
+              </div>
+            </>
+          )}
+          {tab !== "categories" ? (
+            <section className="table-panel">
+              <div className="panel-heading">
+                <div>
+                  <h2>
+                    {tab === "overview" ? "The collection" : "All products"}{" "}
+                    <span>{data.products.length}</span>
+                  </h2>
+                  <p>
+                    {tab === "overview"
+                      ? "Your latest pieces, all in one place."
+                      : "From first idea to final finish."}
+                  </p>
+                </div>
+                {tab === "overview" && (
+                  <button
+                    className="text-button"
+                    onClick={() => switchTab("products")}
+                  >
+                    View all products <ArrowRight size={15} />
+                  </button>
+                )}
+              </div>
+              <div className="table-toolbar">
+                <div className="search-input">
+                  <Search size={17} />
+                  <input
+                    aria-label="Search products"
+                    placeholder="Search by product name, SKU or material…"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  {search && (
+                    <button
+                      aria-label="Clear search"
+                      onClick={() => setSearch("")}
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+                <div className="filters">
+                  <label className="sr-only" htmlFor="status-filter">
+                    Filter by status
+                  </label>
+                  <select
+                    id="status-filter"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <option value="all">All statuses</option>
+                    <option value="published">Published</option>
+                    <option value="draft">Draft</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                  <label className="sr-only" htmlFor="category-filter">
+                    Filter by category
+                  </label>
+                  <select
+                    id="category-filter"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option value="all">All categories</option>
+                    {data.categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  <label className="sort-field">
+                    <SlidersHorizontal size={15} />
+                    <select
+                      aria-label="Sort products"
+                      value={sort}
+                      onChange={(e) => setSort(e.target.value)}
+                    >
+                      <option value="recent">Latest updated</option>
+                      <option value="name">Name A–Z</option>
+                      <option value="price">Price low–high</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div className="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th>Status</th>
+                      <th>Availability</th>
+                      <th>Price</th>
+                      <th>
+                        <span className="sr-only">Actions</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading
+                      ? Array.from({ length: 4 }, (_, i) => (
+                          <tr key={i}>
+                            <td colSpan={6}>
+                              <div className="skeleton" />
+                            </td>
+                          </tr>
+                        ))
+                      : filtered
+                          .slice(0, tab === "overview" ? 6 : filtered.length)
+                          .map((p) => (
+                            <tr key={p.id}>
+                              <td>
+                                <button
+                                  className="product-cell"
+                                  onClick={() => setEditor(p)}
+                                >
+                                  <SafeImage
+                                    src={p.images[0]?.url || "/images/hero.jpg"}
+                                    alt=""
+                                  />
+                                  <span>
+                                    <strong>{p.name}</strong>
+                                    <small>
+                                      {p.sku}
+                                      {p.featured && (
+                                        <span
+                                          className="featured-dot"
+                                          title="Featured product"
+                                        >
+                                          {" "}
+                                          · FEATURED
+                                        </span>
+                                      )}
+                                    </small>
+                                  </span>
+                                </button>
+                              </td>
+                              <td>
+                                {data.categories.find(
+                                  (c) => c.id === p.categoryId,
+                                )?.name || "Uncategorised"}
+                              </td>
+                              <td>
+                                <span
+                                  className={`status-badge status-${p.status}`}
+                                >
+                                  <i />
+                                  {label(p.status)}
+                                </span>
+                              </td>
+                              <td>
+                                <span
+                                  className={`availability ${p.availability === "unavailable" ? "muted" : ""}`}
+                                >
+                                  {label(p.availability)}
+                                </span>
+                              </td>
+                              <td className="price-cell">{price(p.price)}</td>
+                              <td>
+                                <div className="row-actions">
+                                  <button
+                                    className="icon-button edit-row"
+                                    aria-label={`Edit ${p.name}`}
+                                    onClick={() => setEditor(p)}
+                                  >
+                                    <Pencil size={15} />
+                                  </button>
+                                  <div className="action-menu">
+                                    <button
+                                      className="icon-button"
+                                      aria-label={`More actions for ${p.name}`}
+                                      aria-expanded={menu === p.id}
+                                      onClick={() =>
+                                        setMenu(menu === p.id ? null : p.id)
+                                      }
+                                    >
+                                      <MoreHorizontal size={18} />
+                                    </button>
+                                    {menu === p.id && (
+                                      <div className="dropdown">
+                                        <button
+                                          onClick={() => {
+                                            setEditor({
+                                              ...structuredClone(p),
+                                              id: crypto.randomUUID(),
+                                              name: `${p.name} (copy)`,
+                                              sku: `${p.sku}-COPY`,
+                                              status: "draft",
+                                              createdAt:
+                                                new Date().toISOString(),
+                                            });
+                                            setMenu(null);
+                                          }}
+                                        >
+                                          <Copy size={14} />
+                                          Duplicate
+                                        </button>
+                                        <button
+                                          disabled={busy}
+                                          onClick={() =>
+                                            void action(
+                                              () =>
+                                                saveProduct({
+                                                  ...p,
+                                                  status:
+                                                    p.status === "archived"
+                                                      ? "draft"
+                                                      : "archived",
+                                                }),
+                                              "Product status updated",
+                                            )
+                                          }
+                                        >
+                                          <Archive size={14} />
+                                          {p.status === "archived"
+                                            ? "Restore to draft"
+                                            : "Archive"}
+                                        </button>
+                                        <button
+                                          className="danger-text"
+                                          disabled={busy}
+                                          onClick={() => {
+                                            if (
+                                              window.confirm(
+                                                `Delete ${p.name}? This cannot be undone.`,
+                                              )
+                                            )
+                                              void action(
+                                                () => deleteProduct(p.id),
+                                                "Product deleted",
+                                              );
+                                          }}
+                                        >
+                                          <Trash2 size={14} />
+                                          Delete
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                  </tbody>
+                </table>
+              </div>
+              {!loading && !filtered.length && (
+                <div className="empty-state">
+                  <Package size={30} />
+                  <h3>
+                    {search || status !== "all" || category !== "all"
+                      ? "No pieces found"
+                      : "Your collection starts here"}
+                  </h3>
+                  <p>
+                    {search || status !== "all" || category !== "all"
+                      ? "Try a different search or clear your filters."
+                      : "Add your first product to begin."}
+                  </p>
+                  <button
+                    className="button secondary"
+                    onClick={() => {
+                      if (search || status !== "all" || category !== "all") {
+                        setSearch("");
+                        setStatus("all");
+                        setCategory("all");
+                      } else setEditor(newProduct());
+                    }}
+                  >
+                    {search || status !== "all" || category !== "all"
+                      ? "Clear filters"
+                      : "Add a product"}
+                  </button>
+                </div>
+              )}
+              <footer className="table-footer">
+                <span>
+                  Showing{" "}
+                  {Math.min(
+                    filtered.length,
+                    tab === "overview" ? 6 : filtered.length,
+                  )}{" "}
+                  of {data.products.length} products
+                </span>
+                <span>
+                  <Leaf size={12} /> A considered collection
+                </span>
+              </footer>
+            </section>
+          ) : (
+            <section className="category-grid">
+              {loading ? (
+                <div className="skeleton" />
+              ) : (
+                data.categories.map((c, index) => {
+                  const items = data.products.filter(
+                    (p) => p.categoryId === c.id,
+                  );
+                  return (
+                    <article className="category-card" key={c.id}>
+                      <div className="category-cover">
+                        <SafeImage
+                          src={
+                            items.find((p) => p.images.length)?.images[0].url ||
+                            "/images/hero.jpg"
+                          }
+                          alt=""
+                        />
+                        <span>0{index + 1}</span>
+                      </div>
+                      <div className="category-card-body">
+                        <div className="section-title">
+                          <h2>{c.name}</h2>
+                          <span className="category-count">
+                            {items.length} pieces
+                          </span>
+                        </div>
+                        <p>
+                          {c.description ||
+                            "A thoughtful category for your collection."}
+                        </p>
+                        <div className="category-card-actions">
+                          <button
+                            className="text-button"
+                            onClick={() => editCategory(c)}
+                          >
+                            <Pencil size={14} />
+                            Edit category
+                          </button>
+                          <button
+                            className="icon-button danger-text"
+                            disabled={busy || items.length > 0}
+                            title={
+                              items.length
+                                ? "Move all products before deleting this category"
+                                : "Delete category"
+                            }
+                            aria-label={`Delete ${c.name}`}
+                            onClick={() => {
+                              if (
+                                window.confirm(`Delete the ${c.name} category?`)
+                              )
+                                void action(
+                                  () => deleteCategory(c.id),
+                                  "Category deleted",
+                                );
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
+              {!loading && !data.categories.length && (
+                <div className="empty-state">
+                  <Layers size={30} />
+                  <h3>Give every piece a place.</h3>
+                  <p>Add your first category to organise your products.</p>
+                </div>
+              )}
+            </section>
+          )}
+          <footer className="workspace-footer">
+            <span>© {new Date().getFullYear()} Benua Brutti Sdn. Bhd.</span>
+            <span>Thoughtfully crafted in Sabah, Malaysia.</span>
+          </footer>
+        </div>
+      </main>
+      {editor && (
+        <ProductEditor
+          key={editor.id}
+          product={editor}
+          categories={data.categories}
+          onSave={persist}
+          onClose={() => setEditor(null)}
+        />
+      )}{" "}
+      {catEditor && (
+        <Modal
+          title={catEditor.name ? "Edit category" : "Add category"}
+          onClose={() => !busy && setCatEditor(null)}
+        >
+          <form className="category-form" onSubmit={submitCategory}>
+            <label>
+              Category name
+              <input
+                required
+                maxLength={80}
+                value={catName}
+                onChange={(e) => setCatName(e.target.value)}
+                placeholder="e.g. Seating"
+              />
+            </label>
+            <label>
+              Description
+              <textarea
+                maxLength={500}
+                rows={3}
+                value={catDescription}
+                onChange={(e) => setCatDescription(e.target.value)}
+                placeholder="What belongs in this collection?"
+              />
+            </label>
+            {actionError && (
+              <div className="notice error" role="alert">
+                {actionError}
+              </div>
+            )}
+            <div className="button-row justify-end">
+              <button
+                type="button"
+                className="button secondary"
+                disabled={busy}
+                onClick={() => setCatEditor(null)}
+              >
+                Cancel
+              </button>
+              <button className="button primary" disabled={busy}>
+                {busy ? "Saving…" : "Save category"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+      {toast && (
+        <div className="toast" role="status">
+          <CheckCircle2 size={17} />
+          {toast}
+        </div>
+      )}
+    </div>
+  );
+}
+function Login({
+  authenticated,
+  onSuccess,
+  onCatalog,
+  setupError,
+}: {
+  authenticated: boolean;
+  onSuccess: () => Promise<void>;
+  onCatalog: () => void;
+  setupError: string | null;
+}) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      await signIn(email, password);
+      await onSuccess();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sign in failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="access-page">
+      <a href="#/catalog" className="brand">
+        brutti<span>™</span>
+      </a>
+      <div className="access-card">
+        <ShieldCheck size={25} />
+        <span className="eyebrow">THE CATALOG WORKSPACE</span>
+        <h1>{authenticated ? "Admin access required" : "Welcome back."}</h1>
+        <p className="muted">
+          {authenticated
+            ? "Your account does not have catalog administrator access. Ask the workspace owner to grant your user access."
+            : "Sign in with your Supabase administrator account to manage the collection."}
+        </p>
+        {setupError && (
+          <div className="notice error" role="alert">
+            {setupError}
+          </div>
+        )}
+        {authenticated ? (
+          <button
+            className="button secondary"
+            onClick={() => {
+              void signOut().catch((e) =>
+                setError(e instanceof Error ? e.message : "Sign out failed."),
+              );
+            }}
+          >
+            Sign out
+          </button>
+        ) : (
+          <form onSubmit={submit}>
+            <label>
+              Email
+              <input
+                autoComplete="username"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label>
+              Password
+              <input
+                autoComplete="current-password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            <button className="button primary full" disabled={busy}>
+              {busy ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+        )}
+        {error && (
+          <div className="notice error" role="alert">
+            {error}
+          </div>
+        )}
+        <button className="text-button" onClick={onCatalog}>
+          Explore the public catalog <ArrowUpRight size={16} />
+        </button>
+        <p className="tiny muted">
+          Access is enforced by Supabase Auth and database policies. Accounts
+          cannot grant themselves admin access.
+        </p>
+      </div>
+    </div>
+  );
+}
