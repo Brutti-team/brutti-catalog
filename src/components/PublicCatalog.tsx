@@ -13,7 +13,6 @@ import {
   X,
 } from "lucide-react";
 import type { Category, Product } from "../lib/types";
-import { isDemoMode } from "../lib/catalog";
 import { publicAssetUrl } from "../lib/assets";
 import "./public.css";
 
@@ -205,14 +204,6 @@ export default function PublicCatalog({
       >
         Skip to content
       </a>
-      {isDemoMode && (
-        <div className="pub-demo-note">
-          <span className="pub-demo-dot" /> Demo catalog{" "}
-          <span className="pub-demo-note-detail">
-            — Sample products, images and prices for preview only.
-          </span>
-        </div>
-      )}
       <header className="pub-header">
         <a
           href="#/catalog"
@@ -560,7 +551,6 @@ export default function PublicCatalog({
                       {enquiryEmail
                         ? "Opens your email app. No enquiry is sent by this catalog."
                         : "An enquiry contact has not been configured yet."}
-                      {isDemoMode && " Demo product details are illustrative."}
                     </p>
                     <div className="pub-specifications">
                       <h2>The details</h2>
@@ -655,7 +645,6 @@ export default function PublicCatalog({
           )}
           <small>
             © {new Date().getFullYear()} Benua Brutti Sdn. Bhd.
-            {isDemoMode && <span> · Demo preview</span>}
           </small>
         </div>
       </footer>
