@@ -21,7 +21,6 @@ import {
   X,
   LogOut,
   LoaderCircle,
-  RefreshCw,
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
@@ -29,13 +28,11 @@ import {
 } from "lucide-react";
 import type { Product, Category, CatalogData } from "./lib/types";
 import {
-  isDemoMode,
   loadCatalog,
   saveProduct,
   deleteProduct,
   saveCategory,
   deleteCategory,
-  resetDemo,
   signIn,
   signOut,
   getAuthState,
@@ -241,7 +238,7 @@ export default function App() {
         <p>Preparing your workspace…</p>
       </div>
     );
-  if (!auth.isAdmin && !isDemoMode)
+  if (!auth.isAdmin)
     return (
       <Login
         setupError={error}
@@ -352,11 +349,11 @@ export default function App() {
             <div className="avatar">BB</div>
             <div>
               <strong>
-                {isDemoMode ? "Brutti Studio" : "Catalog administrator"}
+                Catalog administrator
               </strong>
-              <span>{isDemoMode ? "Demo workspace" : auth.email}</span>
+              <span>{auth.email}</span>
             </div>
-            {!isDemoMode && (
+            {(
               <button
                 title="Sign out"
                 aria-label="Sign out"
@@ -398,7 +395,7 @@ export default function App() {
           <div className="topbar-actions">
             <span className="connection-pill">
               <span />
-              {isDemoMode ? "Demo mode" : "Supabase connected"}
+              Supabase connected
             </span>
             <button
               className="catalog-link"
@@ -409,33 +406,6 @@ export default function App() {
           </div>
         </header>
         <div className="admin-content">
-          {isDemoMode && (
-            <div className="demo-banner">
-              <div>
-                <span className="demo-dot" />
-                <p>
-                  <strong>You’re exploring a demo.</strong> Sample products and
-                  changes are stored in this browser. This workspace has no
-                  secure authentication.
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      "Reset demo products and categories? Your local changes will be removed.",
-                    )
-                  )
-                    void action(resetDemo, "Demo restored");
-                }}
-                disabled={busy}
-                aria-label="Reset demo data"
-              >
-                <RefreshCw size={14} />
-                <span>Reset demo</span>
-              </button>
-            </div>
-          )}
           <div className="page-heading">
             <div>
               <span className="eyebrow">YOUR CATALOG, CONSIDERED</span>
