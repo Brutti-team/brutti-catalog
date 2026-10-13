@@ -10,7 +10,7 @@ import {
   LoaderCircle,
 } from "lucide-react";
 import type { Product, Category } from "../lib/types";
-import { uploadImage, validateProduct, isDemoMode } from "../lib/catalog";
+import { uploadImage, validateProduct } from "../lib/catalog";
 import Modal from "./Modal";
 export default function ProductEditor({
   product,
@@ -284,9 +284,7 @@ export default function ProductEditor({
                 ))}
               </div>
               <p className="tiny muted">
-                {isDemoMode
-                  ? "Demo uploads stay in this browser. Large collections may exceed browser storage."
-                  : "Uploaded photos are public assets. Avoid confidential images; unused uploads can be removed from Supabase Storage."}
+                Uploaded photos are public assets. Avoid confidential images; unused uploads can be removed from Supabase Storage.
               </p>
             </section>
           </div>
@@ -393,9 +391,7 @@ export default function ProductEditor({
         )}
         <footer className="editor-footer">
           <span className="tiny muted">
-            {isDemoMode
-              ? "Demo workspace · saved to this browser"
-              : "Connected workspace · changes saved to Supabase"}
+            Connected workspace · changes saved to Supabase
           </span>
           <div className="button-row">
             <button
