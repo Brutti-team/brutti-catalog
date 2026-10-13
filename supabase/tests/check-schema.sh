@@ -22,4 +22,7 @@ until docker exec "$CATALOG_TEST_CONTAINER" pg_isready -h 127.0.0.1 -U postgres 
 done
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/mock_platform.sql"
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../migrations/202610120001_phase_one_catalog.sql"
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../migrations/202610130001_real_catalog_categories.sql"
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/catalog_rls.sql"
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../proposals/catalogue-import.sql"
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/import_rerun.sql"

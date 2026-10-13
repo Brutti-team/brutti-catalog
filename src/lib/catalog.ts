@@ -2,7 +2,47 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { CatalogData, Category, Product, ProductImage } from "./types";
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim() ?? "";
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() ?? "";
+const key = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY)?.trim() ?? "";
+
+export type PasswordIntent = "invite" | "recovery";
+export function readPasswordIntent(location: { hash: string; search: string }): PasswordIntent | null {
+  const hash = new URLSearchParams(location.hash.replace(/^#/, ""));
+  const type = hash.get("type") || new URLSearchParams(location.search).get("auth");
+  return type === "invite" || type === "recovery" ? type : null;
+}
+// Capture before createClient processes and clears Supabase's callback fragment.
+export const initialPasswordIntent = typeof window === "undefined" ? null : readPasswordIntent(window.location);
+
+export function readPasswordCallbackToken(location: { hash: string; search: string }): string | null {
+  const hash = new URLSearchParams(location.hash.replace(/^#/, ""));
+  const query = new URLSearchParams(location.search);
+  if (hash.has("error") || hash.has("error_code") || query.has("error") || query.has("error_code")) return null;
+  if (!["invite", "recovery"].includes(hash.get("type") || "") || !hash.get("refresh_token")) return null;
+  return hash.get("access_token");
+}
+const initialCallbackToken = typeof window === "undefined" ? null : readPasswordCallbackToken(window.location);
+
+export async function hasPasswordCallbackSession(): Promise<boolean> {
+  if (!initialCallbackToken) return false;
+  // getSession waits for the SDK's callback processing; compare with the captured
+  // token so an unrelated cached session cannot authorize this completion form.
+  const { data: { session }, error } = await supabase().auth.getSession();
+  return !error && session?.access_token === initialCallbackToken;
+}
+
+
+export function assertBrowserKey(value: string): void {
+  if (value.startsWith("sb_secret_")) throw new Error("Use a public Supabase browser key, never a secret or service-role key.");
+  const payload = value.split(".")[1];
+  if (payload) {
+    try {
+      const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+      if (decoded.role && decoded.role !== "anon") throw new Error("privileged");
+    } catch {
+      throw new Error("Use a valid public Supabase browser key, never a secret or service-role key.");
+    }
+  }
+}
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const MAX_PRODUCT_IMAGES = 8;
 let client: SupabaseClient | undefined;
@@ -12,6 +52,7 @@ function supabase(): SupabaseClient {
     throw new Error(
       "Brutti Catalog database is not connected. Configure both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY with a dedicated Brutti Supabase project.",
     );
+  assertBrowserKey(key);
   if (!client) client = createClient(url, key);
   return client;
 }
@@ -31,6 +72,7 @@ type ProductRow = {
   depth: number;
   height: number;
   price: number | null;
+  price_basis?: Product['priceBasis'];
   status: Product["status"];
   availability: Product["availability"];
   featured: boolean;
@@ -51,6 +93,7 @@ function fromRow(row: ProductRow): Product {
     depth: Number(row.depth),
     height: Number(row.height),
     price: row.price === null ? null : Number(row.price),
+    ...(row.price_basis ? { priceBasis: row.price_basis } : {}),
     status: row.status,
     availability: row.availability,
     featured: row.featured,
@@ -72,6 +115,7 @@ function toRow(product: Product): ProductRow {
     depth: product.depth,
     height: product.height,
     price: product.price,
+    ...(product.priceBasis ? { price_basis: product.priceBasis } : {}),
     status: product.status,
     availability: product.availability,
     featured: product.featured,
@@ -99,6 +143,8 @@ export async function loadCatalog(): Promise<CatalogData> {
 
 /** Throws a user-facing Error when the supplied product cannot be saved. */
 export function validateProduct(product: Product): void {
+  if (product.priceBasis !== undefined && !['fixed', 'starting-from'].includes(product.priceBasis))
+    throw new Error('Choose a valid price basis.');
   if (product.name.trim().length < 2 || product.name.length > 120)
     throw new Error("Product name must contain 2–120 characters.");
   if (!product.sku.trim() || product.sku.length > 64)
@@ -328,4 +374,23 @@ export function subscribeAuth(callback: () => void): () => void {
     // loadCatalog/getAuthState report configuration errors through the app's error UI.
     return () => undefined;
   }
+}
+
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  const redirect = new URL(window.location.pathname, window.location.origin);
+  redirect.searchParams.set("auth", "recovery");
+  const { error } = await supabase().auth.resetPasswordForEmail(email.trim(), { redirectTo: redirect.toString() });
+  if (error) throw backendError(error.message, "send password reset email");
+}
+
+export async function completePassword(password: string): Promise<void> {
+  if (password.length < 8) throw new Error("Use at least 8 characters for your password.");
+  if (!await hasPasswordCallbackSession()) throw new Error("This link is expired or invalid. Request a new link and try again.");
+  const db = supabase();
+  // getUser verifies with Auth; a fragment or a locally cached session is insufficient.
+  const { data: { user }, error: sessionError } = await db.auth.getUser();
+  if (sessionError || !user) throw new Error("This link is expired or invalid. Request a new link and try again.");
+  const { error } = await db.auth.updateUser({ password });
+  if (error) throw backendError(error.message, "set your password");
 }

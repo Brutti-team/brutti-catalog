@@ -1,0 +1,11 @@
+# Existing website integration — proposal, not deployment
+
+Read-only inspection of `benua-brutti-website` found a React/Vite website with root asset base `/` and `.github/workflows/deploy-pages.yml` using `actions/configure-pages`, `upload-pages-artifact` and `deploy-pages`. Its build generates additional static route directories for journey, impact and career. Source metadata references `https://brutti.my`. This establishes the repository's intended GitHub Pages setup; live Pages domain/DNS configuration still needs owner confirmation. No website files were modified.
+
+GitHub Pages does not offer a reverse proxy or configurable SPA server rewrites. Two separate Pages applications cannot independently own the same domain's root artifact. Publishing the catalog's existing `/brutti-catalog/` artifact does not create `brutti.my/admin` or `brutti.my/catalog`.
+
+The least disruptive future option is a **reviewed combined static artifact**: preserve the current website's root/pages, add catalog assets under a distinct prefix and add `/admin/index.html` and `/catalog/index.html` entry documents. The catalog build needs that asset prefix and initial path-to-hash mapping so `/admin/` opens admin and `/catalog/` opens public. Product details can retain hash routes beneath the catalog entry, avoiding unknown Pages 404 rewrites. Direct refresh, trailing slash behavior, relative asset paths and Auth redirect URLs must be tested in the assembled artifact. This work is intentionally not performed in the existing website repository now.
+
+Alternatively, an approved hosting provider with path routing can serve both apps and preserve the existing URLs, but that involves DNS/hosting decisions and migration risk. No DNS change is required for the proposed combined Pages artifact if the domain is already correctly attached; confirm that live setting first.
+
+Before choosing/implementing either option, require verified dedicated Supabase configuration and RLS, successful first-admin invitation/sign-in/out, approved actual PDF Draft imports and publishing visibility checks. Then prepare an integration PR and request approval for website changes/deployment. The catalog validation workflow remains deployment-free. No deployment, main merge, website change or DNS change has occurred.

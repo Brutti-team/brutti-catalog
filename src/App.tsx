@@ -1,4 +1,6 @@
 import SafeImage from "./components/SafeImage";
+import { subscribeCatalogRefresh } from "./lib/catalog-refresh";
+import { formatProductPrice } from "./lib/price";
 import { publicAssetUrl } from "./lib/assets";
 import { useState, useEffect, useCallback, type FormEvent } from "react";
 import {
@@ -37,21 +39,16 @@ import {
   signOut,
   getAuthState,
   subscribeAuth,
+  initialPasswordIntent,
+  hasPasswordCallbackSession,
+  completePassword,
+  requestPasswordReset,
 } from "./lib/catalog";
 import ProductEditor from "./components/ProductEditor";
 import PublicCatalog from "./components/PublicCatalog";
 import Modal from "./components/Modal";
 
 type Tab = "overview" | "products" | "categories";
-const price = (n: number | null) =>
-  n === null
-    ? "On enquiry"
-    : new Intl.NumberFormat("en-MY", {
-        style: "currency",
-        currency: "MYR",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(n);
 const label = (s: string) =>
   s
     .split("-")
@@ -79,6 +76,8 @@ function newProduct(categoryId = ""): Product {
 }
 
 export default function App() {
+  const [passwordIntent, setPasswordIntent] = useState(initialPasswordIntent);
+  const [callbackVerified, setCallbackVerified] = useState(false);
   const [route, setRoute] = useState(window.location.hash || "#/admin");
   const [tab, setTab] = useState<Tab>("overview");
   const [data, setData] = useState<CatalogData>({
@@ -106,21 +105,22 @@ export default function App() {
   const [menu, setMenu] = useState<string | null>(null);
   const [mobileNav, setMobileNav] = useState(false);
   const [busy, setBusy] = useState(false);
-  const refresh = useCallback(async () => {
-    setLoading(true);
+  const refresh = useCallback(async (background = false) => {
+    if (!background) setLoading(true);
     setError(null);
     try {
       setData(await loadCatalog());
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unable to load the catalog.");
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   }, []);
   const refreshAuth = useCallback(async () => {
     try {
       const a = await getAuthState();
       setAuth({ ...a, email: a.email || "" });
+      if (initialPasswordIntent) setCallbackVerified(a.authenticated && await hasPasswordCallbackSession());
     } catch (e) {
       setAuth({ authenticated: false, isAdmin: false, email: "" });
       setError(e instanceof Error ? e.message : "Unable to verify access.");
@@ -142,6 +142,7 @@ export default function App() {
     });
     return unsub;
   }, [refresh, refreshAuth]);
+  useEffect(() => subscribeCatalogRefresh(() => refresh(true)), [refresh]);
   useEffect(() => {
     if (!toast) return;
     const id = setTimeout(() => setToast(""), 4000);
@@ -212,7 +213,7 @@ export default function App() {
   }
   const publicRoute =
     route.startsWith("#/catalog") || route.startsWith("#/product/");
-  if (publicRoute)
+  if (publicRoute && !passwordIntent)
     return (
       <>
         <PublicCatalog
@@ -238,6 +239,16 @@ export default function App() {
         <p>Preparing your workspace…</p>
       </div>
     );
+  if (passwordIntent)
+    return <PasswordAccess intent={passwordIntent} verified={callbackVerified} onDone={async () => {
+      setPasswordIntent(null);
+      const clean = new URL(window.location.href);
+      clean.searchParams.delete("auth");
+      clean.hash = "/admin";
+      window.history.replaceState(null, "", clean);
+      setRoute("#/admin");
+      await refreshAuth();
+    }} />;
   if (!auth.isAdmin)
     return (
       <Login
@@ -610,7 +621,7 @@ export default function App() {
                                   onClick={() => setEditor(p)}
                                 >
                                   <SafeImage
-                                    src={p.images[0]?.url || "/images/hero.jpg"}
+                                    src={p.images[0]?.url || "/images/placeholder.svg"}
                                     alt=""
                                   />
                                   <span>
@@ -650,7 +661,7 @@ export default function App() {
                                   {label(p.availability)}
                                 </span>
                               </td>
-                              <td className="price-cell">{price(p.price)}</td>
+                              <td className="price-cell">{formatProductPrice(p)}</td>
                               <td>
                                 <div className="row-actions">
                                   <button
@@ -940,6 +951,7 @@ function Login({
   onCatalog: () => void;
   setupError: string | null;
 }) {
+  const [resetSent, setResetSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -1012,6 +1024,15 @@ function Login({
             <button className="button primary full" disabled={busy}>
               {busy ? "Signing in…" : "Sign in"}
             </button>
+            <button type="button" className="text-button" disabled={busy} onClick={async () => {
+              setError(""); setResetSent(false);
+              if (!email.trim()) { setError("Enter your email address first."); return; }
+              setBusy(true);
+              try { await requestPasswordReset(email); setResetSent(true); }
+              catch (e) { setError(e instanceof Error ? e.message : "Unable to send reset email."); }
+              finally { setBusy(false); }
+            }}>Forgot password?</button>
+            {resetSent && <p role="status" className="muted">If this account exists, a password reset link has been sent.</p>}
           </form>
         )}
         {error && (
@@ -1029,4 +1050,35 @@ function Login({
       </div>
     </div>
   );
+}
+
+
+function PasswordAccess({ intent, verified, onDone }: { intent: "invite" | "recovery"; verified: boolean; onDone: () => Promise<void> }) {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  async function submit(e: FormEvent) {
+    e.preventDefault(); setError("");
+    if (password !== confirm) { setError("Passwords do not match."); return; }
+    setBusy(true);
+    try { await completePassword(password); await onDone(); }
+    catch (e) { setError(e instanceof Error ? e.message : "Unable to set password."); }
+    finally { setBusy(false); }
+  }
+  return <div className="access-page">
+    <a href="#/catalog" className="brand"><img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="brutti-official-logo" /></a>
+    <div className="access-card">
+      <ShieldCheck size={25} /><span className="eyebrow">THE CATALOG WORKSPACE</span>
+      <h1>{intent === "invite" ? "Set your password." : "Reset your password."}</h1>
+      <p className="muted">Choose a password for your Supabase account. Administrator access is granted separately by the workspace owner.</p>
+      {verified ? <form onSubmit={submit}>
+        <label>New password<input type="password" autoComplete="new-password" required minLength={8} value={password} onChange={e => setPassword(e.target.value)} /></label>
+        <label>Confirm password<input type="password" autoComplete="new-password" required minLength={8} value={confirm} onChange={e => setConfirm(e.target.value)} /></label>
+        <button className="button primary full" disabled={busy}>{busy ? "Saving…" : "Save password"}</button>
+      </form> : <div className="notice error" role="alert">This link is expired or invalid. Request a new link and try again.</div>}
+      {error && <div className="notice error" role="alert">{error}</div>}
+      <button className="text-button" disabled={busy} onClick={() => void onDone()}>Back to sign in</button>
+    </div>
+  </div>;
 }

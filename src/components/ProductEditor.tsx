@@ -12,6 +12,7 @@ import {
 import type { Product, Category } from "../lib/types";
 import { uploadImage, validateProduct } from "../lib/catalog";
 import Modal from "./Modal";
+import { formatProductPrice } from "../lib/price";
 export default function ProductEditor({
   product,
   categories,
@@ -29,10 +30,12 @@ export default function ProductEditor({
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const uploadLock = useRef(false);
   const update = <K extends keyof Product>(key: K, value: Product[K]) =>
     setDraft((p) => ({ ...p, [key]: value }));
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (uploadLock.current || busy) return;
     setError("");
     try {
       validateProduct(draft);
@@ -50,20 +53,26 @@ export default function ProductEditor({
     }
   }
   async function addImages(files: FileList | null) {
-    if (!files) return;
+    if (!files || uploadLock.current || busy) return;
+    const selected = Array.from(files);
     setError("");
-    if (draft.images.length + files.length > 8) {
+    if (draft.images.length + selected.length > 8) {
       setError("Add up to 8 images per product.");
       return;
     }
+    uploadLock.current = true;
     setUploading(true);
     try {
-      const next = [];
-      for (const file of Array.from(files)) next.push(await uploadImage(file));
-      update("images", [...draft.images, ...next]);
+      // Append each successful upload to current state. Edits, removals and
+      // ordering changes made while the request is pending cannot be undone.
+      for (const file of selected) {
+        const image = await uploadImage(file);
+        setDraft(current => ({ ...current, images: [...current.images, image] }));
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Image upload failed.");
     } finally {
+      uploadLock.current = false;
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
     }
@@ -139,7 +148,7 @@ export default function ProductEditor({
                 Description
                 <textarea
                   rows={4}
-                  maxLength={5000}
+                  maxLength={10000}
                   value={draft.description}
                   placeholder="Tell the story, the details, and what makes it special."
                   onChange={(e) => update("description", e.target.value)}
@@ -148,7 +157,7 @@ export default function ProductEditor({
               <label>
                 Materials
                 <input
-                  maxLength={500}
+                  maxLength={2000}
                   value={draft.materials}
                   placeholder="e.g. Reclaimed timber, natural oil finish"
                   onChange={(e) => update("materials", e.target.value)}
@@ -164,9 +173,9 @@ export default function ProductEditor({
                     <input
                       aria-label={`${key} in centimetres`}
                       type="number"
-                      min={0.1}
-                      max={10000}
-                      step="0.1"
+                      min={0}
+                      max={99999.99}
+                      step="0.01"
                       value={draft[key]}
                       onChange={(e) => update(key, Number(e.target.value))}
                     />
@@ -174,7 +183,7 @@ export default function ProductEditor({
                 ))}
               </div>
               <label>
-                Price <span className="muted">optional · MYR</span>
+                {draft.priceBasis === 'starting-from' ? 'Starting price' : 'Price'} <span className="muted">optional · MYR</span>
                 <div className="price-input">
                   <span>RM</span>
                   <input
@@ -208,6 +217,7 @@ export default function ProductEditor({
                 multiple
                 accept="image/jpeg,image/png,image/webp"
                 hidden
+                disabled={uploading || busy}
                 onChange={(e) => void addImages(e.target.files)}
               />
               <button
@@ -369,12 +379,7 @@ export default function ProductEditor({
                 </span>
                 <h3>{draft.name || "Your product name"}</h3>
                 <p>
-                  {draft.price === null
-                    ? "Price on enquiry"
-                    : new Intl.NumberFormat("en-MY", {
-                        style: "currency",
-                        currency: "MYR",
-                      }).format(draft.price)}
+                  {draft.price === null ? "Price on enquiry" : formatProductPrice(draft, 'editor')}
                 </p>
                 <p className="tiny muted">
                   {draft.description ||

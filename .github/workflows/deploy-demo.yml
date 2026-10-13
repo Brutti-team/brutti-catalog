@@ -34,6 +34,25 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Install browser test dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser regression tests (intercepted backend only)
+        run: npm run test:e2e
+
+      - name: Local schema and policy tests (no production connection)
+        run: npm run test:db
+
+      - name: Set up Python for PDF evidence helpers
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test PDF evidence extraction (synthetic fixtures only)
+        run: |
+          python -m pip install -r scripts/pdf-requirements.txt
+          python -m unittest discover -s scripts -p 'test_*.py'
+
       - name: Build production bundle
         env:
           GITHUB_PAGES: "true"
@@ -42,5 +61,5 @@ jobs:
           VITE_SUPABASE_ANON_KEY: "not-a-real-key"
         run: npm run build
 
-# Deployment deliberately disabled until dedicated Brutti Supabase project,
+# Deployment deliberately disabled until the existing Brutti Supabase project,
 # verified staff permissions, import and public routing are approved.

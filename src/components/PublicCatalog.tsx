@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { Category, Product } from "../lib/types";
 import { publicAssetUrl } from "../lib/assets";
+import { formatProductPrice } from "../lib/price";
 import "./public.css";
 
 interface Props {
@@ -35,10 +36,10 @@ const availabilityLabels = {
   "made-to-order": "Made to order",
   unavailable: "Currently unavailable",
 };
-const price = (value: number | null) =>
-  value === null
+const price = (product: Product) =>
+  product.price === null
     ? "Price on enquiry"
-    : `RM ${new Intl.NumberFormat("en-MY", { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value)}`;
+    : formatProductPrice(product, 'public');
 function currentProductId() {
   const match = window.location.hash.match(/^#\/product\/([^/?#]+)$/);
   if (!match) return null;
@@ -186,7 +187,7 @@ export default function PublicCatalog({
       </div>
       <div className="pub-card-bottom">
         <h3>{item.name}</h3>
-        <span>{price(item.price)}</span>
+        <span>{price(item)}</span>
       </div>
       <p className="pub-card-material">{item.materials}</p>
     </a>
@@ -524,7 +525,7 @@ export default function PublicCatalog({
                       {product.description}
                     </p>
                     <p className="pub-detail-price">
-                      {price(product.price)}
+                      {price(product)}
                       {product.price !== null && (
                         <small>
                           Indicative price · Confirm details on enquiry

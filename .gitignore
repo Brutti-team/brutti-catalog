@@ -10,3 +10,5 @@ playwright-report/
 test-results/
 
 .npm-cache/
+__pycache__/
+*.pyc

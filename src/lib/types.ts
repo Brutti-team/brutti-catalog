@@ -17,6 +17,8 @@ export interface Product {
   depth: number;
   height: number;
   price: number | null;
+  /** Optional until inspected/approved price_basis schema addition is installed. */
+  priceBasis?: 'fixed' | 'starting-from';
   status: ProductStatus;
   availability: Availability;
   featured: boolean;

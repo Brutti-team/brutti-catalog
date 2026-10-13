@@ -1,146 +1,106 @@
 # Brutti Catalog
 
-Production-oriented furniture catalog workspace for **Benua Brutti Sdn. Bhd.**, built with React, Vite and TypeScript. Brutti green, generous spacing and responsive layouts bring the admin workspace and public collection together in one standalone application.
+The existing React, Vite and TypeScript catalog for **Benua Brutti Sdn. Bhd.** The dashboard and public catalog design are preserved. The application uses Supabase only, with no demo login, sample-product fallback or browser-only product persistence.
 
-**This project is not yet deployed as a real production catalog.** Changes are confined to `brutti-catalog`; Brutti OS, SEDCO and the existing Brutti website are separate projects.
+**Production verification and real product import are pending. Nothing has been deployed.** Work is on `feat/catalog-phase-one`; changes are limited to this repository.
 
-## What is included
+## Existing backend — do not recreate it
 
-- Admin overview with product, published, draft and category statistics.
-- Searchable product table with status/category filters and sorting.
-- Product creation, editing, duplication, archiving and deletion; category creation, editing and deletion with assigned-product protection.
-- Name, SKU, description, materials, dimensions in centimetres and optional MYR price. Publication and availability are separate: Draft / Published / Archived, and Available / Made to order / Unavailable.
-- Multiple image selection, previews, editable image descriptions, cover image ordering and product preview. Up to eight JPEG, PNG or WebP images, each up to 5 MB.
-- Public catalog with published product cards, search, category filters, featured products and product detail galleries.
-- Mobile navigation, responsive tables and grids, loading, empty and error states.
-- Supabase-only product and category persistence, authenticated administration, RLS and image storage integration.
+Use the existing Benua Brutti project **`lgdjoxafleqnbomtfzqt`**, URL **`https://lgdjoxafleqnbomtfzqt.supabase.co`**.
 
-There is no checkout or payment collection. Image resizing/automatic WebP conversion, private draft image storage, advanced roles, bulk imports, password recovery screens and website integration remain future work.
+The owner reports that `phase_one_brutti_catalog_secure_schema` and `real_brutti_categories_and_draft_validation` are already applied, with seven categories, zero products, zero catalog administrators and one image bucket. These are owner-reported facts; live inspection requires the public key. **Do not create another project or blindly rerun these migrations.** The repository SQL files document the expected schema and support isolated local tests.
 
-## Run locally
+Official categories: Racks & Shelves; Tables & Kitchen Counters; Displays & Panels; Beds & Bunk Beds; Reception Counters; Displays & Mementos; Rentals.
 
-Use **Node.js 22.12 or newer** (Node 24 LTS is recommended) and npm. Start from this existing checkout; each Codex cloud task already has an isolated environment, so an additional worktree is unnecessary unless explicitly requested.
+## Local development and secure configuration
+
+Use Node 24 LTS (minimum 22.12), npm and the existing checkout; no extra worktree is needed.
 
 ```sh
-npm ci
+npm ci --cache .npm-cache --no-audit --no-fund
 cp .env.example .env.local
-npm run dev
+# Enter the PUBLIC Supabase client key securely, then:
+npm run dev -- --port 5173 --strictPort
 ```
 
-Vite prints the local address, normally `http://localhost:5173`.
+Set `VITE_SUPABASE_URL` to the existing project URL. Set **either** `VITE_SUPABASE_ANON_KEY` or `VITE_SUPABASE_PUBLISHABLE_KEY` to its public browser key from Supabase project settings. Cloud environments can inject these variables through environment settings instead of a local file. Restart Vite after changes; hosted builds also need the variables at build time.
 
-Optionally set `VITE_ENQUIRY_EMAIL` in `.env.local` to an approved business contact. Without a valid address, the catalog displays **Enquiries coming soon**. The enquiry action opens the visitor's email application with a `mailto:` draft; the catalog does not submit, deliver or store enquiries. Restart Vite after changing this setting.
+All `VITE_` variables are public in the browser bundle. Never provide a service-role key, `sb_secret_` key, database password or other private credential. Browser configuration rejects known privileged keys; RLS remains the security boundary. `.env.local` is ignored by Git. Missing configuration/backend failures show an error, never invented data.
 
-| Screen | Local URL |
-| --- | --- |
-| Admin workspace | `http://localhost:5173/#/admin` |
-| Public catalog | `http://localhost:5173/#/catalog` |
-| Product detail | `http://localhost:5173/#/product/<product-id>` |
+Routes during review: `/#/admin`, `/#/catalog`, `/#/product/<id>`. These hash routes work on static hosting. Clean `brutti.my/admin` and `/catalog` require the later integration described in [docs/website-integration.md](docs/website-integration.md).
 
-The admin workspace is the default landing page. Use **View catalog** to open the public collection.
+Optionally configure `VITE_ENQUIRY_EMAIL` to an approved business email. Without it, enquiries are disabled. The action opens a mailto draft; there is no server-side email delivery or checkout.
 
-## Production-only data model
+## Inspect before schema changes or importing
 
-The Catalog interface uses Supabase only. Demo mode, localStorage product persistence, sample product loading, unsecured demo sign-in, and the Reset Demo action are disabled/removed from the application.
+With public environment values present:
 
-**Current rollout status:** Source code is prepared on `feat/catalog-phase-one`, but it is not deployed or connected to a dedicated Brutti Supabase project yet. Do not claim it is live. The repository's existing `src/data/demo.ts` fixtures (if retained for old tests) are not imported by the production application.
+```sh
+node --env-file=.env.local scripts/inspect-backend.mjs
+# If variables are already injected, omit --env-file.
+```
 
-Apply database migrations in order to a **dedicated Brutti** project:
-1. `supabase/migrations/202610120001_phase_one_catalog.sql` — Auth/RLS, product/category tables and photo bucket.
-2. `supabase/migrations/202610130001_real_catalog_categories.sql` — the seven official Brutti categories and safe validation for incomplete drafts.
+This performs **read-only** public REST/OpenAPI requests, checks the official category names and checks for leaked unpublished records. Public reads cannot establish total product/admin counts, full policies or bucket configuration. If OpenAPI inspection is disabled, use the owner SQL inspection rather than assuming the schema.
 
-Only Brutti staff approved in `catalog_admins` can edit records. Incomplete PDF product details may be saved in Draft with unknown dimensions recorded as zero; publishing requires complete dimensions, description, materials and a real image. Never invent values to publish a draft.
+Run [supabase/inspection/current-schema.sql](supabase/inspection/current-schema.sql) in the existing project's trusted SQL editor. It is a read-only transaction that reports columns, constraints, RLS, policies, the admin-check function, categories, counts and the product bucket. Review those structural results before considering additions. No application/startup/CI script applies SQL to production.
 
-There is no automatic PDF-to-database import. The real 2025 Brutti PDF must be extracted and reviewed (including duplicate names/photo variants), then imported into the dedicated database as Draft with approved images in Storage. Do not seed the eight sample products.
+## Invite the first administrator
 
-## Configure Supabase
-
-Start with a dedicated development project. A dedicated Brutti project and its administrator must be created/authorized separately. Do not reuse the connected Tumbooh project.
-
-1. Create a dedicated Brutti Catalog Supabase project (development first, then reviewed production) and open its trusted SQL editor.
-2. Apply [`supabase/migrations/202610120001_phase_one_catalog.sql`](supabase/migrations/202610120001_phase_one_catalog.sql), then [`supabase/migrations/202610130001_real_catalog_categories.sql`](supabase/migrations/202610130001_real_catalog_categories.sql). Confirm the seven categories are visible before importing actual products.
-3. In Supabase Auth, create the intended staff user through the dashboard or a trusted server-side administration tool. Use an email/password account and complete the project's email-confirmation requirements. The frontend provides no self-signup or self-admin route. Disable public signups in project settings unless you need them for another reviewed purpose.
-4. Copy the user's **UUID** from the Auth dashboard. As the trusted database owner, grant that existing account membership:
+1. Choose the actual authorized staff email. In the existing Supabase project's Authentication settings, disable public signups unless separately approved. Configure email delivery, confirmation/password policy, Site URL and allowed redirect URLs for the approved review host. Local review may use `http://localhost:5173/`; whitelist the exact reset redirect `http://localhost:5173/?auth=recovery`. Do not point production invitation emails at an unapproved host.
+2. Use the trusted **Supabase Dashboard → Authentication → Users → Invite user** flow. Its invitation destination must be the catalog's approved root URL, where the SDK can receive the invite token fragment. If invitations need a custom redirect, use Supabase's trusted server-side `inviteUserByEmail` with the approved `redirectTo`. Private admin keys stay exclusively in that trusted server, never this frontend.
+3. Copy the invited user's UUID from Authentication. In the project's trusted SQL editor, grant membership to that existing user:
 
    ```sql
-   -- Replace the placeholder with the existing staff user's UUID.
    insert into public.catalog_admins (user_id)
-   values ('REPLACE-WITH-STAFF-USER-UUID'::uuid)
+   values ('REPLACE-WITH-INVITED-USER-UUID'::uuid)
    on conflict (user_id) do nothing;
    ```
 
-5. Set the project's URL and **public anon client key** in `.env.local`:
+4. The staff member opens their personal invitation link and sets their own password. No default password is supplied. Invite/recovery completion requires a successful matching SDK callback session and server-side `getUser()` verification; an expired link cannot reuse an unrelated cached session. Afterward, verify sign-in and sign-out. A signed-in account without `catalog_admins` membership receives **Admin access required**.
+5. **Forgot password?** sends a Supabase recovery email without revealing account existence. Configure redirect allowlists/SMTP and test actual delivery before launch. The completion screen uses existing access-card styling. Current callbacks support Supabase's default implicit token-fragment flow; a custom PKCE/code-only email integration would need a separate reviewed callback implementation.
 
-   ```dotenv
-   VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
-   VITE_SUPABASE_ANON_KEY=YOUR-PUBLIC-ANON-KEY
-   ```
+The database independently enforces admin writes. To revoke catalog membership, delete that user's `catalog_admins` row through trusted SQL and follow the project's session/account offboarding process. Revocation applies to subsequent database operations; do not rely on hiding UI controls as security.
 
-6. Restart Vite after changing variables. Visit `/#/admin` and sign in with the staff account. Use the seven preloaded categories, create a real product in Draft, upload real photos, verify all details and then publish. A newly configured database is intentionally empty.
+## Product and image management
 
-`VITE_` variables are embedded in the browser bundle. **Never put a service-role key, Supabase secret key, database password or other private credential in them.** Store deployment environment values through the approved hosting provider's settings. `.env.local` is ignored by Git.
+Overview statistics, product/category CRUD, duplicate, archive, delete, search/filter/sort, image uploads/order/removal/previews and Draft/Published/Archived controls use database records. Unknown dimensions are zero for Draft only; publishing requires verified positive dimensions, a description, materials and at least one image. Unknown price stays null. Materials and finishing share the existing materials field; imports preserve an explicit `Finishing:` label without changing the editor layout.
 
-Configured mode uses real Supabase Auth and RLS rather than demo login. The app checks `catalog_admins` membership for the workspace, and the database independently enforces all writes. Signing in alone does not grant admin access. An invalid or failing configured backend displays errors; it does not silently substitute demo data.
+Photos use `product-images`, up to eight JPEG/PNG/WebP images, each at most 5 MB. Uploads require a verified admin and a user UUID path prefix. Successful photos append to current editor state, preserving concurrent staff edits/removals. Save is disabled during upload. Partial failures retain successfully uploaded images for review. Replace a photo by adding the replacement, moving it to the desired position/cover and removing the old reference, then save.
 
-Remove a user's catalog access using trusted SQL:
+**The bucket is public:** Draft/Archived photo URLs are downloadable if known. Only upload photos intended for public distribution. Removing a photo/product or cancelling can leave unreferenced files; no destructive cleanup runs automatically. Review storage references before manual cleanup, especially duplicated products sharing photos.
 
-```sql
-delete from public.catalog_admins
-where user_id = 'REPLACE-WITH-STAFF-USER-UUID'::uuid;
-```
+Public pages render Published products only and re-read the database every 30 seconds while visible, also when a tab becomes visible again. Publishing/unpublishing therefore needs no new GitHub deployment, although an already open tab can take up to 30 seconds to reflect it. No Realtime publication setting is required.
 
-Changes are checked by the database on subsequent operations. For staff offboarding, also follow the project's account/session revocation process.
+## Actual 104-page PDF import
 
-## Database and image access
+The real **Brutti Catalogue 2025.pdf has not been supplied to this checkout**. No actual products or photographs have been extracted/imported. [docs/catalogue-import.md](docs/catalogue-import.md) explains the prepared extractor, evidence review, manifest validation and insert-only Draft importer.
 
-The migration creates `categories`, `products`, `catalog_admins`, publication/availability enums, image metadata validation, a server-controlled `updated_at` trigger and indexes. SKU and category-name uniqueness are case-insensitive. A category assigned to any product cannot be deleted. Published products require a description, materials and at least one image; all products require a name, SKU, category and positive dimensions. Optional prices must be nonnegative.
+The importer is offline-validation-only by default. Write mode needs a reviewed real manifest, inspected/approved additional schema, an authenticated approved administrator and verified photo bytes. A durable ledger prevents repeated imports from overwriting staff edits or recreating staff-deleted products. The proposed SQL is [supabase/proposals/catalogue-import.sql](supabase/proposals/catalogue-import.sql), **not an applied migration**. It adds accurate starting-price semantics and import provenance; do not apply it before inspecting the existing database.
 
-- Anonymous and signed-in non-admin users can read categories and **published products only**.
-- Listed catalog administrators can manage all products and categories. Membership is managed only through a trusted database connection; accounts cannot add themselves.
-- `is_catalog_admin()` uses `SECURITY DEFINER`, an empty `search_path`, qualified references and restricted execution privileges to avoid recursive membership policies.
-- Images use the `product-images` bucket, with 5 MB and JPEG/PNG/WebP restrictions. Uploads require admin membership and use the signed-in user's UUID as the path prefix. Other image writes also require admin membership.
+The frontend remains compatible with the reported existing schema: it sends no new price column for existing records until the column is returned by the database. With the reviewed addition installed, imported starting prices display **Starting from RM…** in the existing cards/details/preview and survive staff edits. No fixed price is inferred from a starting price.
 
-**The image bucket is public.** Anyone with a public asset URL can download that photo, including photos attached to draft or archived products. Storage metadata/listing policies expose only published references to non-admin users, but public download URLs bypass those policies. Removing or archiving a product does not make its photos private, and previously delivered copies may remain in browser/CDN caches. Use only photos intended for public distribution. Confidential draft photos require a separate private-bucket/signed-URL design before production use.
-
-Uploads happen before product saving. Cancelling an editor, removing an image or deleting a product can leave unused files in the bucket. No automatic destructive cleanup runs; administrators can review and remove unused files through Supabase Storage. Do not remove files still referenced by another product.
-
-## Validation
+## Verification
 
 ```sh
 npm run typecheck
 npm test
 npm run build
-npm run preview
-```
-
-The production build is written to `dist/`. These commands validate the frontend without requiring Supabase credentials.
-
-Earlier browser tests may still refer to demo fixtures and must be updated before production release. Browser tests use Playwright. Install Chromium if it is not already available, then run:
-
-```sh
-npx playwright install chromium
 npm run test:e2e
+npm run test:db
 ```
 
-The browser suite starts a demo server on port 5190 and a separately configured test server on port 5191. Its configured-mode sign-in check intercepts API rejection responses; it does not verify a real Supabase project. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to use a custom Chromium executable if needed.
+Playwright uses an intercepted test backend on port 5190, no demo mode and **no live production writes**. Install Chromium with `npx playwright install chromium` if `/usr/bin/chromium` is unavailable, or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. Checks include admin denial, expired/invite/recovery callbacks, Draft creation, product editing, upload race regression, publishing/archiving/public filters and desktop/mobile/landscape overflow. Browser screenshots are generated under ignored `test-results/`; they show test fixtures, not imported Brutti products.
 
-Database constraint and role-policy checks are included separately. With Docker available, run:
+The database suite runs both existing migrations and the pending import proposal in a disposable PostgreSQL 17 Docker container with no network/ports, then checks constraints, RLS/admin roles, Draft completeness, rerun safety and staff edit/deletion preservation. It never contacts Supabase. Docker must be available.
+
+PDF helper tests:
 
 ```sh
-npm run test:db
-# Or: sh supabase/tests/check-schema.sh
+python3 -m venv .venv.local
+.venv.local/bin/python -m pip install --cache-dir .pip-cache.local -r scripts/pdf-requirements.txt
+.venv.local/bin/python -m unittest discover -s scripts -p 'test_*.py'
 ```
 
-This starts a disposable PostgreSQL 17 container with **no published ports or external network**, creates minimal mock Supabase platform schemas, applies the migration and checks anonymous/member/admin access, denied self-promotion, publication constraints, duplicate SKUs, category references and image upload policies. It removes the container afterwards. The mock schemas are only for this harness; **do not apply `mock_platform.sql` to Supabase**.
+Unit/mock-browser/local-SQL success does **not** establish live Supabase CRUD, email delivery, storage or actual PDF import. Run the live acceptance procedure in [docs/production-readiness.md](docs/production-readiness.md) before deployment approval.
 
-For a local Supabase stack, use a trusted local database connection to run `supabase/tests/catalog_rls.sql` after the migration; its fixture transaction rolls back. Never run these fixture checks against a production project. The isolated PostgreSQL checks do not exercise Supabase's HTTP APIs, actual email/password sessions, MIME enforcement or public-download caching. Verify those behaviors in the configured development project before approving production use.
-
-## Hosting and next steps
-
-The current application uses **hash routing** so catalog detail URLs survive reloads on ordinary static hosting. Serve `dist/` with HTTPS and the intended environment variables supplied at build time. If changing to clean `/admin`, `/catalog` or `/product/...` paths, configure an SPA fallback that serves `index.html` for application routes, while preserving real asset paths. Hosting under a subdirectory also requires reviewing Vite's `base` and asset paths; the default targets a standalone site root.
-
-Before production: supply a reviewed Supabase project, apply the migration, create staff accounts and memberships, validate real Auth/RLS/Storage access, curate actual products/photos, review privacy and asset caching, and decide hosting plus website integration. Add monitoring, backup and recovery procedures appropriate to the chosen project. Integration with `brutti.my/admin` or `brutti.my/catalog` is a separate change requiring approval.
-
-**Do not deploy or merge without approval.** No deployment, merge or changes to other Brutti repositories are part of Phase 1.
-
-© Benua Brutti Sdn. Bhd.
+The existing GitHub workflow validates TypeScript, unit tests, browser regressions, local database policies, PDF helper tests and the build. Deployment remains disabled. Do not merge or deploy before explicit approval and verified production prerequisites.

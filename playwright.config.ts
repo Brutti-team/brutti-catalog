@@ -31,7 +31,7 @@ export default defineConfig({
       VITE_SUPABASE_ANON_KEY: "browser-test-public-placeholder",
       VITE_ENQUIRY_EMAIL: "",
     },
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 30_000,
   },
 });
