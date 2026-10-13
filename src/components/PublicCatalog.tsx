@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { Category, Product } from "../lib/types";
 import { isDemoMode } from "../lib/catalog";
+import { publicAssetUrl } from "../lib/assets";
 import "./public.css";
 
 interface Props {
@@ -61,13 +62,13 @@ function FurnitureImage({
 }) {
   return (
     <img
-      src={src || "/images/placeholder.svg"}
+      src={publicAssetUrl(src)}
       alt={alt}
       className={className}
       loading={eager ? "eager" : "lazy"}
       onError={(event) => {
         if (!event.currentTarget.src.endsWith("/images/placeholder.svg"))
-          event.currentTarget.src = "/images/placeholder.svg";
+          event.currentTarget.src = publicAssetUrl("/images/placeholder.svg");
       }}
     />
   );
