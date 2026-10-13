@@ -1,5 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { demoCatalog } from "../src/data/demo";
+import { bruttiCategories } from "../src/data/categories";
+import type { Product } from "../src/lib/types";
+
+const reviewProduct: Product = {
+  id: "40000000-0000-4000-8000-000000000002",
+  name: "Kaanagan Wardrobe",
+  sku: "BR-2025-002",
+  categoryId: bruttiCategories[0].id,
+  description: "", materials: "", width: 0, depth: 0, height: 0,
+  price: null, status: "draft", availability: "made-to-order", featured: false,
+  images: [],
+  createdAt: "2026-10-13T00:00:00.000Z", updatedAt: "2026-10-13T00:00:00.000Z",
+};
 
 const fake = vi.hoisted(() => ({
   getUser: vi.fn(),
@@ -43,7 +55,6 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
   vi.stubEnv("VITE_SUPABASE_ANON_KEY", "public-anon-key");
-  vi.stubEnv("VITE_DEMO_MODE", "false");
   fake.getUser.mockResolvedValue({
     data: { user: { id: "admin-uuid", email: "admin@example.com" } },
     error: null,
@@ -60,7 +71,6 @@ afterEach(() => {
 describe("configured Supabase catalog", () => {
   it("performs no backend mutation or connection during module import", async () => {
     const catalog = await import("../src/lib/catalog");
-    expect(catalog.isDemoMode).toBe(false);
     expect(fake.createClient).not.toHaveBeenCalled();
     expect(fake.from).not.toHaveBeenCalled();
   });
@@ -78,10 +88,9 @@ describe("configured Supabase catalog", () => {
     await expect(loadCatalog()).rejects.toThrow(/Connection unavailable/);
   });
 
-  it("rejects partial configuration instead of silently changing to demo", async () => {
+  it("rejects partial configuration instead of allowing unsecured access", async () => {
     vi.stubEnv("VITE_SUPABASE_ANON_KEY", "");
     const catalog = await import("../src/lib/catalog");
-    expect(catalog.isDemoMode).toBe(false);
     await expect(catalog.loadCatalog()).rejects.toThrow(
       /both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY/,
     );
@@ -91,7 +100,7 @@ describe("configured Supabase catalog", () => {
     vi.stubEnv("VITE_SUPABASE_URL", "");
     const catalog = await import("../src/lib/catalog");
     expect(() => catalog.subscribeAuth(() => undefined)()).not.toThrow();
-    await expect(catalog.getAuthState()).rejects.toThrow(/Set both/);
+    await expect(catalog.getAuthState()).rejects.toThrow(/Configure both/);
   });
 
   it("requires database admin membership rather than trusting an authenticated account", async () => {
@@ -102,7 +111,7 @@ describe("configured Supabase catalog", () => {
       isAdmin: false,
       email: "admin@example.com",
     });
-    await expect(catalog.saveProduct(demoCatalog.products[0])).rejects.toThrow(
+    await expect(catalog.saveProduct(reviewProduct)).rejects.toThrow(
       /administrator/i,
     );
     expect(
@@ -135,7 +144,7 @@ describe("configured Supabase catalog", () => {
     fake.from.mockImplementation(() => adminQuery(null));
     const catalog = await import("../src/lib/catalog");
     await expect(
-      catalog.saveCategory(demoCatalog.categories[0]),
+      catalog.saveCategory(bruttiCategories[0]),
     ).rejects.toThrow(/administrator/i);
     await expect(catalog.deleteCategory("category")).rejects.toThrow(
       /administrator/i,
