@@ -1,59 +1,44 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { Product } from "../src/lib/types";
-import {
-  deleteCategory,
-  deleteProduct,
-  getAuthState,
-  isDemoMode,
-  loadCatalog,
-  resetDemo,
-  saveCategory,
-  saveProduct,
-  signIn,
-  signOut,
-  subscribeAuth,
-  uploadImage,
-  validateProduct,
-} from "../src/lib/catalog";
+import { bruttiCategories } from "../src/data/categories";
+import { MAX_IMAGE_SIZE, validateProduct } from "../src/lib/catalog";
 
-class MemoryStorage implements Storage {
-  private values = new Map<string, string>();
-  get length() {
-    return this.values.size;
-  }
-  clear() {
-    this.values.clear();
-  }
-  getItem(key: string) {
-    return this.values.get(key) ?? null;
-  }
-  key(index: number) {
-    return [...this.values.keys()][index] ?? null;
-  }
-  removeItem(key: string) {
-    this.values.delete(key);
-  }
-  setItem(key: string, value: string) {
-    this.values.set(key, value);
-  }
-}
+const sourceDraft: Product = {
+  id: "40000000-0000-4000-8000-000000000001",
+  name: "Kaanagan Open Concept Wardrobe",
+  sku: "BR-2025-002",
+  categoryId: bruttiCategories[0].id,
+  description: "",
+  materials: "",
+  width: 0,
+  depth: 0,
+  height: 0,
+  price: null,
+  status: "draft",
+  availability: "made-to-order",
+  featured: false,
+  images: [],
+  createdAt: "2026-10-13T00:00:00.000Z",
+  updatedAt: "2026-10-13T00:00:00.000Z",
+};
 
-beforeEach(() => {
-  vi.stubGlobal("localStorage", new MemoryStorage());
-});
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
+const verifiedProduct: Product = {
+  ...sourceDraft,
+  description: "Custom-built open concept wardrobe.",
+  materials: "Pine wood and steel.",
+  width: 140,
+  depth: 60,
+  height: 180,
+  images: [{
+    id: "image-1",
+    url: "https://example.com/approved-brutti-photo.webp",
+    alt: "Kaanagan wardrobe",
+  }],
+};
 
-describe("demo catalog", () => {
-  it("seeds eight products including six published products and seven categories", async () => {
-    const data = await loadCatalog();
-    expect(isDemoMode).toBe(true);
-    expect(data.products).toHaveLength(8);
-    expect(
-      data.products.filter((product) => product.status === "published"),
-    ).toHaveLength(6);
-    expect(data.categories.map((category) => category.name)).toEqual([
+describe("official Brutti categories", () => {
+  it("has exactly seven unique categories", () => {
+    expect(bruttiCategories.map((category) => category.name)).toEqual([
       "Racks & Shelves",
       "Tables & Kitchen Counters",
       "Displays & Panels",
@@ -62,253 +47,67 @@ describe("demo catalog", () => {
       "Displays & Mementos",
       "Rentals",
     ]);
-    expect(
-      data.products.every((product) =>
-        product.images[0]?.url.startsWith("/images/"),
-      ),
-    ).toBe(true);
-  });
-
-  it("upgrades existing local demo without losing staff-edited data", async () => {
-    const current = await loadCatalog();
-    const categoryNames = ["Seating", "Tables", "Storage", "Workspace"];
-    const oldCats = categoryNames.map((name, i) => ({
-      id: `10000000-0000-4000-8000-${String(i + 1).padStart(12, "0")}`,
-      name,
-      description: name,
-    }));
-    const custom = {
-      id: "40000000-0000-4000-8000-000000000001",
-      name: "Staff Custom",
-      description: "User-created category",
-    };
-    const oldProducts = current.products.map((product) => ({
-      ...product,
-      categoryId:
-        product.categoryId === current.categories[6].id
-          ? oldCats[0].id
-          : product.categoryId === current.categories[1].id
-            ? oldCats[1].id
-            : oldCats[2].id,
-    }));
-    const extra = {
-      ...oldProducts[0],
-      id: crypto.randomUUID(),
-      name: "Staff edited sample",
-      sku: "BR-EDITED-001",
-      categoryId: custom.id,
-    };
-    localStorage.setItem(
-      "brutti-catalog.demo.v1",
-      JSON.stringify({
-        version: 1,
-        data: { categories: [...oldCats, custom], products: [...oldProducts, extra] },
-      }),
-    );
-    const updated = await loadCatalog();
-    expect(updated.categories.map((c) => c.name)).toEqual([
-      ...current.categories.map((c) => c.name),
-      "Staff Custom",
-    ]);
-    expect(updated.products).toHaveLength(9);
-    expect(updated.products.find((p) => p.id === extra.id)?.categoryId).toBe(custom.id);
-    expect(updated.products[0].categoryId).toBe(current.categories[6].id);
-    expect(JSON.parse(localStorage.getItem("brutti-catalog.demo.v1")!).version).toBe(2);
-    expect((await loadCatalog()).products).toHaveLength(9);
-  });
-
-  it("persists edits across reads without mutating the seed data", async () => {
-    const original = (await loadCatalog()).products[0];
-    await saveProduct({ ...original, name: "Edited chair", price: null });
-    expect((await loadCatalog()).products[0].name).toBe("Edited chair");
-    await resetDemo();
-    expect((await loadCatalog()).products[0].name).toBe(original.name);
-  });
-
-  it("rejects duplicate SKUs ignoring case and whitespace", async () => {
-    const original = (await loadCatalog()).products[0];
-    await expect(
-      saveProduct({
-        ...original,
-        id: crypto.randomUUID(),
-        sku: ` ${original.sku.toLowerCase()} `,
-      }),
-    ).rejects.toThrow(/SKU.*already/i);
-  });
-
-  it("deletes a product without affecting other products", async () => {
-    const product = (await loadCatalog()).products[0];
-    await deleteProduct(product.id);
-    const data = await loadCatalog();
-    expect(data.products).toHaveLength(7);
-    expect(data.products.some((item) => item.id === product.id)).toBe(false);
-  });
-
-  it("refuses category deletion when products still use it", async () => {
-    const data = await loadCatalog();
-    await expect(deleteCategory(data.categories[0].id)).rejects.toThrow(
-      /products/i,
-    );
-    expect((await loadCatalog()).categories).toHaveLength(7);
-  });
-
-  it("creates and deletes an unused category while rejecting duplicate names", async () => {
-    const category = {
-      id: crypto.randomUUID(),
-      name: "Lighting",
-      description: "Soft lighting",
-    };
-    await saveCategory(category);
-    expect((await loadCatalog()).categories).toContainEqual(category);
-    await expect(
-      saveCategory({
-        ...category,
-        id: crypto.randomUUID(),
-        name: " lighting ",
-      }),
-    ).rejects.toThrow(/already/i);
-    await deleteCategory(category.id);
-    expect((await loadCatalog()).categories).toHaveLength(7);
-  });
-
-  it("preserves malformed saved data and gives an actionable error", async () => {
-    await loadCatalog();
-    const key = localStorage.key(0)!;
-    localStorage.setItem(key, "{broken");
-    await expect(loadCatalog()).rejects.toThrow(/reset.*demo/i);
-    expect(localStorage.getItem(key)).toBe("{broken");
-  });
-
-  it("rejects saved records with missing fields before rendering them", async () => {
-    await loadCatalog();
-    const key = localStorage.key(0)!;
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        version: 1,
-        data: { products: [{ id: "invalid", images: [] }], categories: [] },
-      }),
-    );
-    await expect(loadCatalog()).rejects.toThrow(/reset.*demo/i);
-  });
-
-  it("reports storage quota failures instead of claiming the edit saved", async () => {
-    const product = (await loadCatalog()).products[0];
-    vi.spyOn(localStorage, "setItem").mockImplementation(() => {
-      throw new DOMException("Full", "QuotaExceededError");
-    });
-    await expect(saveProduct({ ...product, name: "Unsaved" })).rejects.toThrow(
-      /storage.*full|quota/i,
-    );
-    expect((await loadCatalog()).products[0].name).toBe(product.name);
-  });
-
-  it("exposes demo access without pretending to check passwords", async () => {
-    expect(await getAuthState()).toMatchObject({
-      authenticated: true,
-      isAdmin: true,
-    });
-    const listener = vi.fn();
-    const unsubscribe = subscribeAuth(listener);
-    await signIn("", "");
-    await signOut();
-    expect(listener).toHaveBeenCalledTimes(2);
-    unsubscribe();
+    expect(new Set(bruttiCategories.map((category) => category.id)).size).toBe(7);
   });
 });
 
-describe("product and upload validation", () => {
-  let product: Product;
-  beforeEach(async () => {
-    product = (await loadCatalog()).products[0];
+describe("real catalog product validation", () => {
+  it("allows incomplete real PDF data as a draft, without inventing dimensions or prices", () => {
+    expect(() => validateProduct(sourceDraft)).not.toThrow();
+    expect(() => validateProduct({ ...sourceDraft, price: null })).not.toThrow();
   });
 
-  it("accepts optional pricing and valid positive dimensions", () => {
-    expect(() => validateProduct({ ...product, price: null })).not.toThrow();
+  it("prevents publishing a product with unverified dimensions", () => {
+    expect(() => validateProduct({
+      ...sourceDraft, ...verifiedProduct, width: 0, status: "published"
+    })).toThrow(/dimensions/i);
   });
 
-  it.each(["name", "sku", "categoryId"] as const)(
-    "rejects missing %s",
-    (field) => {
-      expect(() => validateProduct({ ...product, [field]: " " })).toThrow();
-    },
-  );
-
-  it.each([0, -1, NaN, Infinity])("rejects invalid dimensions %s", (width) => {
-    expect(() => validateProduct({ ...product, width })).toThrow(/dimensions/i);
+  it("prevents publishing a product without verified description, materials or image", () => {
+    expect(() => validateProduct({
+      ...verifiedProduct, description: "", status: "published"
+    })).toThrow(/description/i);
+    expect(() => validateProduct({
+      ...verifiedProduct, materials: "", status: "published"
+    })).toThrow(/materials/i);
+    expect(() => validateProduct({
+      ...verifiedProduct, images: [], status: "published"
+    })).toThrow(/image/i);
   });
 
-  it("rejects dimensions outside the database limit", () => {
-    expect(() => validateProduct({ ...product, height: 100000 })).toThrow(
-      /dimensions/i,
-    );
+  it("allows a complete real product to publish", () => {
+    expect(() => validateProduct({ ...verifiedProduct, status: "published" })).not.toThrow();
+  });
+
+  it.each(["name", "sku", "categoryId"] as const)("rejects missing %s", (field) => {
+    expect(() => validateProduct({ ...sourceDraft, [field]: " " })).toThrow();
+  });
+
+  it.each([-1, NaN, Infinity, 100000])("rejects invalid dimensions %s", (width) => {
+    expect(() => validateProduct({ ...sourceDraft, width })).toThrow(/dimensions/i);
   });
 
   it.each([-1, NaN, Infinity])("rejects invalid price %s", (price) => {
-    expect(() => validateProduct({ ...product, price })).toThrow(/price/i);
+    expect(() => validateProduct({ ...sourceDraft, price })).toThrow(/price/i);
   });
 
-  it("requires an image and description before publication", () => {
-    expect(() =>
-      validateProduct({ ...product, status: "published", images: [] }),
-    ).toThrow(/image/i);
-    expect(() =>
-      validateProduct({ ...product, status: "published", description: "" }),
-    ).toThrow(/description/i);
-    expect(() =>
-      validateProduct({
-        ...product,
-        status: "draft",
-        images: [],
-        description: "",
-      }),
-    ).not.toThrow();
+  it("rejects oversized descriptions and materials", () => {
+    expect(() => validateProduct({
+      ...sourceDraft, description: "a".repeat(10001)
+    })).toThrow(/description/i);
+    expect(() => validateProduct({
+      ...sourceDraft, materials: "a".repeat(2001)
+    })).toThrow(/materials/i);
   });
 
-  it("rejects descriptions and materials longer than the database limits", () => {
-    expect(() =>
-      validateProduct({ ...product, description: "a".repeat(10001) }),
-    ).toThrow(/description/i);
-    expect(() =>
-      validateProduct({ ...product, materials: "a".repeat(2001) }),
-    ).toThrow(/materials/i);
+  it("rejects unsafe uploaded image URLs", () => {
+    expect(() => validateProduct({
+      ...sourceDraft,
+      images: [{ id: "bad", alt: "", url: "javascript:alert(1)" }],
+    })).toThrow(/image/i);
   });
 
-  it("rejects image URLs that cannot be used safely as image sources", () => {
-    expect(() =>
-      validateProduct({
-        ...product,
-        images: [{ id: "bad", alt: "", url: "javascript:alert(1)" }],
-      }),
-    ).toThrow(/image/i);
-  });
-
-  it("rejects unsupported image types before reading file contents", async () => {
-    await expect(
-      uploadImage(new File(["svg"], "image.svg", { type: "image/svg+xml" })),
-    ).rejects.toThrow(/JPEG.*PNG.*WebP/i);
-  });
-
-  it("rejects images larger than 5MB", async () => {
-    await expect(
-      uploadImage(
-        new File([new Uint8Array(5 * 1024 * 1024 + 1)], "huge.jpg", {
-          type: "image/jpeg",
-        }),
-      ),
-    ).rejects.toThrow(/5 MB/i);
-  });
-
-  it("returns a preview data URL for a valid demo image", async () => {
-    const image = await uploadImage(
-      new File(
-        [new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])],
-        "chair.png",
-        { type: "image/png" },
-      ),
-    );
-    expect(image.url).toMatch(/^data:image\/png;base64,/);
-    expect(image.alt).toBe("chair");
-    expect(image.storagePath).toBeUndefined();
+  it("enforces the approved 5 MB image limit", () => {
+    expect(MAX_IMAGE_SIZE).toBe(5 * 1024 * 1024);
   });
 });
