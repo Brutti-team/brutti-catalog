@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { demoCatalog } from "../data/demo";
+import { upgradeDemoCategories } from "../data/category-migration";
 import type { CatalogData, Category, Product, ProductImage } from "./types";
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim() ?? "";
@@ -34,7 +35,7 @@ function storage(): Storage {
 
 function writeDemo(data: CatalogData): void {
   try {
-    storage().setItem(storageKey, JSON.stringify({ version: 1, data }));
+    storage().setItem(storageKey, JSON.stringify({ version: 2, data }));
   } catch (error) {
     if (
       error instanceof DOMException &&
@@ -71,7 +72,7 @@ function readDemo(): CatalogData {
       typeof saved !== "object" ||
       !saved ||
       !("version" in saved) ||
-      saved.version !== 1 ||
+      (saved.version !== 1 && saved.version !== 2) ||
       !("data" in saved)
     )
       throw new Error();
@@ -98,6 +99,12 @@ function readDemo(): CatalogData {
       )
     )
       throw new Error();
+    if (saved.version === 1) {
+      // Upgrade only once; keep user-created products and categories intact.
+      const upgraded = upgradeDemoCategories(data);
+      writeDemo(upgraded);
+      return upgraded;
+    }
     return data;
   } catch {
     throw new Error(
