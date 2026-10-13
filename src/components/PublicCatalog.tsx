@@ -15,6 +15,7 @@ import {
 import type { Category, Product } from "../lib/types";
 import { publicAssetUrl } from "../lib/assets";
 import { formatProductPrice } from "../lib/price";
+import { productIdFromHash } from "../lib/routes";
 import "./public.css";
 
 interface Props {
@@ -41,13 +42,7 @@ const price = (product: Product) =>
     ? "Price on enquiry"
     : formatProductPrice(product, 'public');
 function currentProductId() {
-  const match = window.location.hash.match(/^#\/product\/([^/?#]+)$/);
-  if (!match) return null;
-  try {
-    return decodeURIComponent(match[1]);
-  } catch {
-    return "";
-  }
+  return productIdFromHash(window.location.hash);
 }
 function FurnitureImage({
   src,
@@ -125,7 +120,7 @@ export default function PublicCatalog({
         ? a.name.localeCompare(b.name)
         : sort === "price"
           ? (a.price ?? Infinity) - (b.price ?? Infinity)
-          : Number(b.featured) - Number(a.featured),
+          : Number(b.featured) - Number(a.featured) || (a.displayOrder ?? 0) - (b.displayOrder ?? 0),
     );
   }, [published, query, category, featuredOnly, sort]);
   const browseCollection = (featured = false) => {

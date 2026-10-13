@@ -29,6 +29,7 @@ export default defineConfig({
     env: {
       VITE_SUPABASE_URL: "https://catalog-browser-test.supabase.co",
       VITE_SUPABASE_ANON_KEY: "browser-test-public-placeholder",
+      VITE_SUPABASE_PUBLISHABLE_KEY: "browser-test-public-placeholder",
       VITE_ENQUIRY_EMAIL: "",
     },
     reuseExistingServer: false,

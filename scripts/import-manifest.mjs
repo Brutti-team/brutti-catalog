@@ -8,9 +8,9 @@ export function sourceIdentity(sourceKey) {
   return `${hex.slice(0,8)}-${hex.slice(8,12)}-8${hex.slice(13,16)}-a${hex.slice(17,20)}-${hex.slice(20,32)}`;
 }
 
-export function validateManifest(manifest, evidence) {
+export function validateManifest(manifest, evidence, { requireReviewed = true } = {}) {
   const fail = message => { throw new Error(message); };
-  if (manifest.version !== 1 || manifest.source !== 'brutti-catalogue-2025' || manifest.reviewed !== true)
+  if (manifest.version !== 1 || manifest.source !== 'brutti-catalogue-2025' || (requireReviewed !== false && manifest.reviewed !== true))
     fail('A reviewed version 1 Brutti 2025 manifest is required.');
   if (!/^[a-f0-9]{64}$/.test(manifest.documentSha256) || evidence.documentSha256 !== manifest.documentSha256 || evidence.pageCount !== 104)
     fail('Manifest must match the 104-page source evidence digest.');
@@ -23,7 +23,7 @@ export function validateManifest(manifest, evidence) {
     if (typeof p.sku !== 'string' || !p.sku.trim() || p.sku.length > 64 || skus.has(p.sku.trim().toUpperCase())) fail('Assign a unique staff SKU to every product.');
     skus.add(p.sku.trim().toUpperCase());
     if (!CATEGORY_NAMES.includes(p.category)) fail('Choose one of the seven official categories.');
-    if (p.reviewed !== true || !Array.isArray(p.pages) || !p.pages.length || p.pages.some(n => !Number.isInteger(n) || n < 1 || n > 104)) fail('Each product needs reviewed source page numbers.');
+    if ((requireReviewed !== false && p.reviewed !== true) || !Array.isArray(p.pages) || !p.pages.length || p.pages.some(n => !Number.isInteger(n) || n < 1 || n > 104)) fail('Each product needs reviewed source page numbers.');
     for (const [key, max] of [['description',10000], ['materials',2000], ['finishing',2000]])
       if (p[key] !== null && (typeof p[key] !== 'string' || p[key].length > max)) fail(`Missing/invalid ${key}; use null for unknown source details.`);
     if (p.availability !== null && !['available','made-to-order','unavailable'].includes(p.availability)) fail('Verify availability or leave it null (imports default to unavailable).');

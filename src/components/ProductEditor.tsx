@@ -1,5 +1,5 @@
 import SafeImage from "./SafeImage";
-import { useState, useRef, type FormEvent } from "react";
+import { useState, useRef, useEffect, type FormEvent } from "react";
 import {
   ImagePlus,
   ArrowLeft,
@@ -9,20 +9,22 @@ import {
   Save,
   LoaderCircle,
 } from "lucide-react";
-import type { Product, Category } from "../lib/types";
-import { uploadImage, validateProduct } from "../lib/catalog";
+import type { Product, Category, ProductImage } from "../lib/types";
+import { uploadImage, validateProduct, cleanupAbandonedImages } from "../lib/catalog";
 import Modal from "./Modal";
 import { formatProductPrice } from "../lib/price";
 export default function ProductEditor({
   product,
   categories,
+  orderingEnabled = false,
   onSave,
   onClose,
 }: {
   product: Product;
   categories: Category[];
-  onSave: (p: Product) => Promise<void>;
-  onClose: () => void;
+  orderingEnabled?: boolean;
+  onSave: (p: Product) => Promise<Product | void>;
+  onClose: (warning?: string) => void;
 }) {
   const [draft, setDraft] = useState<Product>(structuredClone(product));
   const [error, setError] = useState("");
@@ -31,6 +33,21 @@ export default function ProductEditor({
   const [preview, setPreview] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadLock = useRef(false);
+  const uploadedImages = useRef(new Map<string, ProductImage>());
+  const mounted = useRef(true);
+  const closing = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    const uploads = uploadedImages.current;
+    return () => {
+      mounted.current = false;
+      const abandoned = [...uploads.values()];
+      uploads.clear();
+      // Unexpected navigation/unmount is best effort; server authorization and
+      // references still govern cleanup. Never use an unconditional deletion.
+      if (abandoned.length) void cleanupAbandonedImages(abandoned);
+    };
+  }, []);
   const update = <K extends keyof Product>(key: K, value: Product[K]) =>
     setDraft((p) => ({ ...p, [key]: value }));
   async function submit(e: FormEvent) {
@@ -40,8 +57,12 @@ export default function ProductEditor({
     try {
       validateProduct(draft);
       setBusy(true);
-      await onSave({ ...draft, updatedAt: new Date().toISOString() });
-      onClose();
+      const saved = await onSave({ ...draft, updatedAt: new Date().toISOString() });
+      const retained = new Set((saved?.images ?? draft.images).map(image => image.url));
+      const abandoned = [...uploadedImages.current.values()].filter(image => !retained.has(image.url));
+      const cleanup = await cleanupAbandonedImages(abandoned);
+      uploadedImages.current.clear();
+      if (mounted.current) onClose(cleanup.cleanupWarning);
     } catch (e) {
       setError(
         e instanceof Error
@@ -49,7 +70,7 @@ export default function ProductEditor({
           : "Unable to save product. Please try again.",
       );
     } finally {
-      setBusy(false);
+      if (mounted.current) setBusy(false);
     }
   }
   async function addImages(files: FileList | null) {
@@ -67,15 +88,32 @@ export default function ProductEditor({
       // ordering changes made while the request is pending cannot be undone.
       for (const file of selected) {
         const image = await uploadImage(file);
+        if (!mounted.current) {
+          await cleanupAbandonedImages([image]);
+          break;
+        }
+        uploadedImages.current.set(image.id, image);
         setDraft(current => ({ ...current, images: [...current.images, image] }));
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Image upload failed.");
+      if (mounted.current) setError(e instanceof Error ? e.message : "Image upload failed.");
     } finally {
       uploadLock.current = false;
-      setUploading(false);
+      if (mounted.current) setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
     }
+  }
+  async function requestClose() {
+    if (busy || uploading || uploadLock.current || closing.current) return;
+    if (JSON.stringify(draft) !== JSON.stringify(product) && !window.confirm('Discard your unsaved product changes?')) return;
+    closing.current = true;
+    setBusy(true);
+    const abandoned = [...uploadedImages.current.values()];
+    const result = await cleanupAbandonedImages(abandoned);
+    uploadedImages.current.clear();
+    if (mounted.current) onClose(result.cleanupWarning);
+    closing.current = false;
+    if (mounted.current) setBusy(false);
   }
   function move(index: number, step: number) {
     const images = [...draft.images];
@@ -89,15 +127,7 @@ export default function ProductEditor({
     <Modal
       title={product.name ? "Edit product" : "Create product"}
       wide
-      onClose={() => {
-        if (busy || uploading) return;
-        if (
-          JSON.stringify(draft) !== JSON.stringify(product) &&
-          !window.confirm("Discard your unsaved product changes?")
-        )
-          return;
-        onClose();
-      }}
+      onClose={() => void requestClose()}
     >
       <form onSubmit={submit} className="editor-form">
         <div className="editor-columns">
@@ -208,8 +238,8 @@ export default function ProductEditor({
                 <span className="muted">{draft.images.length}/8</span>
               </div>
               <p className="muted">
-                The first image is your cover. JPEG, PNG or WebP, up to 5 MB
-                each.
+                The first image is your cover. JPEG, PNG or WebP, up to 20 MB
+                each. Photos are optimized to WebP before upload, up to 5 MB.
               </p>
               <input
                 ref={fileRef}
@@ -333,6 +363,23 @@ export default function ProductEditor({
                   <option value="unavailable">Unavailable</option>
                 </select>
               </label>
+              <label>
+                Display order
+                <input
+                  type="number"
+                  min={0}
+                  max={1000000}
+                  step={1}
+                  value={draft.displayOrder ?? 0}
+                  disabled={!orderingEnabled}
+                  onChange={(e) => update('displayOrder', Number(e.target.value))}
+                />
+              </label>
+              <p className="tiny muted">
+                {orderingEnabled
+                  ? 'Lower numbers appear first in the curated collection. Featured products keep their place at the top.'
+                  : 'Display order is available after workspace setup.'}
+              </p>
               <label className="checkbox-field">
                 <input
                   type="checkbox"
@@ -403,7 +450,7 @@ export default function ProductEditor({
               className="button secondary"
               type="button"
               disabled={busy || uploading}
-              onClick={onClose}
+              onClick={() => void requestClose()}
             >
               Cancel
             </button>

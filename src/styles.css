@@ -1428,11 +1428,20 @@ tr:last-child td {
     padding: 14px 16px 0;
   }
   .topbar {
-    padding: 0 10px;
+    height: auto;
+    min-height: 63px;
+    padding: 10px;
+    gap: 10px;
+    flex-wrap: wrap;
   }
   .breadcrumbs {
+    flex-shrink: 0;
     gap: 7px;
     font-size: 10px;
+  }
+  .topbar-actions {
+    flex-shrink: 0;
+    margin-left: auto;
   }
   .connection-pill {
     font-size: 8px;

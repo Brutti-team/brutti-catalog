@@ -70,7 +70,7 @@ afterEach(() => {
 
 describe("configured Supabase catalog", () => {
   it("performs no backend mutation or connection during module import", async () => {
-    const catalog = await import("../src/lib/catalog");
+    await import("../src/lib/catalog");
     expect(fake.createClient).not.toHaveBeenCalled();
     expect(fake.from).not.toHaveBeenCalled();
   });
@@ -174,6 +174,22 @@ describe("configured Supabase catalog", () => {
       password: "password",
     });
     expect(fake.signOut).toHaveBeenCalledOnce();
+  });
+
+  it('does not claim a category deletion when RLS filters out the requested row', async () => {
+    fake.from.mockImplementation((table: string) => table === 'catalog_admins' ? adminQuery() : {
+      delete: () => ({ eq: () => ({ select: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }),
+    });
+    const { deleteCategory } = await import('../src/lib/catalog');
+    await expect(deleteCategory('category-id')).rejects.toThrow(/not deleted/);
+  });
+
+  it('accepts a category deletion only after the database returns its identity', async () => {
+    fake.from.mockImplementation((table: string) => table === 'catalog_admins' ? adminQuery() : {
+      delete: () => ({ eq: () => ({ select: () => ({ maybeSingle: async () => ({ data: { id: 'category-id' }, error: null }) }) }) }),
+    });
+    const { deleteCategory } = await import('../src/lib/catalog');
+    await expect(deleteCategory('category-id')).resolves.toBeUndefined();
   });
 
   it("defers auth notifications until Supabase releases its authentication lock", async () => {

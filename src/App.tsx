@@ -1,8 +1,8 @@
 import SafeImage from "./components/SafeImage";
-import { subscribeCatalogRefresh } from "./lib/catalog-refresh";
 import { formatProductPrice } from "./lib/price";
 import { publicAssetUrl } from "./lib/assets";
-import { useState, useEffect, useCallback, type FormEvent } from "react";
+import { resolveAppRoute } from "./lib/routes";
+import { useState, useEffect, useCallback, useRef, type FormEvent } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -31,6 +31,7 @@ import {
 import type { Product, Category, CatalogData } from "./lib/types";
 import {
   loadCatalog,
+  subscribeCatalog,
   saveProduct,
   deleteProduct,
   saveCategory,
@@ -78,7 +79,7 @@ function newProduct(categoryId = ""): Product {
 export default function App() {
   const [passwordIntent, setPasswordIntent] = useState(initialPasswordIntent);
   const [callbackVerified, setCallbackVerified] = useState(false);
-  const [route, setRoute] = useState(window.location.hash || "#/admin");
+  const [route, setRoute] = useState(() => resolveAppRoute(window.location));
   const [tab, setTab] = useState<Tab>("overview");
   const [data, setData] = useState<CatalogData>({
     products: [],
@@ -105,31 +106,47 @@ export default function App() {
   const [menu, setMenu] = useState<string | null>(null);
   const [mobileNav, setMobileNav] = useState(false);
   const [busy, setBusy] = useState(false);
+  const catalogRequest = useRef(0);
+  const authRequest = useRef(0);
   const refresh = useCallback(async (background = false) => {
+    const request = ++catalogRequest.current;
     if (!background) setLoading(true);
     setError(null);
     try {
-      setData(await loadCatalog());
+      const next = await loadCatalog();
+      if (request === catalogRequest.current) setData(next);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to load the catalog.");
+      if (request === catalogRequest.current)
+        setError(e instanceof Error ? e.message : "Unable to load the catalog.");
     } finally {
-      if (!background) setLoading(false);
+      if (request === catalogRequest.current) setLoading(false);
     }
   }, []);
   const refreshAuth = useCallback(async () => {
+    const request = ++authRequest.current;
     try {
       const a = await getAuthState();
+      const callback = initialPasswordIntent ? a.authenticated && await hasPasswordCallbackSession() : false;
+      if (request !== authRequest.current) return;
       setAuth({ ...a, email: a.email || "" });
-      if (initialPasswordIntent) setCallbackVerified(a.authenticated && await hasPasswordCallbackSession());
+      setCallbackVerified(callback);
+      if (!a.isAdmin) setData(current => ({ ...current, products: current.products.filter(product => product.status === 'published') }));
     } catch (e) {
+      if (request !== authRequest.current) return;
       setAuth({ authenticated: false, isAdmin: false, email: "" });
+      setCallbackVerified(false);
+      setData(current => ({ ...current, products: current.products.filter(product => product.status === 'published') }));
       setError(e instanceof Error ? e.message : "Unable to verify access.");
     } finally {
-      setAuthLoading(false);
+      if (request === authRequest.current) setAuthLoading(false);
     }
   }, []);
+  useEffect(() => () => {
+    ++catalogRequest.current;
+    ++authRequest.current;
+  }, []);
   useEffect(() => {
-    const fn = () => setRoute(window.location.hash || "#/admin");
+    const fn = () => setRoute(resolveAppRoute(window.location));
     window.addEventListener("hashchange", fn);
     return () => window.removeEventListener("hashchange", fn);
   }, []);
@@ -142,7 +159,7 @@ export default function App() {
     });
     return unsub;
   }, [refresh, refreshAuth]);
-  useEffect(() => subscribeCatalogRefresh(() => refresh(true)), [refresh]);
+  useEffect(() => subscribeCatalog(() => refresh(true)), [refresh]);
   useEffect(() => {
     if (!toast) return;
     const id = setTimeout(() => setToast(""), 4000);
@@ -161,17 +178,19 @@ export default function App() {
     setMenu(null);
   };
   async function persist(p: Product) {
-    await saveProduct(p);
+    const saved = await saveProduct(p);
     await refresh();
-    setToast(`${p.name} saved`);
+    setToast(saved.cleanupWarning || `${saved.name} saved`);
+    return saved;
   }
   async function action(fn: () => Promise<unknown>, message: string) {
     setBusy(true);
     setActionError("");
     try {
-      await fn();
+      const result = await fn();
       await refresh();
-      setToast(message);
+      setToast(result && typeof result === 'object' && 'cleanupWarning' in result && typeof result.cleanupWarning === 'string'
+        ? result.cleanupWarning : message);
     } catch (e) {
       setActionError(
         e instanceof Error
@@ -301,6 +320,8 @@ export default function App() {
         ? a.name.localeCompare(b.name)
         : sort === "price"
           ? (a.price ?? Infinity) - (b.price ?? Infinity)
+          : sort === "display-order"
+            ? (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
           : b.updatedAt.localeCompare(a.updatedAt),
     );
   return (
@@ -584,6 +605,7 @@ export default function App() {
                       <option value="recent">Latest updated</option>
                       <option value="name">Name A–Z</option>
                       <option value="price">Price low–high</option>
+                      <option value="display-order">Display order</option>
                     </select>
                   </label>
                 </div>
@@ -880,8 +902,9 @@ export default function App() {
           key={editor.id}
           product={editor}
           categories={data.categories}
+          orderingEnabled={data.capabilities?.ordering === true}
           onSave={persist}
-          onClose={() => setEditor(null)}
+          onClose={(warning) => { setEditor(null); if (warning) setToast(warning); }}
         />
       )}{" "}
       {catEditor && (

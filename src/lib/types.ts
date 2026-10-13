@@ -19,6 +19,8 @@ export interface Product {
   price: number | null;
   /** Optional until inspected/approved price_basis schema addition is installed. */
   priceBasis?: 'fixed' | 'starting-from';
+  /** Optional until the workspace has enabled catalog ordering. */
+  displayOrder?: number;
   status: ProductStatus;
   availability: Availability;
   featured: boolean;
@@ -34,4 +36,10 @@ export interface Category {
 export interface CatalogData {
   products: Product[];
   categories: Category[];
+  capabilities?: CatalogCapabilities;
+}
+export interface CatalogCapabilities {
+  ordering: boolean;
+  imageCleanup: boolean;
+  priceBasis: boolean;
 }

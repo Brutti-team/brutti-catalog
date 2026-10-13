@@ -44,6 +44,14 @@ Validate **offline** before any writes:
 node scripts/import-catalogue.mjs catalogue-review.local/manifest.json
 ```
 
+Generate a concrete offline preview while review is incomplete:
+
+```sh
+node scripts/preview-catalogue.mjs catalogue-review.local/manifest.json catalogue-preview.local
+```
+
+The new output directory contains `index.html` and `validation.json`. Unknown facts remain labelled unverified, starting-price wording stays explicit and unsafe/missing photo references remain errors. The HTML is escaped with a restrictive CSP and no scripts. This preview never connects to Supabase or marks the manifest reviewed. Source pixel identity and WebP byte digests are separate. Obtain explicit approval for the concrete reviewed import selection; `reviewed: true` is evidence review, not permission to modify production.
+
 Validation checks duplicate identities/SKUs/photo references, field bounds, official categories, page provenance, path traversal/symlinks, WebP byte signatures and 5 MB size limits. It cannot replace human verification of product facts. Do not commit unreviewed extracts, personal information or access tokens.
 
 ## Inspect and approve the schema prerequisite
@@ -56,7 +64,7 @@ The proposal has only been tested against a disposable local database. Do not in
 
 ## Approved write-mode execution
 
-After schema, admin access and real manifest review are verified, an approved catalog administrator supplies their **short-lived authenticated access token** as `CATALOG_ADMIN_ACCESS_TOKEN` through secure runtime environment configuration. Do not paste it into chat, commands/history, source files or logs. This is an authorized user token, not a service-role key. Remove the temporary binding afterward. Public URL/key variables remain required.
+After schema, admin access and real manifest review are verified, **obtain explicit approval to import real data into production**. An approved administrator supplies their **short-lived authenticated access token** as `CATALOG_ADMIN_ACCESS_TOKEN` through secure runtime environment configuration. Do not paste it into chat, commands/history, source files or logs. This is an authorized user token, not a service-role key. Remove the temporary binding afterward. Public URL/key variables remain required.
 
 ```sh
 node --env-file=.env.local scripts/import-catalogue.mjs catalogue-review.local/manifest.json --apply

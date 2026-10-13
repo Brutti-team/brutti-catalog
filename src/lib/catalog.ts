@@ -1,5 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { CatalogData, Category, Product, ProductImage } from "./types";
+import type { CatalogCapabilities, CatalogData, Category, Product, ProductImage } from "./types";
+import { optimizeImageForUpload } from "./image-optimization";
+import { subscribeCatalogRefresh } from "./catalog-refresh";
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim() ?? "";
 const key = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY)?.trim() ?? "";
@@ -73,6 +75,7 @@ type ProductRow = {
   height: number;
   price: number | null;
   price_basis?: Product['priceBasis'];
+  display_order?: number;
   status: Product["status"];
   availability: Product["availability"];
   featured: boolean;
@@ -81,7 +84,9 @@ type ProductRow = {
   updated_at: string;
 };
 
+let observedPriceBasis = false;
 function fromRow(row: ProductRow): Product {
+  if (Object.hasOwn(row, 'price_basis')) observedPriceBasis = true;
   return {
     id: row.id,
     name: row.name,
@@ -94,6 +99,7 @@ function fromRow(row: ProductRow): Product {
     height: Number(row.height),
     price: row.price === null ? null : Number(row.price),
     ...(row.price_basis ? { priceBasis: row.price_basis } : {}),
+    ...(row.display_order !== undefined ? { displayOrder: row.display_order } : {}),
     status: row.status,
     availability: row.availability,
     featured: row.featured,
@@ -103,7 +109,7 @@ function fromRow(row: ProductRow): Product {
   };
 }
 
-function toRow(product: Product): ProductRow {
+function toRow(product: Product, capabilities: CatalogCapabilities): ProductRow {
   return {
     id: product.id,
     name: product.name,
@@ -115,7 +121,8 @@ function toRow(product: Product): ProductRow {
     depth: product.depth,
     height: product.height,
     price: product.price,
-    ...(product.priceBasis ? { price_basis: product.priceBasis } : {}),
+    ...(capabilities.priceBasis && product.priceBasis ? { price_basis: product.priceBasis } : {}),
+    ...(capabilities.ordering ? { display_order: product.displayOrder ?? 0 } : {}),
     status: product.status,
     availability: product.availability,
     featured: product.featured,
@@ -125,24 +132,43 @@ function toRow(product: Product): ProductRow {
   };
 }
 
+async function loadCapabilities(db: SupabaseClient): Promise<CatalogCapabilities> {
+  // A reviewed additive proposal enables these features. Legacy projects remain usable.
+  try {
+    const { data, error } = await db.rpc('catalog_capabilities');
+    if (!error && data && typeof data === 'object') return {
+      ordering: data.ordering === true,
+      imageCleanup: data.imageCleanup === true,
+      priceBasis: data.priceBasis === true || observedPriceBasis,
+    };
+  } catch { /* Missing RPC or unavailable optional capability: fail closed. */ }
+  return { ordering: false, imageCleanup: false, priceBasis: observedPriceBasis };
+}
+
 export async function loadCatalog(): Promise<CatalogData> {
   const db = supabase();
-  const [products, categories] = await Promise.all([
+  const [products, categories, capabilities] = await Promise.all([
     db.from("products").select("*").order("created_at", { ascending: false }),
     db.from("categories").select("*").order("name"),
+    loadCapabilities(db),
   ]);
   if (products.error)
     throw backendError(products.error.message, "load products");
   if (categories.error)
     throw backendError(categories.error.message, "load categories");
+  const mapped = (products.data as ProductRow[]).map(fromRow);
   return {
-    products: (products.data as ProductRow[]).map(fromRow),
+    products: mapped,
     categories: categories.data as Category[],
+    capabilities: { ...capabilities, priceBasis: capabilities.priceBasis || observedPriceBasis },
   };
 }
 
 /** Throws a user-facing Error when the supplied product cannot be saved. */
 export function validateProduct(product: Product): void {
+  if (product.displayOrder !== undefined &&
+    (!Number.isInteger(product.displayOrder) || product.displayOrder < 0 || product.displayOrder > 1000000))
+    throw new Error('Display order must be a whole number from 0 to 1,000,000.');
   if (product.priceBasis !== undefined && !['fixed', 'starting-from'].includes(product.priceBasis))
     throw new Error('Choose a valid price basis.');
   if (product.name.trim().length < 2 || product.name.length > 120)
@@ -209,7 +235,61 @@ export function validateProduct(product: Product): void {
   }
 }
 
-export async function saveProduct(product: Product): Promise<Product> {
+export interface CatalogMutationOutcome { cleanupWarning?: string }
+export type ProductSaveResult = Product & CatalogMutationOutcome;
+
+/** Discarded editor uploads still use the same admin/RLS/reference safeguards. */
+export async function cleanupAbandonedImages(images: ProductImage[]): Promise<CatalogMutationOutcome> {
+  if (!images.length) return {};
+  const warning = { cleanupWarning: 'Some unused images may remain. Ask the workspace owner to review storage.' };
+  try {
+    await requireAdmin();
+    if (!(await loadCapabilities(supabase())).imageCleanup) return warning;
+    const result = await cleanupImages(images, 'saved');
+    return result.cleanupWarning ? warning : {};
+  } catch { return warning; }
+}
+
+/** Accept only canonical URLs for this project's bucket and safe, matching object paths. */
+function storagePathForImage(image: ProductImage): string | null {
+  const prefix = `${new URL(url).origin}/storage/v1/object/public/product-images/`;
+  if (!image.url.startsWith(prefix)) return null;
+  const path = image.url.slice(prefix.length);
+  if (path.length > 1024 || !/^[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)*$/.test(path) ||
+      path.split('/').some(part => part === '.' || part === '..') ||
+      (image.storagePath !== undefined && image.storagePath !== path)) return null;
+  return path;
+}
+
+async function cleanupImages(images: ProductImage[], operation: 'saved' | 'deleted'): Promise<CatalogMutationOutcome> {
+  if (!images.length) return {};
+  const paths = new Set<string>();
+  let failed = false;
+  for (const image of images) {
+    const path = storagePathForImage(image);
+    if (path) paths.add(path);
+    else if (image.storagePath) failed = true;
+  }
+  try {
+    if (paths.size) await requireAdmin();
+    for (const path of paths) {
+      try {
+        // The helper checks every product status, including duplicates and shared photos.
+        // A restrictive Storage policy checks again when the API performs the deletion.
+        const { data: removable, error: checkError } = await supabase().rpc(
+          'can_remove_catalog_image', { p_storage_path: path },
+        );
+        if (checkError) { failed = true; continue; }
+        if (removable !== true) continue;
+        const { data: removed, error } = await supabase().storage.from('product-images').remove([path]);
+        if (error || !removed?.some(object => object.name === path)) failed = true;
+      } catch { failed = true; }
+    }
+  } catch { failed = true; }
+  return failed ? { cleanupWarning: `Product ${operation}; some unused images may remain.` } : {};
+}
+
+export async function saveProduct(product: Product): Promise<ProductSaveResult> {
   validateProduct(product);
   const saved = {
     ...product,
@@ -220,19 +300,38 @@ export async function saveProduct(product: Product): Promise<Product> {
     updatedAt: new Date().toISOString(),
   };
   await requireAdmin();
-  const { data, error } = await supabase()
+  const db = supabase();
+  const capabilities = await loadCapabilities(db);
+  let previous: ProductRow | null = null;
+  if (capabilities.imageCleanup) {
+    const { data, error } = await db.from('products').select('*').eq('id', product.id).maybeSingle();
+    if (error) throw backendError(error.message, 'check this product before saving');
+    previous = data as ProductRow | null;
+  }
+  const { data, error } = await db
     .from("products")
-    .upsert(toRow(saved))
+    .upsert(toRow(saved, capabilities))
     .select("*")
     .single();
   if (error) throw backendError(error.message, "save this product");
-  return fromRow(data as ProductRow);
+  if (!data) throw new Error('This product was not saved. Please sign in again and retry.');
+  const result = fromRow(data as ProductRow);
+  const retained = new Set(result.images.map(storagePathForImage).filter(Boolean));
+  const removed = (previous?.images ?? []).filter(image => {
+    const path = storagePathForImage(image);
+    return path ? !retained.has(path) : !result.images.some(current => current.url === image.url && current.storagePath === image.storagePath);
+  });
+  return { ...result, ...(capabilities.imageCleanup ? await cleanupImages(removed, 'saved') : {}) };
 }
 
-export async function deleteProduct(id: string): Promise<void> {
+export async function deleteProduct(id: string): Promise<CatalogMutationOutcome> {
   await requireAdmin();
-  const { error } = await supabase().from("products").delete().eq("id", id);
+  const db = supabase();
+  const capabilities = await loadCapabilities(db);
+  const { data, error } = await db.from("products").delete().eq("id", id).select('id,images').maybeSingle();
   if (error) throw backendError(error.message, "delete this product");
+  if (!data) throw new Error('This product was not deleted. It may no longer exist, or your session may have expired. Please refresh and sign in again.');
+  return capabilities.imageCleanup ? cleanupImages(data.images ?? [], 'deleted') : {};
 }
 
 export async function saveCategory(category: Category): Promise<Category> {
@@ -254,36 +353,70 @@ export async function saveCategory(category: Category): Promise<Category> {
     .select("*")
     .single();
   if (error) throw backendError(error.message, "save this category");
+  if (!data) throw new Error('This category was not saved. Please sign in again and retry.');
   return data as Category;
 }
 
 export async function deleteCategory(id: string): Promise<void> {
   await requireAdmin();
-  const { error } = await supabase().from("categories").delete().eq("id", id);
+  const { data, error } = await supabase().from("categories").delete().eq("id", id).select('id').maybeSingle();
   if (error)
     throw backendError(
       error.message,
       "delete this category. Move any assigned products first",
     );
+  if (!data) throw new Error('This category was not deleted. Please refresh and sign in again.');
+}
+
+export function subscribeCatalog(
+  callback: () => Promise<void> | void,
+  visibility: Pick<Document, 'visibilityState' | 'addEventListener' | 'removeEventListener'> | undefined = typeof document === 'undefined' ? undefined : document,
+): () => void {
+  let active = true;
+  let pending = false;
+  let queued = false;
+  let debounce: ReturnType<typeof setTimeout> | undefined;
+  const run = async () => {
+    if (!active || (visibility && visibility.visibilityState !== 'visible')) return;
+    if (pending) { queued = true; return; }
+    pending = true;
+    try { await callback(); } catch { /* The app reports load errors; keep future refreshes available. */ }
+    finally {
+      pending = false;
+      if (queued && active) { queued = false; void run(); }
+    }
+  };
+  const notify = () => {
+    if (!active) return;
+    clearTimeout(debounce);
+    // Never merge event payloads: every event triggers a fresh RLS-filtered catalog read.
+    debounce = setTimeout(() => { debounce = undefined; void run(); }, 150);
+  };
+  const stopPolling = visibility ? subscribeCatalogRefresh(run, visibility) : () => undefined;
+  let channel: ReturnType<SupabaseClient['channel']> | undefined;
+  try {
+    channel = supabase().channel(`catalog-updates-${crypto.randomUUID()}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, notify)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, notify)
+      .subscribe(() => { /* Polling stays available on errors, timeouts and disconnects. */ });
+  } catch { /* Legacy or unavailable realtime channels retain the polling fallback. */ }
+  return () => {
+    active = false; queued = false; clearTimeout(debounce); stopPolling();
+    if (channel) {
+      try { void supabase().removeChannel(channel).catch(() => undefined); } catch { /* Already disconnected. */ }
+    }
+  };
 }
 
 export async function uploadImage(file: File): Promise<ProductImage> {
-  const extensions: Record<string, string> = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-  };
-  const extension = extensions[file.type];
-  if (!extension) throw new Error("Choose a JPEG, PNG or WebP image.");
-  if (!file.size || file.size > MAX_IMAGE_SIZE)
-    throw new Error("Each image must be between 1 byte and 5 MB.");
+  const userId = await requireAdmin();
+  const optimized = await optimizeImageForUpload(file);
   const id = crypto.randomUUID();
   const alt = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
-  const userId = await requireAdmin();
-  const storagePath = `${userId}/${id}.${extension}`;
+  const storagePath = `${userId}/${id}.webp`;
   const bucket = supabase().storage.from("product-images");
-  const { error } = await bucket.upload(storagePath, file, {
-    contentType: file.type,
+  const { error } = await bucket.upload(storagePath, optimized, {
+    contentType: "image/webp",
     upsert: false,
   });
   if (error) throw backendError(error.message, "upload this image");
