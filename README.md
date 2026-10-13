@@ -1,8 +1,8 @@
 # Brutti Catalog
 
-Phase 1 furniture catalog workspace for **Benua Brutti Sdn. Bhd.**, built with React, Vite and TypeScript. Brutti green, generous spacing and responsive layouts bring the admin workspace and public collection together in one standalone application.
+Production-oriented furniture catalog workspace for **Benua Brutti Sdn. Bhd.**, built with React, Vite and TypeScript. Brutti green, generous spacing and responsive layouts bring the admin workspace and public collection together in one standalone application.
 
-**This project is not deployed.** Changes are confined to `brutti-catalog`; Brutti OS, SEDCO and the existing Brutti website are separate projects.
+**This project is not yet deployed as a real production catalog.** Changes are confined to `brutti-catalog`; Brutti OS, SEDCO and the existing Brutti website are separate projects.
 
 ## What is included
 
@@ -13,7 +13,7 @@ Phase 1 furniture catalog workspace for **Benua Brutti Sdn. Bhd.**, built with R
 - Multiple image selection, previews, editable image descriptions, cover image ordering and product preview. Up to eight JPEG, PNG or WebP images, each up to 5 MB.
 - Public catalog with published product cards, search, category filters, featured products and product detail galleries.
 - Mobile navigation, responsive tables and grids, loading, empty and error states.
-- Labelled sample products and browser-local demo persistence, plus a Supabase data adapter, email/password sign-in, database migrations, RLS and image storage integration.
+- Supabase-only product and category persistence, authenticated administration, RLS and image storage integration.
 
 There is no checkout or payment collection. Image resizing/automatic WebP conversion, private draft image storage, advanced roles, bulk imports, password recovery screens and website integration remain future work.
 
@@ -39,20 +39,26 @@ Optionally set `VITE_ENQUIRY_EMAIL` in `.env.local` to an approved business cont
 
 The admin workspace is the default landing page. Use **View catalog** to open the public collection.
 
-## Demo mode and its limits
+## Production-only data model
 
-With both Supabase settings empty, the application uses demo mode. Setting only a URL or only a client key displays a configuration error. `VITE_DEMO_MODE=true` can also force demo mode when both settings exist. The interface labels the demo and its sample data.
+The Catalog interface uses Supabase only. Demo mode, localStorage product persistence, sample product loading, unsecured demo sign-in, and the Reset Demo action are disabled/removed from the application.
 
-Demo administration has **no secure authentication or authorization**. Anyone using that browser can open the workspace and edit its local data. It must not be used to manage sensitive or production information. Published-product filtering in demo mode illustrates the public UI; it does not make draft data confidential because all demo records live in the same browser.
+**Current rollout status:** Source code is prepared on `feat/catalog-phase-one`, but it is not deployed or connected to a dedicated Brutti Supabase project yet. Do not claim it is live. The repository's existing `src/data/demo.ts` fixtures (if retained for old tests) are not imported by the production application.
 
-Products, categories and uploaded demo image previews are persisted in `localStorage`. They do not sync across browsers or devices. Browser storage is limited, especially for uploaded image data; quota and corrupted-storage errors are displayed. **Reset demo** replaces local changes with the sample collection. Demo content is never automatically seeded into Supabase. Local demo asset sources and photography limitations are documented in [public/images/README.md](public/images/README.md); replace them with approved product photography before publication.
+Apply database migrations in order to a **dedicated Brutti** project:
+1. `supabase/migrations/202610120001_phase_one_catalog.sql` — Auth/RLS, product/category tables and photo bucket.
+2. `supabase/migrations/202610130001_real_catalog_categories.sql` — the seven official Brutti categories and safe validation for incomplete drafts.
+
+Only Brutti staff approved in `catalog_admins` can edit records. Incomplete PDF product details may be saved in Draft with unknown dimensions recorded as zero; publishing requires complete dimensions, description, materials and a real image. Never invent values to publish a draft.
+
+There is no automatic PDF-to-database import. The real 2025 Brutti PDF must be extracted and reviewed (including duplicate names/photo variants), then imported into the dedicated database as Draft with approved images in Storage. Do not seed the eight sample products.
 
 ## Configure Supabase
 
-Start with a dedicated development project. No project, user or production database was created or modified by this implementation.
+Start with a dedicated development project. A dedicated Brutti project and its administrator must be created/authorized separately. Do not reuse the connected Tumbooh project.
 
-1. Create a Supabase development project and open its trusted SQL editor.
-2. Apply [`supabase/migrations/202610120001_phase_one_catalog.sql`](supabase/migrations/202610120001_phase_one_catalog.sql). Alternatively, use the Supabase CLI migration workflow for a reviewed development project. Apply this migration once; it intentionally does not overwrite existing tables or an existing `product-images` bucket.
+1. Create a dedicated Brutti Catalog Supabase project (development first, then reviewed production) and open its trusted SQL editor.
+2. Apply [`supabase/migrations/202610120001_phase_one_catalog.sql`](supabase/migrations/202610120001_phase_one_catalog.sql), then [`supabase/migrations/202610130001_real_catalog_categories.sql`](supabase/migrations/202610130001_real_catalog_categories.sql). Confirm the seven categories are visible before importing actual products.
 3. In Supabase Auth, create the intended staff user through the dashboard or a trusted server-side administration tool. Use an email/password account and complete the project's email-confirmation requirements. The frontend provides no self-signup or self-admin route. Disable public signups in project settings unless you need them for another reviewed purpose.
 4. Copy the user's **UUID** from the Auth dashboard. As the trusted database owner, grant that existing account membership:
 
@@ -68,10 +74,9 @@ Start with a dedicated development project. No project, user or production datab
    ```dotenv
    VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
    VITE_SUPABASE_ANON_KEY=YOUR-PUBLIC-ANON-KEY
-   VITE_DEMO_MODE=false
    ```
 
-6. Restart Vite after changing variables. Visit `/#/admin` and sign in with the staff account. Create a category, then create a product with positive dimensions, an image, description and materials before publishing. A newly configured database is intentionally empty.
+6. Restart Vite after changing variables. Visit `/#/admin` and sign in with the staff account. Use the seven preloaded categories, create a real product in Draft, upload real photos, verify all details and then publish. A newly configured database is intentionally empty.
 
 `VITE_` variables are embedded in the browser bundle. **Never put a service-role key, Supabase secret key, database password or other private credential in them.** Store deployment environment values through the approved hosting provider's settings. `.env.local` is ignored by Git.
 
@@ -110,7 +115,7 @@ npm run preview
 
 The production build is written to `dist/`. These commands validate the frontend without requiring Supabase credentials.
 
-Browser tests use Playwright. Install Chromium if it is not already available, then run:
+Earlier browser tests may still refer to demo fixtures and must be updated before production release. Browser tests use Playwright. Install Chromium if it is not already available, then run:
 
 ```sh
 npx playwright install chromium
