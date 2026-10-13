@@ -23,25 +23,15 @@ export default defineConfig({
       args: ["--no-sandbox"],
     },
   },
-  webServer: [
-    {
-      command: "npm run dev -- --port 5190 --strictPort",
-      url: "http://127.0.0.1:5190",
-      env: { VITE_DEMO_MODE: "true", VITE_ENQUIRY_EMAIL: "" },
-      reuseExistingServer: !process.env.CI,
-      timeout: 30_000,
+  webServer: {
+    command: "npm run dev -- --port 5190 --strictPort",
+    url: "http://127.0.0.1:5190",
+    env: {
+      VITE_SUPABASE_URL: "https://catalog-browser-test.supabase.co",
+      VITE_SUPABASE_ANON_KEY: "browser-test-public-placeholder",
+      VITE_ENQUIRY_EMAIL: "",
     },
-    {
-      command: "npm run dev -- --port 5191 --strictPort",
-      url: "http://127.0.0.1:5191",
-      env: {
-        VITE_DEMO_MODE: "false",
-        VITE_SUPABASE_URL: "https://catalog-browser-test.supabase.co",
-        VITE_SUPABASE_ANON_KEY: "browser-test-public-placeholder",
-        VITE_ENQUIRY_EMAIL: "",
-      },
-      reuseExistingServer: !process.env.CI,
-      timeout: 30_000,
-    },
-  ],
+    reuseExistingServer: !process.env.CI,
+    timeout: 30_000,
+  },
 });
