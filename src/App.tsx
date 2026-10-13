@@ -1,4 +1,5 @@
 import SafeImage from "./components/SafeImage";
+import { publicAssetUrl } from "./lib/assets";
 import { useState, useEffect, useCallback, type FormEvent } from "react";
 import {
   LayoutDashboard,
@@ -302,7 +303,7 @@ export default function App() {
           className="brand"
           onClick={() => switchTab("overview")}
         >
-          brutti<span>™</span>
+          <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="brutti-official-logo" />
         </a>
         <div className="workspace-label">
           CATALOG WORKSPACE <span>01</span>
@@ -989,7 +990,7 @@ function Login({
   return (
     <div className="access-page">
       <a href="#/catalog" className="brand">
-        brutti<span>™</span>
+        <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="brutti-official-logo" />
       </a>
       <div className="access-card">
         <ShieldCheck size={25} />
