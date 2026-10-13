@@ -219,7 +219,7 @@ export default function PublicCatalog({
           className="pub-wordmark"
           aria-label="Brutti catalog home"
         >
-          brutti<span>™</span>
+          <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="pub-official-logo" />
           <small>THE FURNITURE COLLECTION</small>
         </a>
         <nav
@@ -637,7 +637,7 @@ export default function PublicCatalog({
       <footer className="pub-footer">
         <div>
           <a href="#/catalog" className="pub-wordmark">
-            brutti<span>™</span>
+            <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="pub-official-logo" />
           </a>
           <p>
             BENUA BRUTTI SDN. BHD.
