@@ -1,184 +1,19 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { demoCatalog } from "../data/demo";
-import { upgradeDemoCategories } from "../data/category-migration";
 import type { CatalogData, Category, Product, ProductImage } from "./types";
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim() ?? "";
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() ?? "";
-/** Demo mode is a local preview, with no authentication or access control. */
-export const isDemoMode =
-  import.meta.env.VITE_DEMO_MODE === "true" || (!url && !key);
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const MAX_PRODUCT_IMAGES = 8;
-const storageKey = "brutti-catalog.demo.v1";
-const demoAuthListeners = new Set<() => void>();
 let client: SupabaseClient | undefined;
 
 function supabase(): SupabaseClient {
   if (!url || !key)
     throw new Error(
-      "Set both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, or remove both to use the demo.",
+      "Brutti Catalog database is not connected. Configure both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY with a dedicated Brutti Supabase project.",
     );
   if (!client) client = createClient(url, key);
   return client;
-}
-
-function storage(): Storage {
-  try {
-    return globalThis.localStorage;
-  } catch {
-    throw new Error(
-      "Browser storage is unavailable. Enable local storage to use the demo catalog.",
-    );
-  }
-}
-
-function writeDemo(data: CatalogData): void {
-  try {
-    storage().setItem(storageKey, JSON.stringify({ version: 2, data }));
-  } catch (error) {
-    if (
-      error instanceof DOMException &&
-      (error.name === "QuotaExceededError" ||
-        error.name === "NS_ERROR_DOM_QUOTA_REACHED")
-    ) {
-      throw new Error(
-        "Demo browser storage is full. Remove some uploaded images, use smaller files, or reset the demo. Your changes were not saved.",
-      );
-    }
-    throw new Error(
-      "Could not save the demo catalog to browser storage. Check your browser storage settings.",
-    );
-  }
-}
-
-function readDemo(): CatalogData {
-  let raw: string | null;
-  try {
-    raw = storage().getItem(storageKey);
-  } catch {
-    throw new Error(
-      "Could not read browser storage. Enable local storage to use the demo catalog.",
-    );
-  }
-  if (!raw) {
-    const data = structuredClone(demoCatalog);
-    writeDemo(data);
-    return data;
-  }
-  try {
-    const saved: unknown = JSON.parse(raw);
-    if (
-      typeof saved !== "object" ||
-      !saved ||
-      !("version" in saved) ||
-      (saved.version !== 1 && saved.version !== 2) ||
-      !("data" in saved)
-    )
-      throw new Error();
-    const data = saved.data as CatalogData;
-    if (!Array.isArray(data.products) || !Array.isArray(data.categories))
-      throw new Error();
-    if (data.products.some((item) => !isProductRecord(item))) throw new Error();
-    if (data.categories.some((item) => !isCategoryRecord(item)))
-      throw new Error();
-    if (
-      new Set(data.categories.map((item) => item.id)).size !==
-      data.categories.length
-    )
-      throw new Error();
-    if (
-      new Set(data.products.map((item) => item.id)).size !==
-      data.products.length
-    )
-      throw new Error();
-    if (
-      data.products.some(
-        (item) =>
-          !data.categories.some((category) => category.id === item.categoryId),
-      )
-    )
-      throw new Error();
-    if (saved.version === 1) {
-      // Upgrade only once; keep user-created products and categories intact.
-      const upgraded = upgradeDemoCategories(data);
-      writeDemo(upgraded);
-      return upgraded;
-    }
-    return data;
-  } catch {
-    throw new Error(
-      "Saved demo data could not be read. Use “Reset demo” to restore the sample catalog.",
-    );
-  }
-}
-
-function isCategoryRecord(value: unknown): value is Category {
-  if (!value || typeof value !== "object") return false;
-  const item = value as Category;
-  return (
-    typeof item.id === "string" &&
-    Boolean(item.id) &&
-    typeof item.name === "string" &&
-    Boolean(item.name.trim()) &&
-    item.name.length <= 80 &&
-    typeof item.description === "string" &&
-    item.description.length <= 2000
-  );
-}
-
-function isProductRecord(value: unknown): value is Product {
-  if (!value || typeof value !== "object") return false;
-  const item = value as Product;
-  if (
-    ![
-      "id",
-      "name",
-      "sku",
-      "categoryId",
-      "description",
-      "materials",
-      "createdAt",
-      "updatedAt",
-    ].every(
-      (field) =>
-        typeof (item as unknown as Record<string, unknown>)[field] === "string",
-    )
-  )
-    return false;
-  if (
-    !item.id ||
-    !Number.isFinite(Date.parse(item.createdAt)) ||
-    !Number.isFinite(Date.parse(item.updatedAt))
-  )
-    return false;
-  if (typeof item.featured !== "boolean" || !Array.isArray(item.images))
-    return false;
-  if (
-    ![item.width, item.depth, item.height].every(
-      (dimension) => typeof dimension === "number",
-    )
-  )
-    return false;
-  if (item.price !== null && typeof item.price !== "number") return false;
-  if (
-    item.images.some(
-      (image) =>
-        !image ||
-        typeof image.id !== "string" ||
-        typeof image.url !== "string" ||
-        typeof image.alt !== "string" ||
-        (image.storagePath !== undefined &&
-          typeof image.storagePath !== "string"),
-    )
-  )
-    return false;
-  try {
-    validateProduct(item);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function backendError(message: string, operation: string): Error {
@@ -247,7 +82,6 @@ function toRow(product: Product): ProductRow {
 }
 
 export async function loadCatalog(): Promise<CatalogData> {
-  if (isDemoMode) return readDemo();
   const db = supabase();
   const [products, categories] = await Promise.all([
     db.from("products").select("*").order("created_at", { ascending: false }),
@@ -335,26 +169,6 @@ export async function saveProduct(product: Product): Promise<Product> {
     materials: product.materials.trim(),
     updatedAt: new Date().toISOString(),
   };
-  if (isDemoMode) {
-    const data = readDemo();
-    if (!data.categories.some((category) => category.id === saved.categoryId))
-      throw new Error(
-        "The selected category no longer exists. Choose another category.",
-      );
-    if (
-      data.products.some(
-        (item) =>
-          item.id !== saved.id &&
-          item.sku.trim().toLowerCase() === saved.sku.toLowerCase(),
-      )
-    )
-      throw new Error("This SKU is already used by another product.");
-    const index = data.products.findIndex((item) => item.id === saved.id);
-    if (index === -1) data.products.unshift(saved);
-    else data.products[index] = saved;
-    writeDemo(data);
-    return structuredClone(saved);
-  }
   await requireAdmin();
   const { data, error } = await supabase()
     .from("products")
@@ -366,12 +180,6 @@ export async function saveProduct(product: Product): Promise<Product> {
 }
 
 export async function deleteProduct(id: string): Promise<void> {
-  if (isDemoMode) {
-    const data = readDemo();
-    data.products = data.products.filter((product) => product.id !== id);
-    writeDemo(data);
-    return;
-  }
   await requireAdmin();
   const { error } = await supabase().from("products").delete().eq("id", id);
   if (error) throw backendError(error.message, "delete this product");
@@ -389,22 +197,6 @@ export async function saveCategory(category: Category): Promise<Category> {
     throw new Error(
       "Category description must contain at most 2,000 characters.",
     );
-  if (isDemoMode) {
-    const data = readDemo();
-    if (
-      data.categories.some(
-        (item) =>
-          item.id !== saved.id &&
-          item.name.toLowerCase() === saved.name.toLowerCase(),
-      )
-    )
-      throw new Error("A category with this name already exists.");
-    const index = data.categories.findIndex((item) => item.id === saved.id);
-    if (index === -1) data.categories.push(saved);
-    else data.categories[index] = saved;
-    writeDemo(data);
-    return structuredClone(saved);
-  }
   await requireAdmin();
   const { data, error } = await supabase()
     .from("categories")
@@ -416,16 +208,6 @@ export async function saveCategory(category: Category): Promise<Category> {
 }
 
 export async function deleteCategory(id: string): Promise<void> {
-  if (isDemoMode) {
-    const data = readDemo();
-    if (data.products.some((product) => product.categoryId === id))
-      throw new Error(
-        "Move or delete the products in this category before deleting it.",
-      );
-    data.categories = data.categories.filter((category) => category.id !== id);
-    writeDemo(data);
-    return;
-  }
   await requireAdmin();
   const { error } = await supabase().from("categories").delete().eq("id", id);
   if (error)
@@ -447,13 +229,6 @@ export async function uploadImage(file: File): Promise<ProductImage> {
     throw new Error("Each image must be between 1 byte and 5 MB.");
   const id = crypto.randomUUID();
   const alt = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
-  if (isDemoMode) {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    let binary = "";
-    for (let offset = 0; offset < bytes.length; offset += 8192)
-      binary += String.fromCharCode(...bytes.subarray(offset, offset + 8192));
-    return { id, alt, url: `data:${file.type};base64,${btoa(binary)}` };
-  }
   const userId = await requireAdmin();
   const storagePath = `${userId}/${id}.${extension}`;
   const bucket = supabase().storage.from("product-images");
@@ -470,20 +245,11 @@ export async function uploadImage(file: File): Promise<ProductImage> {
   };
 }
 
-export async function resetDemo(): Promise<void> {
-  if (!isDemoMode)
-    throw new Error("Reset demo is only available in demo mode.");
-  writeDemo(structuredClone(demoCatalog));
-}
-
 export async function getAuthState(): Promise<{
   authenticated: boolean;
   isAdmin: boolean;
   email?: string;
 }> {
-  // This state provides access to a browser-local demo. It does not authenticate a person.
-  if (isDemoMode)
-    return { authenticated: true, isAdmin: true, email: "demo@brutti.local" };
   const {
     data: { user },
     error,
@@ -521,10 +287,6 @@ async function requireAdmin(): Promise<string> {
 }
 
 export async function signIn(email: string, password: string): Promise<void> {
-  if (isDemoMode) {
-    demoAuthListeners.forEach((callback) => callback());
-    return;
-  }
   const { error } = await supabase().auth.signInWithPassword({
     email: email.trim(),
     password,
@@ -533,19 +295,11 @@ export async function signIn(email: string, password: string): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
-  if (isDemoMode) {
-    demoAuthListeners.forEach((callback) => callback());
-    return;
-  }
   const { error } = await supabase().auth.signOut();
   if (error) throw backendError(error.message, "sign out");
 }
 
 export function subscribeAuth(callback: () => void): () => void {
-  if (isDemoMode) {
-    demoAuthListeners.add(callback);
-    return () => demoAuthListeners.delete(callback);
-  }
   // Session verification in a listener must happen after Supabase releases its auth lock.
   const pending = new Set<ReturnType<typeof setTimeout>>();
   let active = true;
