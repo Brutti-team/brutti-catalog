@@ -42,8 +42,10 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ""
         run: npm run build
 
-      - name: Configure GitHub Pages
+      - name: Configure and enable GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
