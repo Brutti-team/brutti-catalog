@@ -1673,3 +1673,25 @@
   font-size: 12px;
   color: #859579;
 }
+
+
+/* Use Brutti's original signature logo, preserving public catalog structure. */
+.pub-app .pub-wordmark .pub-official-logo {
+  display: block;
+  width: 112px;
+  height: auto;
+  max-width: none;
+}
+.pub-app .pub-footer .pub-wordmark .pub-official-logo {
+  width: 98px;
+}
+@media (max-width: 800px) {
+  .pub-app .pub-header .pub-wordmark .pub-official-logo {
+    width: 91px;
+  }
+}
+@media (max-width: 580px) {
+  .pub-app .pub-header .pub-wordmark .pub-official-logo {
+    width: 79px;
+  }
+}
