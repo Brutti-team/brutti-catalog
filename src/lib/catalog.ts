@@ -107,12 +107,16 @@ export function validateProduct(product: Product): void {
     throw new Error("Choose a category for this product.");
   if (
     ![product.width, product.depth, product.height].every(
-      (value) => Number.isFinite(value) && value > 0 && value < 100000,
+      (value) => Number.isFinite(value) && value >= 0 && value < 100000,
     )
   )
-    throw new Error(
-      "Dimensions must be positive numbers below 100,000 centimetres.",
-    );
+    throw new Error("Dimensions must be valid numbers below 100,000 centimetres.");
+  // Incomplete dimensions from the PDF are allowed in Draft, not in live listings.
+  if (
+    product.status === "published" &&
+    [product.width, product.depth, product.height].some((value) => value <= 0)
+  )
+    throw new Error("Confirm all three product dimensions before publishing.");
   if (
     product.price !== null &&
     (!Number.isFinite(product.price) ||
