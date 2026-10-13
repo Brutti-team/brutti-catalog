@@ -46,7 +46,7 @@ afterEach(() => {
 });
 
 describe("demo catalog", () => {
-  it("seeds eight products including six published products and four categories", async () => {
+  it("seeds eight products including six published products and seven categories", async () => {
     const data = await loadCatalog();
     expect(isDemoMode).toBe(true);
     expect(data.products).toHaveLength(8);
@@ -54,16 +54,67 @@ describe("demo catalog", () => {
       data.products.filter((product) => product.status === "published"),
     ).toHaveLength(6);
     expect(data.categories.map((category) => category.name)).toEqual([
-      "Seating",
-      "Tables",
-      "Storage",
-      "Workspace",
+      "Racks & Shelves",
+      "Tables & Kitchen Counters",
+      "Displays & Panels",
+      "Beds & Bunk Beds",
+      "Reception Counters",
+      "Displays & Mementos",
+      "Rentals",
     ]);
     expect(
       data.products.every((product) =>
         product.images[0]?.url.startsWith("/images/"),
       ),
     ).toBe(true);
+  });
+
+  it("upgrades existing local demo without losing staff-edited data", async () => {
+    const current = await loadCatalog();
+    const categoryNames = ["Seating", "Tables", "Storage", "Workspace"];
+    const oldCats = categoryNames.map((name, i) => ({
+      id: `10000000-0000-4000-8000-${String(i + 1).padStart(12, "0")}`,
+      name,
+      description: name,
+    }));
+    const custom = {
+      id: "40000000-0000-4000-8000-000000000001",
+      name: "Staff Custom",
+      description: "User-created category",
+    };
+    const oldProducts = current.products.map((product) => ({
+      ...product,
+      categoryId:
+        product.categoryId === current.categories[6].id
+          ? oldCats[0].id
+          : product.categoryId === current.categories[1].id
+            ? oldCats[1].id
+            : oldCats[2].id,
+    }));
+    const extra = {
+      ...oldProducts[0],
+      id: crypto.randomUUID(),
+      name: "Staff edited sample",
+      sku: "BR-EDITED-001",
+      categoryId: custom.id,
+    };
+    localStorage.setItem(
+      "brutti-catalog.demo.v1",
+      JSON.stringify({
+        version: 1,
+        data: { categories: [...oldCats, custom], products: [...oldProducts, extra] },
+      }),
+    );
+    const updated = await loadCatalog();
+    expect(updated.categories.map((c) => c.name)).toEqual([
+      ...current.categories.map((c) => c.name),
+      "Staff Custom",
+    ]);
+    expect(updated.products).toHaveLength(9);
+    expect(updated.products.find((p) => p.id === extra.id)?.categoryId).toBe(custom.id);
+    expect(updated.products[0].categoryId).toBe(current.categories[6].id);
+    expect(JSON.parse(localStorage.getItem("brutti-catalog.demo.v1")!).version).toBe(2);
+    expect((await loadCatalog()).products).toHaveLength(9);
   });
 
   it("persists edits across reads without mutating the seed data", async () => {
@@ -98,7 +149,7 @@ describe("demo catalog", () => {
     await expect(deleteCategory(data.categories[0].id)).rejects.toThrow(
       /products/i,
     );
-    expect((await loadCatalog()).categories).toHaveLength(4);
+    expect((await loadCatalog()).categories).toHaveLength(7);
   });
 
   it("creates and deletes an unused category while rejecting duplicate names", async () => {
@@ -117,7 +168,7 @@ describe("demo catalog", () => {
       }),
     ).rejects.toThrow(/already/i);
     await deleteCategory(category.id);
-    expect((await loadCatalog()).categories).toHaveLength(4);
+    expect((await loadCatalog()).categories).toHaveLength(7);
   });
 
   it("preserves malformed saved data and gives an actionable error", async () => {
