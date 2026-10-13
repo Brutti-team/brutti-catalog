@@ -1,11 +1,12 @@
 import type { CatalogData, Product } from "../lib/types";
+import { bruttiCategories } from "./categories";
 
 const createdAt = "2026-09-14T08:00:00.000Z";
 const ids = {
-  seating: "10000000-0000-4000-8000-000000000001",
-  tables: "10000000-0000-4000-8000-000000000002",
-  storage: "10000000-0000-4000-8000-000000000003",
-  workspace: "10000000-0000-4000-8000-000000000004",
+  racks: bruttiCategories[0].id,
+  tables: bruttiCategories[1].id,
+  mementos: bruttiCategories[5].id,
+  rentals: bruttiCategories[6].id,
 };
 
 function product(
@@ -21,35 +22,12 @@ function product(
 }
 
 export const demoCatalog: CatalogData = {
-  categories: [
-    {
-      id: ids.seating,
-      name: "Seating",
-      description:
-        "Thoughtfully shaped chairs, stools and sofas for everyday living.",
-    },
-    {
-      id: ids.tables,
-      name: "Tables",
-      description:
-        "Gathering places, made with honest materials and considered proportions.",
-    },
-    {
-      id: ids.storage,
-      name: "Storage",
-      description: "Quietly functional pieces that bring order to your space.",
-    },
-    {
-      id: ids.workspace,
-      name: "Workspace",
-      description: "Comfortable, purposeful furniture for a more focused day.",
-    },
-  ],
+  categories: bruttiCategories,
   products: [
     product(1, {
       name: "Senar Lounge Chair",
       sku: "BR-SEA-001",
-      categoryId: ids.seating,
+      categoryId: ids.rentals,
       description:
         "A sculptural lounge chair with a gently reclined seat and generous, enveloping proportions. Senar brings a quiet moment of comfort to a reading corner, living room or hospitality space. Its refined silhouette balances warmth with a distinctly contemporary presence.",
       materials:
@@ -72,7 +50,7 @@ export const demoCatalog: CatalogData = {
     product(2, {
       name: "Nala Bar Stool",
       sku: "BR-SEA-002",
-      categoryId: ids.seating,
+      categoryId: ids.rentals,
       description:
         "Nala makes everyday gatherings feel effortless. A beautifully simple bar stool with a rounded seat and carefully positioned footrest, suited to kitchen islands, cafés and relaxed dining spaces. Made for conversation that lasts a little longer.",
       materials: "Solid ash · natural oil finish · powder-coated footrest",
@@ -94,7 +72,7 @@ export const demoCatalog: CatalogData = {
     product(3, {
       name: "Ruma Modular Sofa",
       sku: "BR-SEA-003",
-      categoryId: ids.seating,
+      categoryId: ids.rentals,
       description:
         "A soft landing at the end of the day. Ruma combines deep seats, generous cushions and an understated profile to create an inviting centrepiece. Its modular construction allows the composition to grow and adapt with your home.",
       materials:
@@ -161,7 +139,7 @@ export const demoCatalog: CatalogData = {
     product(6, {
       name: "Kisi Sideboard",
       sku: "BR-STO-001",
-      categoryId: ids.storage,
+      categoryId: ids.racks,
       description:
         "A considered home for the things you love. Kisi offers generous concealed storage behind beautifully proportioned fronts. Subtle detailing and a low, balanced silhouette bring a sense of ease to dining rooms, hallways and living spaces.",
       materials: "Walnut veneer · solid timber legs · soft-close hinges",
@@ -183,7 +161,7 @@ export const demoCatalog: CatalogData = {
     product(7, {
       name: "Temu Writing Desk",
       sku: "BR-WOR-001",
-      categoryId: ids.workspace,
+      categoryId: ids.tables,
       description:
         "A workspace that feels at home. Temu is a compact writing desk with a generous surface and a discreet drawer for the essentials. Clean lines and warm materials create a comfortable place to think, work and make.",
       materials: "Solid oak · oak veneer · concealed soft-close drawer",
@@ -205,7 +183,7 @@ export const demoCatalog: CatalogData = {
     product(8, {
       name: "Langit Open Shelf",
       sku: "BR-STO-002",
-      categoryId: ids.storage,
+      categoryId: ids.racks,
       description:
         "An open framework for your favourite books, plants and collected objects. Langit uses a light, vertical silhouette to create useful storage without overwhelming a room. This archived design remains in the management collection for reference.",
       materials: "Powder-coated steel frame · oak shelves",
