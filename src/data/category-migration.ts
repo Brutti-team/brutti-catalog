@@ -33,7 +33,7 @@ const legacyCategories = [
 const byName = (name: string) => name.trim().toLocaleLowerCase("en");
 
 export function upgradeDemoCategories(data: CatalogData): CatalogData {
-  const originals = new Map(
+  const originals = new Map<string, (typeof legacyCategories)[number]>(
     legacyCategories.map((category) => [category.id, category]),
   );
   // Do not rename a category if the user edited its name in the old demo.
