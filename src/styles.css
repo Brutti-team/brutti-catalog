@@ -1642,3 +1642,78 @@ tr:last-child td {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Brutti wordmark: preserve the original dashboard layout and sidebar palette. */
+.brand .brutti-official-logo {
+  display: block;
+  width: 116px;
+  height: auto;
+  max-width: none;
+  flex-shrink: 0;
+}
+.sidebar > .brand {
+  height: 50px;
+  align-items: center;
+}
+.access-card .brand {
+  align-items: center;
+  min-height: 76px;
+}
+
+/* Catalog administration typography: readable without changing card sizes or layout. */
+.admin-app .workspace-label { font-size: 11px; }
+.admin-app .workspace-label span { font-size: 11px; }
+.admin-app .nav-group-label { font-size: 10px; }
+.admin-app .nav-item { font-size: 14px; }
+.admin-app .nav-count { font-size: 11px; }
+.admin-app .sidebar-note h3 { font-size: 14px; }
+.admin-app .sidebar-note p { font-size: 12px; }
+.admin-app .sidebar-note > span { font-size: 10px; }
+.admin-app .account strong { font-size: 12px; }
+.admin-app .account span { font-size: 11px; }
+.admin-app .breadcrumbs { font-size: 13px; }
+.admin-app .connection-pill { font-size: 11px; }
+.admin-app .catalog-link { font-size: 12px; }
+.admin-app .demo-banner p { font-size: 12px; }
+.admin-app .demo-banner button { font-size: 11px; }
+.admin-app .eyebrow { font-size: 11px; }
+.admin-app .page-heading p { font-size: 13px; }
+.admin-app .button { font-size: 13px; }
+.admin-app .stat-card > div > span { font-size: 13px; }
+.admin-app .stat-card p { font-size: 11px; }
+.admin-app .collection-banner .eyebrow { font-size: 10px; }
+.admin-app .collection-banner p,
+.admin-app .collection-banner button { font-size: 12px; }
+.admin-app .banner-caption { font-size: 9px; }
+.admin-app .panel-heading h2 { font-size: 17px; }
+.admin-app .panel-heading h2 > span { font-size: 11px; }
+.admin-app .panel-heading p { font-size: 12px; }
+.admin-app .text-button { font-size: 12px; }
+.admin-app .search-input input,
+.admin-app .filters select { font-size: 12px; }
+.admin-app th { font-size: 11px; }
+.admin-app td { font-size: 12px; }
+.admin-app .product-cell strong { font-size: 13px; }
+.admin-app .product-cell small { font-size: 10px; }
+.admin-app .status-badge { font-size: 11px; }
+.admin-app .availability { font-size: 11px; }
+.admin-app .price-cell { font-size: 12px; }
+.admin-app .table-footer,
+.admin-app .workspace-footer { font-size: 11px; }
+.admin-app .category-card-body > p { font-size: 13px; }
+.admin-app .category-count { font-size: 11px; }
+
+@media (max-width: 600px) {
+  /* Keep compact phone headings and controls while avoiding tiny labels. */
+  .admin-app .nav-item { font-size: 13px; }
+  .admin-app .page-heading .eyebrow { font-size: 10px; }
+  .admin-app .page-heading .button { font-size: 11px; }
+  .admin-app .stat-card p { font-size: 10px; }
+  .admin-app .collection-banner .eyebrow { font-size: 9px; }
+  .admin-app .collection-banner p,
+  .admin-app .collection-banner button { font-size: 11px; }
+  .admin-app .panel-heading > .text-button { font-size: 11px; }
+  .admin-app .table-footer,
+  .admin-app .workspace-footer { font-size: 10px; }
+}
