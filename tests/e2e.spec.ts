@@ -48,7 +48,7 @@ test("demo dashboard describes its access honestly and shows seeded collection s
     ["Total products", "8"],
     ["Published", "6"],
     ["Drafts", "1"],
-    ["Categories", "4"],
+    ["Categories", "7"],
   ]) {
     await expect(
       page.locator(".stat-card").filter({ hasText: label }).locator("strong"),
