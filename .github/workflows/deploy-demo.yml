@@ -1,28 +1,22 @@
-name: Deploy Brutti Catalog Demo
+name: Validate Brutti Catalog production code
 
 on:
   push:
     branches:
       - feat/catalog-phase-one
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "brutti-catalog-pages"
-  cancel-in-progress: true
 
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
-    environment:
-      name: brutti-catalog-demo
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Check out catalog branch
+      - name: Check out source
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -34,30 +28,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check TypeScript
+      - name: TypeScript checks
         run: npm run typecheck
 
-      - name: Run unit tests
+      - name: Unit tests
         run: npm test
 
-      - name: Build safe demo for GitHub Pages
+      - name: Build production bundle
         env:
           GITHUB_PAGES: "true"
-          VITE_DEMO_MODE: "true"
-          VITE_SUPABASE_URL: ""
-          VITE_SUPABASE_ANON_KEY: ""
+          # Build-only placeholders. These values must never be used for a public deployment.
+          VITE_SUPABASE_URL: "https://brutti-catalog-check.invalid"
+          VITE_SUPABASE_ANON_KEY: "not-a-real-key"
         run: npm run build
 
-      - name: Configure and enable GitHub Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Upload static site
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-      - name: Publish GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+# Deployment deliberately disabled until dedicated Brutti Supabase project,
+# verified staff permissions, import and public routing are approved.
