@@ -144,6 +144,48 @@ async function expectReadable(page: Page, selectors: string[], darkSurface = fal
   }
 }
 
+test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Published products' })).toBeVisible();
+  await page.getByRole('button', { name: 'View products', exact: true }).last().click();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+});
+
+test('catalog products toggle between persistent Table and Gallery views', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  const gallery = page.getByRole('button', { name: 'Gallery view' });
+  await expect(gallery).toBeVisible();
+  await gallery.click();
+  await expect(gallery).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.catalog-gallery-card')).toHaveCount(1);
+  await expect(page.locator('.catalog-gallery-card').first()).toContainText('Admin UI fixture shelf');
+  await page.getByRole('button', { name: 'Table view' }).click();
+  await expect(page.locator('.product-cell').first()).toContainText('Admin UI fixture shelf');
+  await expect(page.locator('.catalog-gallery-card')).toHaveCount(0);
+});
+
+test('quick status filters and category card navigation find matching products', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  const nav = page.getByRole('navigation', { name: 'Admin navigation' });
+  await nav.getByRole('button', { name: /Products/ }).click();
+  const controls = page.getByRole('group', { name: 'Quick product status filters' });
+  await controls.getByRole('button', { name: /Draft/ }).click();
+  await expect(page.getByRole('heading', { name: 'No pieces found' })).toBeVisible();
+  await controls.getByRole('button', { name: /Published/ }).click();
+  await expect(page.locator('.product-cell').first()).toContainText('Admin UI fixture shelf');
+  await nav.getByRole('button', { name: 'Categories', exact: true }).click();
+  await page.locator('.category-card').first().getByRole('button', { name: 'View products' }).click();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.locator('.product-cell').first()).toContainText('Admin UI fixture shelf');
+});
+
 test('Products exposes Bulk import photos above the filters and opens the ZIP picker', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
