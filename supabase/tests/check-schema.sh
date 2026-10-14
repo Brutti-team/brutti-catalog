@@ -35,3 +35,8 @@ sh "$SCRIPT_ROOT/check-management-concurrency.sh" "$CATALOG_TEST_CONTAINER"
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../proposals/catalogue-import.sql"
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/import_rerun.sql"
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/catalog_management.sql"
+
+# Proposed staff role and audit schema is tested only in this disposable database.
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/catalog_staff_preflight.sql"
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../proposals/catalogue-staff-audit.sql"
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/catalog_staff_audit.sql"
