@@ -499,7 +499,7 @@ export default function App() {
           {tab === "profile" || tab === "users" || tab === "activity" ? (
             <AccountCenter view={tab} onProfileChanged={setAccountName} />
           ) : (<>
-          <div className="page-heading">
+          <div className={`page-heading ${tab === "overview" ? "overview-heading" : ""}`}>
             <div>
               <span className="eyebrow">YOUR CATALOG, CONSIDERED</span>
               <h1>
@@ -545,19 +545,19 @@ export default function App() {
           )}
           {tab === "overview" && (
             <>
-              <div className="stats-grid">
+              <div className="stats-grid overview-stats">
                 {stats.map((s) => (
-                  <article className="stat-card" key={s.title}>
+                  <article className="stat-card overview-stat" key={s.title}>
                     <div>
                       <span>{s.title}</span>
-                      <s.icon size={17} />
+                      <span className="overview-stat-icon"><s.icon size={19} aria-hidden="true" /></span>
                     </div>
                     <strong>{loading ? "—" : s.value}</strong>
                     <p>{s.detail}</p>
                   </article>
                 ))}
               </div>
-              <div className="collection-banner">
+              <div className="collection-banner overview-feature">
                 <div>
                   <span className="eyebrow">
                     CRAFTED HERE. SHARED EVERYWHERE.
@@ -587,7 +587,7 @@ export default function App() {
             </>
           )}
           {tab !== "categories" ? (
-            <section className="table-panel">
+            <section className={`table-panel ${tab === "overview" ? "overview-collection" : ""}`}>
               <div className="panel-heading">
                 <div>
                   <h2>
