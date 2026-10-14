@@ -987,20 +987,22 @@ export default function App() {
                       ? "Try a different search or clear your filters."
                       : "Add your first product to begin."}
                   </p>
-                  <button
-                    className="button secondary"
-                    onClick={() => {
-                      if (search || status !== "all" || category !== "all") {
-                        setSearch("");
-                        setStatus("all");
-                        setCategory("all");
-                      } else setEditor(newProduct());
-                    }}
-                  >
-                    {search || status !== "all" || category !== "all"
-                      ? "Clear filters"
-                      : "Add a product"}
-                  </button>
+                  {(tab !== "products" || !(search || status !== "all" || category !== "all")) && (
+                    <button
+                      className="button secondary"
+                      onClick={() => {
+                        if (search || status !== "all" || category !== "all") {
+                          setSearch("");
+                          setStatus("all");
+                          setCategory("all");
+                        } else setEditor(newProduct());
+                      }}
+                    >
+                      {search || status !== "all" || category !== "all"
+                        ? "Clear filters"
+                        : "Add a product"}
+                    </button>
+                  )}
                 </div>
               )}
               <footer className="table-footer">
