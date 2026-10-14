@@ -27,6 +27,9 @@ import {
   AlertCircle,
   ShieldCheck,
   ExternalLink,
+  UserRound,
+  UsersRound,
+  History,
 } from "lucide-react";
 import type { Product, Category, CatalogData } from "./lib/types";
 import {
@@ -48,8 +51,10 @@ import {
 import ProductEditor from "./components/ProductEditor";
 import PublicCatalog from "./components/PublicCatalog";
 import Modal from "./components/Modal";
+import AccountCenter from "./components/AccountCenter";
+import { getAccountSummary, initials, roleLabel, type StaffRole } from "./lib/account-center";
 
-type Tab = "overview" | "products" | "categories";
+type Tab = "overview" | "products" | "categories" | "profile" | "users" | "activity";
 const label = (s: string) =>
   s
     .split("-")
@@ -93,6 +98,9 @@ export default function App() {
     email: "",
   });
   const [authLoading, setAuthLoading] = useState(true);
+  const [accountRole, setAccountRole] = useState<StaffRole | null>(null);
+  const [accountName, setAccountName] = useState("");
+  const [accountsReady, setAccountsReady] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [category, setCategory] = useState("all");
@@ -160,6 +168,23 @@ export default function App() {
     return unsub;
   }, [refresh, refreshAuth]);
   useEffect(() => subscribeCatalog(() => refresh(true)), [refresh]);
+  useEffect(() => {
+    let active = true;
+    if (!auth.isAdmin) return;
+    void getAccountSummary().then(info => {
+      if (!active) return;
+      setAccountRole(info.role);
+      setAccountsReady(info.managementReady);
+      setAccountName(info.displayName);
+    }).catch(() => {
+      if (active) {
+        setAccountRole(null);
+        setAccountsReady(false);
+      }
+    });
+    return () => { active = false; };
+  }, [auth.isAdmin, auth.email]);
+
   useEffect(() => {
     if (!toast) return;
     const id = setTimeout(() => setToast(""), 4000);
@@ -364,6 +389,23 @@ export default function App() {
             Public catalog
             <ExternalLink size={13} className="nav-trailing" />
           </button>
+          <span className="nav-group-label nav-group-second">ACCOUNT</span>
+          <button className={`nav-item ${tab === "profile" ? "active" : ""}`}
+            onClick={() => switchTab("profile")}>
+            <UserRound size={19} /> My profile
+          </button>
+          {accountsReady && accountRole === "super_admin" && (
+            <button className={`nav-item ${tab === "users" ? "active" : ""}`}
+              onClick={() => switchTab("users")}>
+              <UsersRound size={19} /> Users
+            </button>
+          )}
+          {accountsReady && accountRole && (
+            <button className={`nav-item ${tab === "activity" ? "active" : ""}`}
+              onClick={() => switchTab("activity")}>
+              <History size={19} /> Activity log
+            </button>
+          )}
         </nav>
         <div className="sidebar-bottom">
           <div className="sidebar-note">
@@ -378,12 +420,10 @@ export default function App() {
             <span>BENUa BRUTTI SDN. BHD.</span>
           </div>
           <div className="account">
-            <div className="avatar">BB</div>
+            <div className="avatar">{initials(accountName || auth.email.split("@")[0] || "BB")}</div>
             <div>
-              <strong>
-                Catalog administrator
-              </strong>
-              <span>{auth.email}</span>
+              <strong>{accountName || "Catalog administrator"}</strong>
+              <span>{roleLabel(accountRole)} · {auth.email}</span>
             </div>
             {(
               <button
@@ -438,6 +478,9 @@ export default function App() {
           </div>
         </header>
         <div className="admin-content">
+          {tab === "profile" || tab === "users" || tab === "activity" ? (
+            <AccountCenter view={tab} onProfileChanged={setAccountName} />
+          ) : (<>
           <div className="page-heading">
             <div>
               <span className="eyebrow">YOUR CATALOG, CONSIDERED</span>
@@ -895,6 +938,7 @@ export default function App() {
             <span>© {new Date().getFullYear()} Benua Brutti Sdn. Bhd.</span>
             <span>Thoughtfully crafted in Sabah, Malaysia.</span>
           </footer>
+          </>)}
         </div>
       </main>
       {editor && (
