@@ -11,6 +11,9 @@ export type PhotoImportResult = {
   attached: number;
   skipped: number;
   errors: string[];
+  /** Authenticated re-read of SKUs whose original catalog image is linked. */
+  ready: number;
+  total: number;
 };
 type ZipItem = { sku: string; page: number; file: string; sha256: string };
 type ImportManifest = {
@@ -147,6 +150,7 @@ export async function attachBruttiCataloguePhotos(
     onProgress({ completed: index, total: 96, attached, skipped, current: item.sku });
     if (record.status !== "draft" || (Array.isArray(record.images) && record.images.length > 0)) {
       skipped++;
+      onProgress({ completed: index + 1, total: 96, attached, skipped, current: item.sku });
       continue;
     }
     const bytes = entries.get(item.file)!;
@@ -187,5 +191,23 @@ export async function attachBruttiCataloguePhotos(
     }
     onProgress({ completed: index + 1, total: 96, attached, skipped, current: item.sku });
   }
-  return { attached, skipped, errors };
+  // Re-read persisted product records instead of interpreting "skipped" as failure.
+  // The user's ZIP may be a retry after earlier successful uploads.
+  let ready = 0;
+  for (let i = 0; i < manifest.items.length; i += 25) {
+    const chunk = manifest.items.slice(i, i + 25);
+    const { data, error } = await db.from("products")
+      .select("sku,images").in("sku", chunk.map(item => item.sku));
+    if (error) throw new Error(`Unable to confirm the saved product photos: ${error.message}`);
+    const bySku = new Map((data || []).map(record => [record.sku as string, record.images as unknown]));
+    for (const item of chunk) {
+      const photos = bySku.get(item.sku);
+      if (Array.isArray(photos) && photos.some(photo =>
+        photo && typeof photo === "object" &&
+        typeof photo.storagePath === "string" &&
+        photo.storagePath.endsWith(`/brutti2025/${item.sku}/${item.sha256}.webp`)
+      )) ready++;
+    }
+  }
+  return { attached, skipped, errors, ready, total: manifest.items.length };
 }
