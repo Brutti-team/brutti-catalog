@@ -8,8 +8,9 @@ on:
       - .github/workflows/deploy-staging.yml
 
 # Staging uses only the separate brutti-catalog GitHub Pages site.
-# Approved staging refresh: premium admin polish, header profile and saved
-# light/dark appearance from feat/catalog-phase-one; account gates stay unchanged.
+# Approved staging refresh: compact sidebar, My Profile only in header,
+# server-sourced Last Change card with Malaysia timestamp and preserved dark mode.
+# Role/audit SQL proposals remain UNAPPLIED; no production database writes.
 # Keep path-filtered activation to avoid deploying every subsequent PR edit.
 # Never merge PR #1, write to Supabase production data or touch brutti.my.
 permissions:
