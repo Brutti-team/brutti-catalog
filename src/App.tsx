@@ -370,8 +370,8 @@ export default function App() {
         <div className="workspace-label">
           <span className="workspace-symbol" aria-hidden="true"><Layers size={17} /></span>
           <span className="workspace-meta">
-            <strong>Catalog Studio</strong>
-            <small>Brutti workspace</small>
+            <strong>Catalog Workspace</strong>
+            <small>Product management</small>
           </span>
           <span className="workspace-indicator" aria-label="Current workspace"><span aria-hidden="true" /></span>
         </div>
