@@ -27,6 +27,8 @@ import {
   AlertCircle,
   ShieldCheck,
   ExternalLink,
+  Moon,
+  Sun,
   UserRound,
   UsersRound,
   History,
@@ -53,6 +55,7 @@ import PublicCatalog from "./components/PublicCatalog";
 import Modal from "./components/Modal";
 import AccountCenter from "./components/AccountCenter";
 import { getAccountSummary, initials, roleLabel, type StaffRole } from "./lib/account-center";
+import { useAdminTheme } from "./lib/admin-theme";
 
 type Tab = "overview" | "products" | "categories" | "profile" | "users" | "activity";
 const label = (s: string) =>
@@ -82,6 +85,7 @@ function newProduct(categoryId = ""): Product {
 }
 
 export default function App() {
+  const { theme, toggleTheme } = useAdminTheme();
   const [passwordIntent, setPasswordIntent] = useState(initialPasswordIntent);
   const [callbackVerified, setCallbackVerified] = useState(false);
   const [route, setRoute] = useState(() => resolveAppRoute(window.location));
@@ -278,13 +282,15 @@ export default function App() {
     );
   if (authLoading)
     return (
+      <div className="admin-app admin-access-shell" data-theme={theme}>
       <div className="access-page">
         <LoaderCircle className="spin" />
         <p>Preparing your workspace…</p>
       </div>
+      </div>
     );
   if (passwordIntent)
-    return <PasswordAccess intent={passwordIntent} verified={callbackVerified} onDone={async () => {
+    return <div className="admin-app admin-access-shell" data-theme={theme}><PasswordAccess intent={passwordIntent} verified={callbackVerified} onDone={async () => {
       setPasswordIntent(null);
       const clean = new URL(window.location.href);
       clean.searchParams.delete("auth");
@@ -292,11 +298,12 @@ export default function App() {
       window.history.replaceState(null, "", clean);
       setRoute("#/admin");
       await refreshAuth();
-    }} />;
+    }} /></div>;
   if (!auth.isAdmin)
     return (
+      <div className="admin-app admin-access-shell" data-theme={theme}>
       <Login
-        setupError={error}
+        setupError={error || actionError}
         authenticated={auth.authenticated}
         onSuccess={async () => {
           await refreshAuth();
@@ -304,6 +311,7 @@ export default function App() {
         }}
         onCatalog={() => navigate("/catalog")}
       />
+      </div>
     );
   const stats = [
     {
@@ -350,7 +358,7 @@ export default function App() {
           : b.updatedAt.localeCompare(a.updatedAt),
     );
   return (
-    <div className="admin-app">
+    <div className="admin-app" data-theme={theme}>
       <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
         <a
           href="#/admin"
@@ -419,31 +427,6 @@ export default function App() {
             </p>
             <span>BENUa BRUTTI SDN. BHD.</span>
           </div>
-          <div className="account">
-            <button type="button" className="account-profile-entry"
-              aria-label="Open my profile" onClick={() => switchTab("profile")}>
-              <div className="avatar">{initials(accountName || auth.email.split("@")[0] || "BB")}</div>
-              <div className="account-entry-details">
-                <strong>{accountName || "Catalog administrator"}</strong>
-                <span>{roleLabel(accountRole)} · {auth.email}</span>
-              </div>
-            </button>
-            {(
-              <button
-                title="Sign out"
-                aria-label="Sign out"
-                onClick={() => {
-                  void signOut().catch((e) =>
-                    setActionError(
-                      e instanceof Error ? e.message : "Sign out failed.",
-                    ),
-                  );
-                }}
-              >
-                <LogOut size={16} />
-              </button>
-            )}
-          </div>
         </div>
       </aside>
       {mobileNav && (
@@ -477,6 +460,41 @@ export default function App() {
               onClick={() => navigate("/catalog")}
             >
               View catalog <ArrowUpRight size={15} />
+            </button>
+            <button
+              type="button"
+              className="theme-toggle"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              aria-pressed={theme === "dark"}
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              onClick={toggleTheme}
+            >
+              {theme === "dark" ? <Moon size={17} aria-hidden="true" /> : <Sun size={17} aria-hidden="true" />}
+              <span className="theme-label">{theme === "dark" ? "Dark" : "Light"}</span>
+            </button>
+            <button
+              type="button"
+              className={`header-profile ${tab === "profile" ? "active" : ""}`}
+              aria-label="Open my profile"
+              title="My profile"
+              onClick={() => switchTab("profile")}
+            >
+              <span className="profile-avatar" aria-hidden="true">{initials(accountName || auth.email.split("@")[0] || "BB")}</span>
+              <span className="profile-copy">
+                <strong>{accountName || auth.email.split("@")[0] || "Your profile"}</strong>
+                <small>{roleLabel(accountRole)}</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              className="header-signout"
+              title="Sign out"
+              aria-label="Sign out"
+              onClick={() => {
+                void signOut().catch((e) => setActionError(e instanceof Error ? e.message : "Sign out failed."));
+              }}
+            >
+              <LogOut size={17} aria-hidden="true" />
             </button>
           </div>
         </header>
