@@ -29,6 +29,19 @@
 @media(max-width:600px){.catalog-bulk-upload{padding:0 18px 22px}.bulk-upload-actions{flex-wrap:wrap}.bulk-upload-actions .button{flex:1}}
 @media(prefers-reduced-motion:reduce){.bulk-upload-spinner{animation:none}}
 
-.admin-app .page-heading .catalog-import-trigger{margin-left:auto;min-height:44px;padding:10px 14px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:650;white-space:nowrap}
-.admin-app .page-heading .catalog-import-trigger + .button.primary{margin-left:0}
-@media (max-width:600px){.admin-app .page-heading .catalog-import-trigger{margin-left:0;font-size:11px;white-space:normal;text-align:center}}
+/* Deliberately positioned beside "All products", above filters, so bulk upload
+   is visible even when the page headline contains only the Add product action. */
+.admin-app .table-panel .panel-heading .catalog-import-trigger{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  margin-left:auto;min-height:43px;padding:10px 15px;border-radius:11px;
+  border:1px solid var(--admin-focus,var(--admin-border));font-size:12.5px;
+  font-weight:700;white-space:nowrap;cursor:pointer;flex:none;
+}
+.admin-app .table-panel .panel-heading .catalog-import-trigger:hover:not(:disabled){
+  background:var(--admin-selected);border-color:var(--admin-accent);
+}
+@media (max-width:600px){
+  .admin-app .table-panel .panel-heading .catalog-import-trigger{
+    width:100%;margin-left:0;font-size:12px;min-height:43px;
+  }
+}
