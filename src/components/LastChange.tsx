@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Clock3, History } from "lucide-react";
-import { getLatestCatalogActivity, type ActivityEntry, type StaffRole } from "../lib/account-center";
+import { getLatestCatalogActivity, type ActivityEntry } from "../lib/account-center";
 import type { CatalogData } from "../lib/types";
 
 type RecordStatus = "not-enabled" | "loading" | "ready" | "empty" | "error";
@@ -39,14 +39,10 @@ export function activityLabel(event: Pick<ActivityEntry, "action" | "resource_ty
 
 export default function LastChange({
   authenticated,
-  managementReady,
-  role,
   refreshKey,
   onHistory,
 }: {
   authenticated: boolean;
-  managementReady: boolean;
-  role: StaffRole | null;
   refreshKey: CatalogData;
   onHistory: () => void;
 }) {
@@ -55,7 +51,7 @@ export default function LastChange({
 
   useEffect(() => {
     let mounted = true;
-    if (!authenticated || !managementReady || !role) return;
+    if (!authenticated) return;
     // Do not fabricate actor/time from product timestamps while audit is absent.
     void getLatestCatalogActivity().then(record => {
       if (!mounted) return;
@@ -67,10 +63,10 @@ export default function LastChange({
       setStatus("error");
     });
     return () => { mounted = false; };
-  }, [authenticated, managementReady, role, refreshKey]);
+  }, [authenticated, refreshKey]);
 
-  const canRead = authenticated && managementReady && Boolean(role);
-  const visibleStatus = canRead ? status === "not-enabled" ? "loading" : status : "not-enabled";
+  const canRead = authenticated;
+  const visibleStatus = authenticated ? (status === "not-enabled" ? "loading" : status) : "not-enabled";
 
   return (
     <section className="sidebar-last-change" aria-label="Latest catalog change">
@@ -96,7 +92,7 @@ export default function LastChange({
           {visibleStatus === "loading" ? "Checking latest changes…"
             : visibleStatus === "empty" ? "No changes recorded yet."
               : visibleStatus === "error" ? "Activity history is temporarily unavailable."
-                : "Recording will start once Activity Log is enabled."}
+                : "Recording will start after your administrator account is verified."}
         </p>
       )}
       {canRead && <button type="button" className="last-change-link" onClick={onHistory}>
