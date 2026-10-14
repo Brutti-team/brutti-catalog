@@ -370,7 +370,7 @@ export default function App() {
               { id: "products", text: "Products", icon: Package },
               { id: "categories", text: "Categories", icon: Layers },
             ] as const
-          ).map((n) => (
+          ).filter((n) => accountRole !== "editor" || n.id !== "categories").map((n) => (
             <button
               key={n.id}
               className={`nav-item ${tab === n.id ? "active" : ""}`}
@@ -420,11 +420,14 @@ export default function App() {
             <span>BENUa BRUTTI SDN. BHD.</span>
           </div>
           <div className="account">
-            <div className="avatar">{initials(accountName || auth.email.split("@")[0] || "BB")}</div>
-            <div>
-              <strong>{accountName || "Catalog administrator"}</strong>
-              <span>{roleLabel(accountRole)} · {auth.email}</span>
-            </div>
+            <button type="button" className="account-profile-entry"
+              aria-label="Open my profile" onClick={() => switchTab("profile")}>
+              <div className="avatar">{initials(accountName || auth.email.split("@")[0] || "BB")}</div>
+              <div className="account-entry-details">
+                <strong>{accountName || "Catalog administrator"}</strong>
+                <span>{roleLabel(accountRole)} · {auth.email}</span>
+              </div>
+            </button>
             {(
               <button
                 title="Sign out"
