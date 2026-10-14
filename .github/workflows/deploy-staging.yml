@@ -8,7 +8,7 @@ on:
       - .github/workflows/deploy-staging.yml
 
 # Staging uses only the separate brutti-catalog GitHub Pages site.
-# Approved staging refresh: Brutti Studio 2.0 visually redesigned dark workspace rail, branded command hero, compact KPI, live publishing pipeline and top-category chart; all mobile and dark-mode regression tests pass.
+# Approved staging refresh: Product Workbench 2.1 with branded forest-green product header, concise live stats, premium status tabs, photo-first table and gallery, verified responsive UX; no PR merge or data writes.
 # header-only My Profile and live server-sourced Last Change and Activity Log in MYT.
 # Separate staff-role proposal stays UNAPPLIED. Audit migration was owner-approved
 # and applied independently, preserving product/category and access data.
