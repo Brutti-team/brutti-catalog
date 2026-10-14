@@ -1175,3 +1175,157 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Compact catalog navigation. The profile remains in the header only.
+   Only the navigation scrolls when the viewport is genuinely too short. */
+.admin-app .sidebar {
+  overflow-y: hidden;
+  padding-top: 22px;
+}
+.admin-app .sidebar > .brand {
+  margin-bottom: 13px;
+}
+.admin-app .workspace-label {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.admin-app .sidebar nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 5px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--admin-border) transparent;
+}
+.admin-app .nav-group-label {
+  padding-bottom: 7px;
+}
+.admin-app .nav-group-second {
+  padding-top: 18px;
+}
+.admin-app .nav-item {
+  min-height: 41px;
+  padding: 9px 12px;
+  margin: 2px 0;
+  gap: 10px;
+  line-height: 1.35;
+  font-size: 14px;
+}
+.admin-app .nav-item > svg {
+  flex: none;
+}
+.admin-app .nav-trailing {
+  flex: none;
+}
+.admin-app .sidebar-bottom {
+  margin-top: auto;
+  flex: none;
+  padding: 12px 0 17px;
+}
+.admin-app .sidebar-last-change {
+  padding: 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-surface-soft);
+  box-shadow: var(--admin-shadow);
+  min-width: 0;
+}
+.admin-app .last-change-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--admin-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+}
+.admin-app .last-change-icon {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--admin-accent);
+  background: var(--admin-selected);
+  flex: none;
+}
+.admin-app .last-change-details {
+  margin-top: 12px;
+  min-width: 0;
+}
+.admin-app .last-change-details strong {
+  display: block;
+  color: var(--admin-text);
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 650;
+}
+.admin-app .last-change-details p {
+  color: var(--admin-muted);
+  font-size: 12px;
+  margin: 4px 0 8px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.admin-app .last-change-by {
+  display: block;
+  color: var(--admin-text);
+  opacity: .85;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-app .last-change-details time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  color: var(--admin-muted);
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .last-change-placeholder {
+  margin: 12px 0 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.admin-app .last-change-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 0 0;
+  margin-top: 6px;
+  border: 0;
+  color: var(--admin-accent);
+  font-size: 11px;
+  font-weight: 600;
+  background: transparent;
+}
+.admin-app .last-change-link:hover {
+  text-decoration: underline;
+}
+@media (max-height: 610px) {
+  .admin-app .sidebar {
+    padding-top: 13px;
+  }
+  .admin-app .sidebar > .brand {
+    margin-bottom: 7px;
+  }
+  .admin-app .workspace-label {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+  .admin-app .sidebar-bottom {
+    padding-top: 8px;
+    padding-bottom: 10px;
+  }
+  .admin-app .sidebar-last-change {
+    padding: 11px;
+  }
+}
