@@ -368,7 +368,12 @@ export default function App() {
           <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="brutti-official-logo" />
         </a>
         <div className="workspace-label">
-          CATALOG WORKSPACE <span>01</span>
+          <span className="workspace-symbol" aria-hidden="true"><Layers size={17} /></span>
+          <span className="workspace-meta">
+            <strong>Catalog Studio</strong>
+            <small>Brutti workspace</small>
+          </span>
+          <span className="workspace-indicator" aria-label="Current workspace"><span aria-hidden="true" /></span>
         </div>
         <nav aria-label="Admin navigation">
           <span className="nav-group-label">MANAGE</span>
@@ -384,7 +389,7 @@ export default function App() {
               className={`nav-item ${tab === n.id ? "active" : ""}`}
               onClick={() => switchTab(n.id)}
             >
-              <n.icon size={19} />
+              <span className="nav-icon" aria-hidden="true"><n.icon size={18} /></span>
               {n.text}
               {n.id === "products" && (
                 <span className="nav-count">{data.products.length}</span>
@@ -397,18 +402,18 @@ export default function App() {
           {accountsReady && accountRole === "super_admin" && (
             <button className={`nav-item ${tab === "users" ? "active" : ""}`}
               onClick={() => switchTab("users")}>
-              <UsersRound size={19} /> Users
+              <span className="nav-icon" aria-hidden="true"><UsersRound size={18} /></span> Users
             </button>
           )}
           {auth.isAdmin && (
             <button className={`nav-item ${tab === "activity" ? "active" : ""}`}
               onClick={() => switchTab("activity")}>
-              <History size={19} /> Activity log
+              <span className="nav-icon" aria-hidden="true"><History size={18} /></span> Activity log
             </button>
           )}
           <span className="nav-group-label nav-group-second">EXPLORE</span>
           <button className="nav-item" onClick={() => navigate("/catalog")}>
-            <ArrowUpRight size={19} />
+            <span className="nav-icon" aria-hidden="true"><ArrowUpRight size={18} /></span>
             Public catalog
             <ExternalLink size={13} className="nav-trailing" />
           </button>
