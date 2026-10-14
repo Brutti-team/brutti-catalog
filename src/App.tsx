@@ -391,7 +391,7 @@ export default function App() {
               )}
             </button>
           ))}
-          {accountsReady && accountRole && (
+          {auth.isAdmin && (
             <span className="nav-group-label nav-group-second">TEAM</span>
           )}
           {accountsReady && accountRole === "super_admin" && (
@@ -400,7 +400,7 @@ export default function App() {
               <UsersRound size={19} /> Users
             </button>
           )}
-          {accountsReady && accountRole && (
+          {auth.isAdmin && (
             <button className={`nav-item ${tab === "activity" ? "active" : ""}`}
               onClick={() => switchTab("activity")}>
               <History size={19} /> Activity log
@@ -416,8 +416,6 @@ export default function App() {
         <div className="sidebar-bottom">
           <LastChange
             authenticated={auth.isAdmin}
-            managementReady={accountsReady}
-            role={accountRole}
             refreshKey={data}
             onHistory={() => switchTab("activity")}
           />
