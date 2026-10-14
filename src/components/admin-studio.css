@@ -425,9 +425,23 @@
   .admin-app .catalog-command-insight-foot {
     margin: 0; padding: 0; border: 0;
   }
-  .admin-app .overview-stats { gap: 9px; margin-bottom: 12px; }
+  .admin-app .overview-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px; margin-bottom: 12px; min-width: 0;
+  }
   .admin-app .overview-stats .overview-stat {
-    padding: 12px 13px; min-height: 120px; border-radius: 11px;
+    min-width: 0; padding: 12px 13px; min-height: 120px; border-radius: 11px;
+  }
+  .admin-app .overview-stat > div:first-child {
+    display: flex; min-width: 0; gap: 5px; align-items: flex-start;
+  }
+  .admin-app .overview-stat > div:first-child > span:first-child {
+    min-width: 0; flex: 1; font-size: 10px; white-space: normal;
+    overflow-wrap: break-word; line-height: 1.4;
+  }
+  .admin-app .overview-stat .overview-stat-icon {
+    flex: 0 0 26px; width: 26px; height: 26px; border-radius: 8px;
   }
   .admin-app .overview-stat > strong { font-size: 28px; }
   .admin-app .overview-stat > p { font-size: 10px; }
