@@ -547,20 +547,39 @@ export default function App() {
                 <div className="catalog-command-insight-foot"><span className="catalog-command-insight-dot" /> {publishedCount} published</div>
               </div>
             </section>
+          ) : tab === "products" ? (
+            <section className="catalog-product-hero" aria-labelledby="catalog-products-title">
+              <div className="catalog-product-hero-main">
+                <span className="catalog-product-hero-eyebrow"><span className="catalog-hero-pulse" aria-hidden="true" /> PRODUCT MANAGEMENT <span aria-hidden="true">/</span> BRUTTI WORKSPACE</span>
+                <h1 id="catalog-products-title">Products</h1>
+                <p>Organise, review and manage your collection from one workspace.</p>
+                <div className="catalog-product-hero-meta">
+                  <span><Package size={14} aria-hidden="true" /> {data.products.length} products</span>
+                  <span><Images size={14} aria-hidden="true" /> {withPhotos} with photos</span>
+                  <span><Layers size={14} aria-hidden="true" /> {data.categories.length} categories</span>
+                </div>
+              </div>
+              <div className="catalog-product-hero-side">
+                <div className="catalog-product-hero-status">
+                  <span>REVIEW QUEUE</span>
+                  <div><strong>{draftCount}</strong><span>Draft products</span></div>
+                </div>
+                <button className="catalog-products-add-button" type="button" disabled={loading || busy}
+                  onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
+                  <Plus size={17} aria-hidden="true" /> Add product
+                </button>
+              </div>
+            </section>
           ) : (
             <div className="page-heading catalog-management-heading">
               <div>
                 <span className="eyebrow">BRUTTI CATALOG WORKSPACE</span>
-                <h1>{tab === "products" ? "Products" : "Categories"}</h1>
-                <p>{tab === "products"
-                  ? "Browse, organise and prepare every item in your collection."
-                  : "Manage how customers discover your collections."}</p>
+                <h1>Categories</h1>
+                <p>Manage how customers discover your collections.</p>
               </div>
               <button className="button primary" disabled={loading || busy}
-                onClick={() => tab === "categories"
-                  ? editCategory({ id: crypto.randomUUID(), name: "", description: "" })
-                  : setEditor(newProduct(data.categories[0]?.id))}>
-                <Plus size={17} /> {tab === "categories" ? "Add category" : "Add product"}
+                onClick={() => editCategory({ id: crypto.randomUUID(), name: "", description: "" })}>
+                <Plus size={17} /> Add category
               </button>
             </div>
           )}
@@ -640,7 +659,7 @@ export default function App() {
             </>
           )}
           {tab !== "categories" ? (
-            <section className={`table-panel ${tab === "overview" ? "overview-collection" : ""}`}>
+            <section className={`table-panel ${tab === "overview" ? "overview-collection" : "catalog-products-panel"}`}>
               <div className="panel-heading">
                 <div>
                   <h2>
@@ -720,16 +739,14 @@ export default function App() {
                   <label className="sr-only" htmlFor="status-filter">
                     Filter by status
                   </label>
-                  <select
-                    id="status-filter"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                  >
-                    <option value="all">All statuses</option>
-                    <option value="published">Published</option>
-                    <option value="draft">Draft</option>
-                    <option value="archived">Archived</option>
-                  </select>
+                  {tab === "overview" && (
+                    <select id="status-filter" value={status} onChange={(e) => setStatus(e.target.value)}>
+                      <option value="all">All statuses</option>
+                      <option value="published">Published</option>
+                      <option value="draft">Draft</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  )}
                   <label className="sr-only" htmlFor="category-filter">
                     Filter by category
                   </label>
@@ -760,6 +777,17 @@ export default function App() {
                   </label>
                 </div>
               </div>
+              {tab === "products" && (
+                <div className="catalog-products-filter-summary" role="status">
+                  <span><strong>{filtered.length}</strong> matching {filtered.length === 1 ? "product" : "products"}</span>
+                  {(search || status !== "all" || category !== "all") && (
+                    <button type="button" onClick={() => { setSearch(""); setStatus("all"); setCategory("all"); }}>
+                      <X size={13} aria-hidden="true" /> Clear filters
+                    </button>
+                  )}
+                  <span className="catalog-products-summary-hint">Select a product to view and edit its details</span>
+                </div>
+              )}
               {tab === "products" && productView === "gallery" ? (
                 <div className="catalog-gallery">
                   {loading ? Array.from({ length: 6 }, (_, index) => <div className="skeleton" key={index} />)
@@ -835,9 +863,11 @@ export default function App() {
                                 </button>
                               </td>
                               <td>
-                                {data.categories.find(
-                                  (c) => c.id === p.categoryId,
-                                )?.name || "Uncategorised"}
+                                <span className="catalog-table-category">
+                                  {data.categories.find(
+                                    (c) => c.id === p.categoryId,
+                                  )?.name || "Uncategorised"}
+                                </span>
                               </td>
                               <td>
                                 <span
@@ -983,7 +1013,7 @@ export default function App() {
                   of {data.products.length} products
                 </span>
                 <span>
-                  <Leaf size={12} /> A considered collection
+                  <Leaf size={12} /> Brutti Catalog Workspace
                 </span>
               </footer>
             </section>
