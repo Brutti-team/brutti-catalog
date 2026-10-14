@@ -219,7 +219,7 @@ test('premium Products Workbench shows live metadata and clean status controls',
   await panel.getByRole('group', { name: 'Quick product status filters' })
     .getByRole('button', { name: /Draft/ }).click();
   await expect(panel.getByRole('status')).toContainText('0 matching products');
-  await panel.getByRole('button', { name: 'Clear filters' }).click();
+  await panel.getByRole('status').getByRole('button', { name: 'Clear filters' }).click();
   await expect(panel.getByRole('status')).toContainText('1 matching product');
 });
 
