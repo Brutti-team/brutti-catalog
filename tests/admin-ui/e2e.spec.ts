@@ -147,12 +147,25 @@ async function expectReadable(page: Page, selectors: string[], darkSurface = fal
 test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
-  await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Your collection/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
+  await expect(page.locator('.catalog-command')).toBeVisible();
+  await expect(page.locator('.catalog-category-bar')).toHaveCount(5);
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toBeVisible();
   await expect(page.getByRole('progressbar', { name: 'Published products' })).toBeVisible();
   await page.getByRole('button', { name: 'View products', exact: true }).last().click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+});
+
+test('studio overview category bars navigate to product filters without changing data', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  const chart = page.locator('.catalog-insights-card');
+  await expect(chart).toBeVisible();
+  await chart.getByRole('button', { name: /View .* products/ }).first().click();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.locator('.product-cell').first()).toBeVisible();
 });
 
 test('catalog products toggle between persistent Table and Gallery views', async ({ page }) => {
