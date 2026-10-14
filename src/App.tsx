@@ -12,6 +12,10 @@ import {
   Plus,
   Search,
   SlidersHorizontal,
+  Grid2X2,
+  List,
+  Camera,
+  CircleCheck,
   MoreHorizontal,
   Pencil,
   Copy,
@@ -111,6 +115,15 @@ export default function App() {
   const [status, setStatus] = useState("all");
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("recent");
+  const [productView, setProductView] = useState<"table" | "gallery">(() => {
+    try { return window.localStorage.getItem("brutti-catalog-product-view") === "gallery" ? "gallery" : "table"; }
+    catch { return "table"; }
+  });
+  const changeProductView = (next: "table" | "gallery") => {
+    setProductView(next);
+    try { window.localStorage.setItem("brutti-catalog-product-view", next); }
+    catch { /* Keep the selected view in this session. */ }
+  };
   const [editor, setEditor] = useState<Product | null>(null);
   const [photoImportOpen, setPhotoImportOpen] = useState(false);
   const [catEditor, setCatEditor] = useState<Category | null>(null);
@@ -316,29 +329,35 @@ export default function App() {
       />
       </div>
     );
+  const publishedCount = data.products.filter((p) => p.status === "published").length;
+  const draftCount = data.products.filter((p) => p.status === "draft").length;
+  const archivedCount = data.products.filter((p) => p.status === "archived").length;
+  const withPhotos = data.products.filter((p) => p.images.length > 0).length;
+  const photoCoverage = data.products.length ? Math.round(withPhotos / data.products.length * 100) : 0;
+  const liveCoverage = data.products.length ? Math.round(publishedCount / data.products.length * 100) : 0;
   const stats = [
     {
       title: "Total products",
       value: data.products.length,
-      detail: "Thoughtfully made, beautifully presented",
+      detail: "Products in this workspace",
       icon: Package,
     },
     {
       title: "Published",
       value: data.products.filter((p) => p.status === "published").length,
-      detail: "Live in your public collection",
+      detail: "Visible in your public catalog",
       icon: CheckCircle2,
     },
     {
       title: "Drafts",
       value: data.products.filter((p) => p.status === "draft").length,
-      detail: "A little more care before sharing",
+      detail: "Waiting for final review",
       icon: Pencil,
     },
     {
       title: "Categories",
       value: data.categories.length,
-      detail: "A place for every piece",
+      detail: "Collection groups",
       icon: Layers,
     },
   ];
@@ -504,20 +523,20 @@ export default function App() {
           ) : (<>
           <div className={`page-heading ${tab === "overview" ? "overview-heading" : ""}`}>
             <div>
-              <span className="eyebrow">YOUR CATALOG, CONSIDERED</span>
+              <span className="eyebrow">BRUTTI CATALOG WORKSPACE</span>
               <h1>
                 {tab === "overview"
-                  ? "A home for every piece."
+                  ? "Catalog overview"
                   : tab === "products"
-                    ? "Your collection."
-                    : "Made to belong."}
+                    ? "Products"
+                    : "Categories"}
               </h1>
               <p>
                 {tab === "overview"
-                  ? "A little overview of what’s crafted, curated, and ready to share."
+                  ? "A clear view of your collection, publishing progress and next steps."
                   : tab === "products"
-                    ? "Manage the pieces that tell your story."
-                    : "Organise your collection into thoughtful categories."}
+                    ? "Search, organise and prepare products for your public catalog."
+                    : "Manage how customers browse your collection."}
               </p>
             </div>
             <button
@@ -560,32 +579,34 @@ export default function App() {
                   </article>
                 ))}
               </div>
-              <div className="collection-banner overview-feature">
-                <div>
-                  <span className="eyebrow">
-                    CRAFTED HERE. SHARED EVERYWHERE.
-                  </span>
-                  <h2>
-                    Good design deserves
-                    <br />
-                    to be discovered.
-                  </h2>
-                  <p>
-                    Your collection, beautifully presented.
-                    <br />
-                    See what your customers will see.
-                  </p>
-                  <button onClick={() => navigate("/catalog")}>
-                    Explore your catalog <ArrowRight size={17} />
+              <div className="catalog-operations" aria-label="Catalog readiness">
+                <section className="catalog-health-card">
+                  <div className="catalog-card-title">
+                    <span className="catalog-card-icon"><CircleCheck size={20} aria-hidden="true" /></span>
+                    <div><span className="eyebrow">WORKSPACE HEALTH</span><h2>Catalog readiness</h2></div>
+                  </div>
+                  <p className="catalog-card-intro">Track what is ready and what still needs attention before customers see it.</p>
+                  <div className="catalog-progress-row">
+                    <div><span>Products with photos</span><strong>{withPhotos} / {data.products.length}</strong></div>
+                    <progress max={100} value={photoCoverage} aria-label="Products with photos" />
+                    <small>{photoCoverage}% have at least one image</small>
+                  </div>
+                  <div className="catalog-progress-row">
+                    <div><span>Published products</span><strong>{publishedCount} / {data.products.length}</strong></div>
+                    <progress max={100} value={liveCoverage} aria-label="Published products" />
+                    <small>{liveCoverage}% visible to customers</small>
+                  </div>
+                </section>
+                <section className="catalog-next-card">
+                  <span className="catalog-next-kicker"><Pencil size={15} aria-hidden="true" /> NEXT STEP</span>
+                  <div><strong>{draftCount}</strong><span>Draft products awaiting review</span></div>
+                  <p>{draftCount > 0 ? "Check descriptions, dimensions and pricing before publishing." : "Your draft queue is clear. Keep your collection current."}</p>
+                  <button type="button" className="button secondary catalog-next-action"
+                    onClick={() => { switchTab("products"); setStatus(draftCount > 0 ? "draft" : "all"); }}>
+                    {draftCount > 0 ? "Review drafts" : "View products"} <ArrowRight size={17} aria-hidden="true" />
                   </button>
-                </div>
-                <SafeImage
-                  src="/images/hero.jpg"
-                  alt="Warm, considered furniture in a natural interior"
-                />
-                <div className="banner-caption">
-                  THE BRUTTI COLLECTION <span>EST. IN SABAH</span>
-                </div>
+                  <div className="catalog-next-foot"><Camera size={14} aria-hidden="true" /> {data.products.length - withPhotos} products without photos</div>
+                </section>
               </div>
             </>
           )}
@@ -620,6 +641,34 @@ export default function App() {
                   </button>
                 )}
               </div>
+              {tab === "products" && (
+                <div className="catalog-product-controls">
+                  <div className="catalog-status-tabs" role="group" aria-label="Quick product status filters">
+                    {[
+                      { id: "all", title: "All", total: data.products.length },
+                      { id: "draft", title: "Draft", total: draftCount },
+                      { id: "published", title: "Published", total: publishedCount },
+                      { id: "archived", title: "Archived", total: archivedCount },
+                    ].map(item => (
+                      <button type="button" key={item.id}
+                        className={`catalog-status-tab ${status === item.id ? "selected" : ""}`}
+                        aria-pressed={status === item.id} onClick={() => setStatus(item.id)}>
+                        {item.title} <span>{item.total}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="catalog-view-switch" role="group" aria-label="Product display mode">
+                    <button type="button" aria-label="Table view" aria-pressed={productView === "table"}
+                      className={productView === "table" ? "selected" : ""} onClick={() => changeProductView("table")}>
+                      <List size={17} aria-hidden="true" /><span>Table</span>
+                    </button>
+                    <button type="button" aria-label="Gallery view" aria-pressed={productView === "gallery"}
+                      className={productView === "gallery" ? "selected" : ""} onClick={() => changeProductView("gallery")}>
+                      <Grid2X2 size={17} aria-hidden="true" /><span>Gallery</span>
+                    </button>
+                  </div>
+                </div>
+              )}
               <div className="table-toolbar">
                 <div className="search-input">
                   <Search size={17} />
@@ -682,6 +731,26 @@ export default function App() {
                   </label>
                 </div>
               </div>
+              {tab === "products" && productView === "gallery" ? (
+                <div className="catalog-gallery">
+                  {loading ? Array.from({ length: 6 }, (_, index) => <div className="skeleton" key={index} />)
+                    : filtered.map(p => (
+                      <button className="catalog-gallery-card" type="button" key={p.id}
+                        onClick={() => setEditor(p)} aria-label={`Edit ${p.name}`}>
+                        <div className="catalog-gallery-photo">
+                          <SafeImage src={p.images[0]?.url || "/images/placeholder.svg"} alt="" />
+                          <span className={`status-badge status-${p.status}`}><i />{label(p.status)}</span>
+                        </div>
+                        <div className="catalog-gallery-body">
+                          <span className="catalog-gallery-category">{data.categories.find(c => c.id === p.categoryId)?.name || "Uncategorised"}</span>
+                          <strong>{p.name}</strong>
+                          <span className="catalog-gallery-sku">{p.sku}</span>
+                          <div className="catalog-gallery-bottom"><span>{formatProductPrice(p)}</span><span><Pencil size={15} aria-hidden="true" /> Edit</span></div>
+                        </div>
+                      </button>
+                    ))}
+                </div>
+              ) : (
               <div className="table-scroll">
                 <table>
                   <thead>
@@ -722,6 +791,7 @@ export default function App() {
                                     <strong>{p.name}</strong>
                                     <small>
                                       {p.sku}
+                                      <span className="catalog-product-updated"> · Updated {new Intl.DateTimeFormat("en-MY", { month: "short", day: "numeric", timeZone: "Asia/Kuala_Lumpur" }).format(new Date(p.updatedAt))}</span>
                                       {p.featured && (
                                         <span
                                           className="featured-dot"
@@ -844,6 +914,7 @@ export default function App() {
                   </tbody>
                 </table>
               </div>
+              )}
               {!loading && !filtered.length && (
                 <div className="empty-state">
                   <Package size={30} />
@@ -920,6 +991,10 @@ export default function App() {
                             "A thoughtful category for your collection."}
                         </p>
                         <div className="category-card-actions">
+                          <button type="button" className="text-button"
+                            onClick={() => { switchTab("products"); setCategory(c.id); }}>
+                            View products <ArrowRight size={14} aria-hidden="true" />
+                          </button>
                           <button
                             className="text-button"
                             onClick={() => editCategory(c)}
