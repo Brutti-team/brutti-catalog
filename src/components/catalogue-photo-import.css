@@ -45,3 +45,8 @@
     width:100%;margin-left:0;font-size:12px;min-height:43px;
   }
 }
+
+.bulk-upload-incomplete{background:var(--admin-surface-soft,#faf7ef);border-color:var(--admin-border,#e6dfd0);color:#9a6519}
+.bulk-upload-incomplete > svg{color:#a16c1b;flex:none}
+.bulk-upload-incomplete strong{color:var(--admin-text,#243b2c)}
+.bulk-upload-incomplete p{line-height:1.65}
