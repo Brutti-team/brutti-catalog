@@ -88,7 +88,7 @@ export default function LastChange({
           </time>
         </div>
       ) : (
-        <p className="last-change-placeholder" role="status">
+        <p className="last-change-placeholder">
           {visibleStatus === "loading" ? "Checking latest changes…"
             : visibleStatus === "empty" ? "No changes recorded yet."
               : visibleStatus === "error" ? "Activity history is temporarily unavailable."
