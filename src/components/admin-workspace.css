@@ -1329,3 +1329,70 @@
     padding: 11px;
   }
 }
+
+/* Brutti SaaS navigation proportions: ordinary desktop sidebar, not a broad panel.
+   Preserve the existing palette, responsiveness and signed-in header controls. */
+.admin-app {
+  --catalog-nav-width: 226px;
+}
+@media (min-width: 801px) {
+  .admin-app .sidebar {
+    width: var(--catalog-nav-width);
+    padding-left: 16px;
+    padding-right: 16px;
+    border-right: 1px solid var(--admin-border);
+  }
+  .admin-app .admin-main {
+    margin-left: var(--catalog-nav-width);
+  }
+  .admin-app .sidebar > .brand {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .admin-app .sidebar > .brand .brutti-official-logo {
+    width: 108px;
+    max-width: 100%;
+  }
+  .admin-app .topbar {
+    min-height: 72px;
+    padding: 10px 30px;
+  }
+  .admin-app .admin-content {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+@media (min-width: 1120px) {
+  .admin-app .topbar {
+    flex-wrap: nowrap;
+  }
+  .admin-app .topbar-actions {
+    flex-wrap: nowrap;
+    gap: 9px;
+  }
+}
+.admin-app .sidebar nav .nav-item {
+  border: 1px solid transparent;
+  font-size: 13.5px;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+}
+.admin-app .sidebar nav .nav-item.active {
+  border-color: var(--admin-border);
+  box-shadow: inset 3px 0 0 var(--admin-accent);
+  font-weight: 700;
+}
+.admin-app .sidebar nav .nav-item:focus-visible,
+.admin-app .last-change-link:focus-visible {
+  outline-offset: 2px;
+}
+.admin-app .sidebar-last-change {
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.admin-app .sidebar-last-change:hover {
+  border-color: var(--admin-focus);
+  box-shadow: var(--admin-shadow-raised);
+}
+.admin-app .header-profile {
+  min-height: 42px;
+}
