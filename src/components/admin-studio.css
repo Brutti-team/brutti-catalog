@@ -122,6 +122,16 @@
 .admin-app .sidebar-last-change .last-change-link {
   color: #d9f4db; font-weight: 750; font-size: 11px;
 }
+/* Active navigation remains a dark, legible surface in dark mode. */
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active {
+  background: #315742; color: #f3fcf4; border-color: #577962;
+}
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
+  background: #436a53; color: #f3fcf4;
+}
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-count {
+  background: #436a53; color: #effbf1; border-color: #64836c;
+}
 /* Productive content shell */
 .admin-app .topbar { min-height: 70px; background: var(--admin-surface); box-shadow: none; }
 .admin-app .admin-content { padding-top: 24px; }
