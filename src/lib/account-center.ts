@@ -101,6 +101,20 @@ export async function updateStaffRole(userId: string, role: StaffRole | null): P
   });
   if (error) throw new Error(error.message);
 }
+/** Latest persisted server audit record, not a guessed products.updated_at timestamp. */
+export async function getLatestCatalogActivity(): Promise<ActivityEntry | null> {
+  const account = await getAccountSummary();
+  if (!account.managementReady || !account.role)
+    throw new Error("Activity tracking has not been enabled.");
+  const { data, error } = await catalogClient()
+    .from("catalog_activity")
+    .select("id,actor_id,actor_email,action,resource_type,resource_name,created_at")
+    .order("created_at", { ascending: false })
+    .limit(1);
+  if (error) throw new Error(error.message);
+  return (data?.[0] as ActivityEntry | undefined) ?? null;
+}
+
 export async function listCatalogActivity(): Promise<ActivityEntry[]> {
   const account = await getAccountSummary();
   if (!account.managementReady || !account.role)
