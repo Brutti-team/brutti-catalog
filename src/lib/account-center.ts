@@ -1,5 +1,5 @@
 import type { User } from "@supabase/supabase-js";
-import { catalogClient } from "./catalog";
+import { catalogClient, getAuthState } from "./catalog";
 
 export type StaffRole = "super_admin" | "admin" | "editor";
 export type AccountSummary = {
@@ -103,9 +103,9 @@ export async function updateStaffRole(userId: string, role: StaffRole | null): P
 }
 /** Latest persisted server audit record, not a guessed products.updated_at timestamp. */
 export async function getLatestCatalogActivity(): Promise<ActivityEntry | null> {
-  const account = await getAccountSummary();
-  if (!account.managementReady || !account.role)
-    throw new Error("Activity tracking has not been enabled.");
+  const access = await getAuthState();
+  if (!access.authenticated || !access.isAdmin)
+    throw new Error("An approved catalog administrator is required to view activity.");
   const { data, error } = await catalogClient()
     .from("catalog_activity")
     .select("id,actor_id,actor_email,action,resource_type,resource_name,created_at")
@@ -116,9 +116,9 @@ export async function getLatestCatalogActivity(): Promise<ActivityEntry | null> 
 }
 
 export async function listCatalogActivity(): Promise<ActivityEntry[]> {
-  const account = await getAccountSummary();
-  if (!account.managementReady || !account.role)
-    throw new Error("Staff access is required.");
+  const access = await getAuthState();
+  if (!access.authenticated || !access.isAdmin)
+    throw new Error("An approved catalog administrator is required to view activity.");
   const { data, error } = await catalogClient()
     .from("catalog_activity")
     .select("id,actor_id,actor_email,action,resource_type,resource_name,created_at")
