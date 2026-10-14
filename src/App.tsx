@@ -361,6 +361,10 @@ export default function App() {
       icon: Layers,
     },
   ];
+  const categoryInsights = data.categories.map(item => ({
+    ...item, count: data.products.filter(product => product.categoryId === item.id).length,
+  })).sort((a, b) => b.count - a.count);
+  const maxCategoryCount = Math.max(1, ...categoryInsights.map(item => item.count));
   const filtered = data.products
     .filter((p) => {
       const needle = search.toLowerCase();
@@ -521,41 +525,47 @@ export default function App() {
           {tab === "profile" || tab === "users" || tab === "activity" ? (
             <AccountCenter view={tab} onProfileChanged={setAccountName} />
           ) : (<>
-          <div className={`page-heading ${tab === "overview" ? "overview-heading" : ""}`}>
-            <div>
-              <span className="eyebrow">BRUTTI CATALOG WORKSPACE</span>
-              <h1>
-                {tab === "overview"
-                  ? "Catalog overview"
-                  : tab === "products"
-                    ? "Products"
-                    : "Categories"}
-              </h1>
-              <p>
-                {tab === "overview"
-                  ? "A clear view of your collection, publishing progress and next steps."
-                  : tab === "products"
-                    ? "Search, organise and prepare products for your public catalog."
-                    : "Manage how customers browse your collection."}
-              </p>
+          {tab === "overview" ? (
+            <section className="catalog-command" aria-labelledby="catalog-overview-title">
+              <div className="catalog-command-content">
+                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BRUTTI CATALOG <span aria-hidden="true">/</span> ADMIN WORKSPACE</div>
+                <h1 id="catalog-overview-title">Your collection.<br /><span>Under control.</span></h1>
+                <p>Organise your work, review products and manage what your customers see.</p>
+                <div className="catalog-command-actions">
+                  <button type="button" className="catalog-hero-primary" disabled={loading || busy}
+                    onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
+                    <Plus size={17} aria-hidden="true" /> Add product
+                  </button>
+                  <button type="button" className="catalog-hero-secondary"
+                    onClick={() => { switchTab("products"); setStatus(draftCount > 0 ? "draft" : "all"); }}>
+                    {draftCount > 0 ? "Review drafts" : "View products"} <ArrowUpRight size={16} aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+              <div className="catalog-command-insight" aria-label="Drafts awaiting review">
+                <span>WORK QUEUE</span>
+                <strong>{loading ? "—" : draftCount.toLocaleString("en-MY")}</strong>
+                <small>products awaiting review</small>
+                <div className="catalog-command-insight-foot"><span className="catalog-command-insight-dot" /> {publishedCount} published</div>
+              </div>
+            </section>
+          ) : (
+            <div className="page-heading catalog-management-heading">
+              <div>
+                <span className="eyebrow">BRUTTI CATALOG WORKSPACE</span>
+                <h1>{tab === "products" ? "Products" : "Categories"}</h1>
+                <p>{tab === "products"
+                  ? "Browse, organise and prepare every item in your collection."
+                  : "Manage how customers discover your collections."}</p>
+              </div>
+              <button className="button primary" disabled={loading || busy}
+                onClick={() => tab === "categories"
+                  ? editCategory({ id: crypto.randomUUID(), name: "", description: "" })
+                  : setEditor(newProduct(data.categories[0]?.id))}>
+                <Plus size={17} /> {tab === "categories" ? "Add category" : "Add product"}
+              </button>
             </div>
-            <button
-              className="button primary"
-              disabled={loading || busy}
-              onClick={() =>
-                tab === "categories"
-                  ? editCategory({
-                      id: crypto.randomUUID(),
-                      name: "",
-                      description: "",
-                    })
-                  : setEditor(newProduct(data.categories[0]?.id))
-              }
-            >
-              <Plus size={17} />
-              {tab === "categories" ? "Add category" : "Add product"}
-            </button>
-          </div>
+          )}
           {(error || actionError) && !catEditor && (
             <div className="notice error" role="alert">
               <AlertCircle size={18} />
@@ -581,31 +591,52 @@ export default function App() {
               </div>
               <div className="catalog-operations" aria-label="Catalog readiness">
                 <section className="catalog-health-card">
-                  <div className="catalog-card-title">
-                    <span className="catalog-card-icon"><CircleCheck size={20} aria-hidden="true" /></span>
-                    <div><span className="eyebrow">WORKSPACE HEALTH</span><h2>Catalog readiness</h2></div>
+                  <header className="catalog-studio-panel-head">
+                    <div>
+                      <span className="catalog-studio-kicker">PUBLISHING PIPELINE</span>
+                      <h2>Catalog readiness</h2>
+                      <p>Know exactly what is ready before it goes public.</p>
+                    </div>
+                    <span className="catalog-readiness-chip"><CheckCircle2 size={14} aria-hidden="true" /> {withPhotos} photos ready</span>
+                  </header>
+                  <div className="catalog-status-summary" aria-label="Product publishing status">
+                    <div><span className="catalog-summary-dot is-draft" /><strong>{draftCount}</strong><small>Draft</small></div>
+                    <div><span className="catalog-summary-dot is-published" /><strong>{publishedCount}</strong><small>Published</small></div>
+                    <div><span className="catalog-summary-dot is-archived" /><strong>{archivedCount}</strong><small>Archived</small></div>
                   </div>
-                  <p className="catalog-card-intro">Track what is ready and what still needs attention before customers see it.</p>
                   <div className="catalog-progress-row">
-                    <div><span>Products with photos</span><strong>{withPhotos} / {data.products.length}</strong></div>
+                    <div><span>Product photos</span><strong>{withPhotos} / {data.products.length}</strong></div>
                     <progress max={100} value={photoCoverage} aria-label="Products with photos" />
-                    <small>{photoCoverage}% have at least one image</small>
+                    <small>{photoCoverage}% of products have an image</small>
                   </div>
                   <div className="catalog-progress-row">
                     <div><span>Published products</span><strong>{publishedCount} / {data.products.length}</strong></div>
                     <progress max={100} value={liveCoverage} aria-label="Published products" />
-                    <small>{liveCoverage}% visible to customers</small>
+                    <small>{liveCoverage}% of the catalog is public</small>
                   </div>
                 </section>
-                <section className="catalog-next-card">
-                  <span className="catalog-next-kicker"><Pencil size={15} aria-hidden="true" /> NEXT STEP</span>
-                  <div><strong>{draftCount}</strong><span>Draft products awaiting review</span></div>
-                  <p>{draftCount > 0 ? "Check descriptions, dimensions and pricing before publishing." : "Your draft queue is clear. Keep your collection current."}</p>
-                  <button type="button" className="button secondary catalog-next-action"
-                    onClick={() => { switchTab("products"); setStatus(draftCount > 0 ? "draft" : "all"); }}>
-                    {draftCount > 0 ? "Review drafts" : "View products"} <ArrowRight size={17} aria-hidden="true" />
-                  </button>
-                  <div className="catalog-next-foot"><Camera size={14} aria-hidden="true" /> {data.products.length - withPhotos} products without photos</div>
+                <section className="catalog-insights-card">
+                  <header className="catalog-studio-panel-head">
+                    <div>
+                      <span className="catalog-studio-kicker">COLLECTION BREAKDOWN</span>
+                      <h2>Top categories</h2>
+                      <p>Products grouped by category.</p>
+                    </div>
+                    <button type="button" className="catalog-chart-action" onClick={() => switchTab("categories")}
+                      aria-label="Manage categories"><ArrowUpRight size={18} aria-hidden="true" /></button>
+                  </header>
+                  <div className="catalog-category-bars">
+                    {categoryInsights.slice(0, 5).map((item, index) => (
+                      <button type="button" className="catalog-category-bar" key={item.id}
+                        onClick={() => { switchTab("products"); setCategory(item.id); }}
+                        aria-label={`View ${item.name} products`}>
+                        <span className="catalog-category-name">{item.name}</span>
+                        <span className="catalog-category-track"><span style={{ width: `${(item.count / maxCategoryCount) * 100}%` }} className={index === 0 ? "leading" : ""} /></span>
+                        <strong>{item.count}</strong>
+                      </button>
+                    ))}
+                    {!categoryInsights.length && <span className="catalog-empty-hint">No categories yet.</span>}
+                  </div>
                 </section>
               </div>
             </>
@@ -620,8 +651,8 @@ export default function App() {
                   </h2>
                   <p>
                     {tab === "overview"
-                      ? "Your latest pieces, all in one place."
-                      : "From first idea to final finish."}
+                      ? "Recently updated products in your workspace."
+                      : "All your products in one place."}
                   </p>
                 </div>
                 {tab === "overview" && (
