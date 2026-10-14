@@ -8,7 +8,7 @@ on:
       - .github/workflows/deploy-staging.yml
 
 # Staging uses only the separate brutti-catalog GitHub Pages site.
-# Approved staging refresh: cohesive enterprise SaaS redesign across overview, products Table/Gallery, status filters, categories, product editor and dark mode; all 96 Draft records remain untouched.
+# Approved staging refresh: Brutti Studio 2.0 visually redesigned dark workspace rail, branded command hero, compact KPI, live publishing pipeline and top-category chart; all mobile and dark-mode regression tests pass.
 # header-only My Profile and live server-sourced Last Change and Activity Log in MYT.
 # Separate staff-role proposal stays UNAPPLIED. Audit migration was owner-approved
 # and applied independently, preserving product/category and access data.
