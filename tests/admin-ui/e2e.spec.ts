@@ -427,7 +427,18 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
       if (theme === 'dark') await page.getByRole('button', { name: 'Switch to dark mode', exact: true }).click();
       await expectTheme(page, theme);
       await page.evaluate(() => document.fonts.ready);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${theme} document overflow`).toBe(true);
+      const overflowAudit = await page.evaluate(() => {
+        const limit = innerWidth;
+        const violating = Array.from(document.querySelectorAll<HTMLElement>('body *'))
+          .map(element => {
+            const box = element.getBoundingClientRect();
+            return { element: element.tagName.toLowerCase(), className: typeof element.className === 'string' ? element.className.slice(0, 110) : '', left: Math.round(box.left), right: Math.round(box.right), width: Math.round(box.width) };
+          })
+          .filter(box => box.right > limit + 2 && box.width > 0 && box.left < limit)
+          .slice(0, 15);
+        return { document: document.documentElement.scrollWidth, viewport: limit, violating };
+      });
+      expect(overflowAudit.document, `${theme} document overflow: ${JSON.stringify(overflowAudit)}`).toBeLessThanOrEqual(overflowAudit.viewport);
       const collisions = await page.locator('.topbar').evaluate(header => {
         const selectors = ['.breadcrumbs', '.connection-pill', '.catalog-link', '.header-profile', '[aria-label="Switch to dark mode"]', '[aria-label="Switch to light mode"]', '[aria-label="Sign out"]'];
         const boxes = selectors.flatMap(selector => {
