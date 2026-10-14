@@ -1,0 +1,461 @@
+/* Brutti Catalog | Enterprise workspace layer
+   Purpose: consistent functional SaaS UI across dashboard, product management,
+   editor, categories and team pages. Public catalog is never restyled. */
+.admin-app {
+  --enterprise-radius: 15px;
+  --enterprise-radius-sm: 10px;
+  --enterprise-line: var(--admin-border);
+  --enterprise-shadow: 0 2px 6px rgb(24 48 32 / 3%), 0 12px 28px rgb(24 48 32 / 3%);
+  --enterprise-surface-raised: var(--admin-surface);
+  --enterprise-track: var(--admin-surface-soft);
+  --enterprise-progress: #356b4d;
+  background: var(--admin-bg);
+}
+.admin-app[data-theme="dark"] {
+  --enterprise-shadow: 0 8px 28px rgb(5 15 8 / 16%);
+  --enterprise-progress: #a7c9a6;
+}
+/* Application shell & navigation */
+.admin-app .topbar {
+  min-height: 72px;
+  border-bottom: 1px solid var(--enterprise-line);
+  box-shadow: 0 1px 0 rgb(32 62 37 / 2%);
+}
+.admin-app .breadcrumbs { font-size: 12.5px; gap: 11px; }
+.admin-app .breadcrumbs strong { color: var(--admin-text); font-weight: 750; }
+.admin-app .topbar-actions { gap: 10px; }
+.admin-app .header-profile { border-radius: 12px; }
+.admin-app .header-profile:hover { background: var(--admin-surface-soft); }
+.admin-app .sidebar { border-right-color: var(--enterprise-line); }
+.admin-app .sidebar nav .nav-item {
+  min-height: 44px; font-size: 13px; border-radius: 10px;
+  font-weight: 590; margin-top: 3px; margin-bottom: 3px;
+}
+.admin-app .sidebar nav .nav-item.active { box-shadow: none; border-color: var(--admin-border); }
+.admin-app .sidebar-last-change { border-radius: 13px; }
+.admin-app .admin-content {
+  max-width: 1720px;
+  padding-top: 27px;
+  padding-bottom: 40px;
+}
+.admin-app .page-heading, .admin-app .overview-heading {
+  margin: 18px 0 25px;
+  align-items: center;
+}
+.admin-app .page-heading .eyebrow {
+  font-size: 10px; font-weight: 780; letter-spacing: 1.1px;
+  margin: 0 0 10px; color: var(--admin-accent);
+}
+.admin-app .page-heading h1, .admin-app .overview-heading h1 {
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: clamp(26px, 2.45vw, 33px);
+  font-weight: 760;
+  line-height: 1.24;
+  letter-spacing: -0.95px;
+}
+.admin-app .page-heading p, .admin-app .overview-heading p {
+  margin-top: 9px; font-size: 13px; line-height: 1.65;
+  color: var(--admin-muted);
+}
+.admin-app .button {
+  min-height: 42px;
+  border-radius: var(--enterprise-radius-sm);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 10px 16px;
+}
+.admin-app .button.primary { box-shadow: 0 4px 11px rgb(18 55 30 / 12%); }
+.admin-app .button.primary:focus-visible, .admin-app .button.secondary:focus-visible {
+  outline: 2px solid var(--admin-focus); outline-offset: 3px;
+}
+/* Metrics: a restrained, readable enterprise KPI deck */
+.admin-app .overview-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px; margin-bottom: 20px;
+}
+.admin-app .overview-stats .overview-stat {
+  min-height: 154px;
+  border-radius: var(--enterprise-radius);
+  padding: 19px 20px 18px;
+  border-color: var(--enterprise-line);
+  box-shadow: var(--enterprise-shadow);
+}
+.admin-app .overview-stats .overview-stat:hover {
+  box-shadow: var(--admin-shadow-raised);
+  transform: translateY(-1px);
+}
+.admin-app .overview-stat > div:first-child > span:first-child {
+  font-size: 12px; color: var(--admin-muted);
+  font-weight: 650;
+}
+.admin-app .overview-stat .overview-stat-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--admin-surface-soft); border: 0;
+}
+.admin-app .overview-stat > strong { font-size: 34px; margin: 15px 0 5px; font-weight: 800; }
+.admin-app .overview-stat > p { font-size: 11.5px; line-height: 1.5; }
+/* Operations, with only verified catalog facts and clear calls to action */
+.admin-app .catalog-operations {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(270px, .9fr);
+  gap: 16px; margin: 0 0 25px; align-items: stretch;
+}
+.admin-app .catalog-health-card, .admin-app .catalog-next-card {
+  min-width: 0; border: 1px solid var(--enterprise-line);
+  border-radius: var(--enterprise-radius);
+  background: var(--enterprise-surface-raised);
+  box-shadow: var(--enterprise-shadow); padding: 24px;
+}
+.admin-app .catalog-card-title {
+  display: flex; align-items: center; gap: 13px;
+}
+.admin-app .catalog-card-icon {
+  width: 41px; height: 41px; display: grid; place-items: center;
+  background: var(--admin-selected); color: var(--admin-accent); border-radius: 12px;
+}
+.admin-app .catalog-card-title .eyebrow {
+  font-size: 9px; letter-spacing: 1.15px; font-weight: 750; margin-bottom: 4px;
+}
+.admin-app .catalog-card-title h2, .admin-app .catalog-next-card h2 {
+  font-size: 16px; font-weight: 760; color: var(--admin-text);
+  line-height: 1.4; letter-spacing: -0.35px;
+}
+.admin-app .catalog-card-intro {
+  font-size: 12px; line-height: 1.65; color: var(--admin-muted);
+  margin: 15px 0 22px; max-width: 640px;
+}
+.admin-app .catalog-progress-row + .catalog-progress-row { margin-top: 20px; }
+.admin-app .catalog-progress-row > div {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 9px;
+}
+.admin-app .catalog-progress-row > div span { font-size: 12px; color: var(--admin-text); font-weight: 650; }
+.admin-app .catalog-progress-row > div strong {
+  font-size: 12px; font-weight: 780; color: var(--admin-text); font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-progress-row progress {
+  width: 100%; height: 8px; border: none; border-radius: 100px;
+  display: block; background: var(--enterprise-track);
+  overflow: hidden; accent-color: var(--enterprise-progress);
+}
+.admin-app .catalog-progress-row progress::-webkit-progress-bar { background: var(--enterprise-track); border-radius: 100px; }
+.admin-app .catalog-progress-row progress::-webkit-progress-value { background: var(--enterprise-progress); border-radius: 100px; }
+.admin-app .catalog-progress-row progress::-moz-progress-bar { background: var(--enterprise-progress); border-radius: 100px; }
+.admin-app .catalog-progress-row small {
+  color: var(--admin-muted); display: block; margin-top: 7px; font-size: 10.5px;
+}
+.admin-app .catalog-next-card {
+  display: flex; flex-direction: column; align-items: flex-start;
+  background: var(--admin-surface-soft);
+}
+.admin-app .catalog-next-kicker {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 10px; font-weight: 770; letter-spacing: 1px; color: var(--admin-accent);
+}
+.admin-app .catalog-next-card > div:nth-child(2) {
+  display: flex; align-items: baseline; gap: 12px; margin-top: 22px;
+}
+.admin-app .catalog-next-card > div:nth-child(2) strong {
+  font-family: "Manrope",sans-serif; font-size: 39px;
+  color: var(--admin-text); font-weight: 800; line-height: 1.2;
+}
+.admin-app .catalog-next-card > div:nth-child(2) span {
+  max-width: 145px; line-height: 1.45; color: var(--admin-muted);
+  font-size: 12px; font-weight: 600;
+}
+.admin-app .catalog-next-card > p {
+  font-size: 12px; line-height: 1.6; color: var(--admin-muted); margin-top: 11px;
+}
+.admin-app .catalog-next-action {
+  margin-top: 17px; background: var(--admin-surface);
+  color: var(--admin-text); border-color: var(--admin-border);
+}
+.admin-app .catalog-next-foot {
+  display: flex; align-items: center; gap: 7px;
+  border-top: 1px solid var(--admin-border);
+  width: 100%; padding-top: 15px; margin-top: auto;
+  color: var(--admin-muted); font-size: 10.5px;
+}
+/* Product manager: control surfaces + proper density */
+.admin-app .table-panel {
+  background: var(--admin-surface); border: 1px solid var(--enterprise-line);
+  border-radius: var(--enterprise-radius); box-shadow: var(--enterprise-shadow);
+  overflow: visible;
+}
+.admin-app .table-panel .panel-heading, .admin-app .overview-collection .panel-heading {
+  padding: 23px 24px 18px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 15px;
+  border-bottom: none;
+}
+.admin-app .table-panel .panel-heading h2 { font-size: 17px; font-weight: 765; letter-spacing: -.5px; }
+.admin-app .table-panel .panel-heading h2 > span {
+  border-radius: 8px; padding: 5px 9px;
+  background: var(--admin-surface-soft); font-size: 11px;
+}
+.admin-app .table-panel .panel-heading p {
+  margin-top: 6px; font-size: 12px; line-height: 1.5;
+}
+.admin-app .catalog-product-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+  padding: 1px 24px 19px;
+}
+.admin-app .catalog-status-tabs, .admin-app .catalog-view-switch {
+  display: inline-flex; align-items: center; gap: 3px;
+  min-width: 0; padding: 4px; border: 1px solid var(--admin-border);
+  border-radius: 11px; background: var(--admin-surface-soft);
+}
+.admin-app .catalog-status-tab, .admin-app .catalog-view-switch button {
+  min-height: 36px; display: inline-flex; align-items: center; justify-content: center;
+  gap: 7px; border-radius: 8px; padding: 7px 11px;
+  font-size: 11.5px; font-weight: 690; color: var(--admin-muted);
+  white-space: nowrap;
+}
+.admin-app .catalog-status-tab:hover, .admin-app .catalog-view-switch button:hover { color: var(--admin-text); }
+.admin-app .catalog-status-tab.selected, .admin-app .catalog-view-switch button.selected {
+  background: var(--admin-surface); color: var(--admin-text);
+  box-shadow: 0 1px 5px rgb(20 49 29 / 8%);
+}
+.admin-app .catalog-status-tab span {
+  font-size: 10px; padding: 2px 5px; min-width: 20px; border-radius: 6px;
+  background: var(--admin-surface-soft); font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-status-tab.selected span { color: var(--admin-accent); }
+.admin-app .catalog-view-switch { margin-left: auto; }
+.admin-app .table-toolbar {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  padding: 0 24px 22px;
+}
+.admin-app .table-toolbar .search-input {
+  min-width: min(100%, 260px); flex: 1 1 300px;
+  min-height: 44px; border-radius: 10px;
+  color: var(--admin-muted); padding: 0 13px;
+}
+.admin-app .table-toolbar .search-input input {
+  font-size: 12px; min-height: 42px;
+}
+.admin-app .table-toolbar .filters { flex-wrap: wrap; gap: 9px; }
+.admin-app .table-toolbar .filters select,
+.admin-app .table-toolbar .sort-field {
+  min-height: 44px; border-radius: 10px;
+  font-size: 11.5px; color: var(--admin-text);
+}
+.admin-app .table-toolbar .sort-field { padding: 0 6px 0 10px; }
+.admin-app .table-scroll { overflow-x: auto; border-radius: 0 0 12px 12px; }
+.admin-app .table-scroll table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.admin-app .table-scroll thead th {
+  background: var(--admin-surface-soft); color: var(--admin-muted);
+  text-transform: uppercase; letter-spacing: .75px;
+  font-size: 10px; font-weight: 765;
+  padding: 14px 16px; border-top: 1px solid var(--admin-border);
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .table-scroll tbody td {
+  background: var(--admin-surface); color: var(--admin-text);
+  padding: 12px 16px; font-size: 12px; white-space: normal;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .table-scroll tbody tr:hover td { background: var(--admin-surface-soft); }
+.admin-app .table-scroll .product-cell {
+  min-width: 220px; width: 100%; gap: 13px; text-align: left;
+}
+.admin-app .table-scroll .product-cell img {
+  width: 57px; height: 57px; border-radius: 10px;
+  object-fit: cover; background: var(--admin-surface-soft);
+  border: 1px solid var(--admin-border);
+}
+.admin-app .table-scroll .product-cell strong {
+  display: block; color: var(--admin-text);
+  font-size: 12px; font-weight: 755; line-height: 1.4;
+  white-space: normal; overflow-wrap: anywhere;
+}
+.admin-app .table-scroll .product-cell small {
+  color: var(--admin-muted); display: block; margin-top: 5px;
+  font-size: 10px; font-variant-numeric: tabular-nums;
+}
+.admin-app .table-scroll .product-cell:hover strong { color: var(--admin-accent); }
+.admin-app .catalog-product-updated { opacity: .75; }
+.admin-app .status-badge {
+  border-radius: 8px; font-size: 11px; font-weight: 685;
+  padding: 6px 9px; white-space: nowrap;
+}
+.admin-app .status-badge i { width: 6px; height: 6px; }
+.admin-app .availability { font-size: 11.5px; color: var(--admin-muted); }
+.admin-app .price-cell { font-size: 12px; font-weight: 720; color: var(--admin-text); }
+.admin-app .row-actions .icon-button {
+  width: 31px; height: 32px; border-radius: 8px;
+}
+.admin-app .row-actions .icon-button:hover { background: var(--admin-selected); color: var(--admin-accent); }
+.admin-app .table-footer {
+  padding: 15px 23px; color: var(--admin-muted);
+  font-size: 11px; background: var(--admin-surface);
+  border-radius: 0 0 14px 14px;
+}
+.admin-app .empty-state {
+  padding: 45px 22px; color: var(--admin-text);
+}
+.admin-app .empty-state h3 { font-size: 17px; font-weight: 760; }
+.admin-app .empty-state p { font-size: 12px; color: var(--admin-muted); }
+/* A practical, photo-first product gallery */
+.admin-app .catalog-gallery {
+  display: grid; grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 16px; padding: 8px 23px 23px;
+}
+.admin-app .catalog-gallery-card {
+  min-width: 0; overflow: hidden; display: flex; flex-direction: column;
+  text-align: left; border: 1px solid var(--admin-border);
+  background: var(--admin-surface); border-radius: 13px;
+  padding: 0; box-shadow: none;
+  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+.admin-app .catalog-gallery-card:hover {
+  transform: translateY(-2px); border-color: var(--admin-focus);
+  box-shadow: var(--admin-shadow-raised);
+}
+.admin-app .catalog-gallery-photo {
+  position: relative; background: var(--admin-surface-soft);
+  overflow: hidden; aspect-ratio: 4/3; width: 100%;
+}
+.admin-app .catalog-gallery-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 160ms ease;
+}
+.admin-app .catalog-gallery-card:hover .catalog-gallery-photo img { transform: scale(1.035); }
+.admin-app .catalog-gallery-photo .status-badge {
+  position: absolute; top: 12px; left: 12px; z-index: 1;
+  border: 1px solid var(--admin-warning-border);
+}
+.admin-app .catalog-gallery-body {
+  display: flex; flex: 1; flex-direction: column; padding: 17px; min-width: 0;
+}
+.admin-app .catalog-gallery-category {
+  font-size: 10px; color: var(--admin-accent); font-weight: 750;
+  margin-bottom: 9px; line-height: 1.5;
+}
+.admin-app .catalog-gallery-body > strong {
+  color: var(--admin-text); font-size: 12.5px; line-height: 1.5;
+  font-weight: 750; min-height: 39px; overflow-wrap: anywhere;
+}
+.admin-app .catalog-gallery-sku { margin-top: 5px; font-size: 10px; color: var(--admin-muted); }
+.admin-app .catalog-gallery-bottom {
+  border-top: 1px solid var(--admin-border); display: flex;
+  flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 9px; margin-top: 16px; padding-top: 12px;
+  color: var(--admin-text); font-size: 11.5px; font-weight: 720;
+}
+.admin-app .catalog-gallery-bottom > span:last-child {
+  color: var(--admin-accent); display: inline-flex; align-items: center; gap: 5px;
+}
+/* Category cards retain source product photography and have usable shortcuts */
+.admin-app .category-grid { gap: 17px; }
+.admin-app .category-card {
+  border-color: var(--admin-border); border-radius: var(--enterprise-radius);
+  background: var(--admin-surface); box-shadow: var(--enterprise-shadow);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.admin-app .category-card:hover { transform: translateY(-1px); box-shadow: var(--admin-shadow-raised); }
+.admin-app .category-cover { height: 176px; background: var(--admin-surface-soft); }
+.admin-app .category-card-body { padding: 20px; }
+.admin-app .category-card-body h2 { font-size: 16px; font-weight: 755; line-height: 1.35; }
+.admin-app .category-card-body > p {
+  color: var(--admin-muted); font-size: 12px; line-height: 1.65;
+  min-height: 40px; margin: 11px 0 18px;
+}
+.admin-app .category-card-actions {
+  justify-content: flex-start; gap: 12px; flex-wrap: wrap;
+  padding-top: 15px;
+}
+.admin-app .category-card-actions .text-button { font-size: 11px; font-weight: 750; }
+.admin-app .category-card-actions .icon-button { margin-left: auto; }
+/* Forms, dialogs and team pages share the same density and surfaces */
+.admin-app .modal {
+  max-height: min(92dvh, 1020px); border-radius: 17px;
+  box-shadow: 0 26px 100px rgb(10 22 16 / 32%);
+  background: var(--admin-surface);
+}
+.admin-app .modal-heading {
+  padding: 21px 27px; border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .modal-heading h2 { font-size: 20px; line-height: 1.35; font-weight: 780; }
+.admin-app .editor-columns { gap: 23px; }
+.admin-app .editor-form .form-section {
+  padding-bottom: 22px; margin-bottom: 22px;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .editor-form .form-section h3 {
+  color: var(--admin-text); font-size: 15px; font-weight: 770;
+  letter-spacing: -.2px;
+}
+.admin-app .editor-form :is(label, .field-pair label, .field-trio label),
+.admin-app .category-form label { font-size: 11.5px; font-weight: 695; color: var(--admin-text); }
+.admin-app .editor-form :is(input:not([type=checkbox]),textarea,select),
+.admin-app .category-form :is(input,textarea) {
+  border-radius: 10px; min-height: 42px; font-size: 12px;
+}
+.admin-app .editor-form textarea { line-height: 1.7; }
+.admin-app .editor-footer {
+  padding: 15px 27px; border-color: var(--admin-border);
+  background: var(--admin-surface);
+}
+.admin-app .account-identity,.admin-app .account-settings,.admin-app .account-mini,
+.admin-app .account-table-wrap,.admin-app .account-empty {
+  background: var(--admin-surface); color: var(--admin-text);
+  border-color: var(--admin-border); box-shadow: var(--enterprise-shadow);
+  border-radius: var(--enterprise-radius);
+}
+.admin-app .account-center :is(h1,h2,h3,strong) { color: var(--admin-text); }
+/* Dense enough for laptop screens; readable at each breakpoint */
+@media (min-width: 1280px) and (max-width: 1540px) {
+ .admin-app .catalog-gallery { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 1180px) {
+ .admin-app .overview-stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+ .admin-app .catalog-gallery { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 880px) {
+ .admin-app .catalog-operations { grid-template-columns: minmax(0,1fr); }
+ .admin-app .catalog-gallery { grid-template-columns: repeat(2,minmax(0,1fr)); }
+ .admin-app .table-toolbar .filters { flex: 1 1 100%; }
+}
+@media (max-width: 600px) {
+ .admin-app .admin-content { padding-top: 12px; padding-bottom: 25px; }
+ .admin-app .page-heading, .admin-app .overview-heading {
+   margin: 13px 0 19px; align-items: flex-start; gap: 13px;
+ }
+ .admin-app .page-heading h1 { font-size: 25px; }
+ .admin-app .page-heading p { font-size: 12px; }
+ .admin-app .page-heading > .button { flex: 0 0 auto; }
+ .admin-app .overview-stats { gap: 10px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+ .admin-app .overview-stats .overview-stat { padding: 15px; min-height: 138px; }
+ .admin-app .overview-stat > strong { font-size: 29px; }
+ .admin-app .overview-stat .overview-stat-icon { width: 30px; height: 30px; }
+ .admin-app .catalog-health-card, .admin-app .catalog-next-card { padding: 18px; border-radius: 13px; }
+ .admin-app .catalog-next-card > div:nth-child(2) { margin-top: 13px; }
+ .admin-app .table-panel .panel-heading { padding: 17px 16px; }
+ .admin-app .catalog-product-controls { padding: 0 14px 15px; }
+ .admin-app .catalog-status-tabs { width: 100%; overflow-x: auto; }
+ .admin-app .catalog-status-tab { flex: 1 0 auto; padding: 7px 9px; }
+ .admin-app .catalog-view-switch { margin-left: 0; }
+ .admin-app .table-toolbar { padding: 0 14px 17px; gap: 10px; }
+ .admin-app .table-toolbar .search-input { flex: 1 1 100%; min-width: 0; }
+ .admin-app .table-toolbar .filters { display: flex; gap: 8px; }
+ .admin-app .table-toolbar .filters select { max-width: 100%; }
+ .admin-app .table-toolbar .filters > select { flex: 1 1 100px; min-width: 0; }
+ .admin-app .table-scroll tbody td { padding: 12px 11px; }
+ .admin-app .catalog-gallery { padding: 4px 13px 18px; gap: 10px; }
+ .admin-app .catalog-gallery-body { padding: 12px; }
+ .admin-app .catalog-gallery-body > strong { font-size: 11.5px; }
+ .admin-app .catalog-gallery-photo .status-badge { top: 8px; left: 8px; font-size: 9px; }
+ .admin-app .category-grid { grid-template-columns: minmax(0,1fr); gap: 14px; }
+ .admin-app .modal-heading { padding: 17px 19px; }
+ .admin-app .editor-footer { padding: 13px 16px; }
+}
+@media (max-width: 360px) {
+ .admin-app .catalog-gallery { grid-template-columns: minmax(0,1fr); }
+ .admin-app .overview-stats .overview-stat { padding: 12px; }
+ .admin-app .page-heading { flex-wrap: wrap; }
+ .admin-app .page-heading .button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+ .admin-app .catalog-gallery-card, .admin-app .catalog-gallery-photo img,
+ .admin-app .category-card { transition: none; transform: none !important; }
+}
