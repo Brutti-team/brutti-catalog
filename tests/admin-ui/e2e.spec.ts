@@ -199,6 +199,30 @@ test('quick status filters and category card navigation find matching products',
   await expect(page.locator('.product-cell').first()).toContainText('Admin UI fixture shelf');
 });
 
+test('premium Products Workbench shows live metadata and clean status controls', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  await page.getByRole('navigation', { name: 'Admin navigation' })
+    .getByRole('button', { name: /Products/ }).click();
+  const hero = page.locator('.catalog-product-hero');
+  await expect(hero).toBeVisible();
+  await expect(hero.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(hero).toContainText('PRODUCT MANAGEMENT');
+  await expect(hero).toContainText('Draft products');
+  await expect(hero.getByRole('button', { name: 'Add product', exact: true })).toBeVisible();
+  const panel = page.locator('.catalog-products-panel');
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole('group', { name: 'Quick product status filters' })).toBeVisible();
+  await expect(panel.getByLabel('Filter by category')).toBeVisible();
+  await expect(panel.locator('select#status-filter')).toHaveCount(0);
+  await expect(panel.getByRole('status')).toContainText('matching');
+  await panel.getByRole('group', { name: 'Quick product status filters' })
+    .getByRole('button', { name: /Draft/ }).click();
+  await expect(panel.getByRole('status')).toContainText('0 matching products');
+  await panel.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(panel.getByRole('status')).toContainText('1 matching product');
+});
+
 test('Products exposes Bulk import photos above the filters and opens the ZIP picker', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
