@@ -29,7 +29,6 @@ import {
   ExternalLink,
   Moon,
   Sun,
-  UserRound,
   UsersRound,
   History,
 } from "lucide-react";
@@ -54,6 +53,7 @@ import ProductEditor from "./components/ProductEditor";
 import PublicCatalog from "./components/PublicCatalog";
 import Modal from "./components/Modal";
 import AccountCenter from "./components/AccountCenter";
+import LastChange from "./components/LastChange";
 import { getAccountSummary, initials, roleLabel, type StaffRole } from "./lib/account-center";
 import { useAdminTheme } from "./lib/admin-theme";
 
@@ -391,11 +391,9 @@ export default function App() {
               )}
             </button>
           ))}
-          <span className="nav-group-label nav-group-second">ACCOUNT</span>
-          <button className={`nav-item ${tab === "profile" ? "active" : ""}`}
-            onClick={() => switchTab("profile")}>
-            <UserRound size={19} /> My profile
-          </button>
+          {accountsReady && accountRole && (
+            <span className="nav-group-label nav-group-second">TEAM</span>
+          )}
           {accountsReady && accountRole === "super_admin" && (
             <button className={`nav-item ${tab === "users" ? "active" : ""}`}
               onClick={() => switchTab("users")}>
@@ -416,17 +414,13 @@ export default function App() {
           </button>
         </nav>
         <div className="sidebar-bottom">
-          <div className="sidebar-note">
-            <Leaf size={21} />
-            <h3>Made with purpose.</h3>
-            <p>
-              Honest materials.
-              <br />
-              Thoughtful craftsmanship.
-              <br />A story in every piece.
-            </p>
-            <span>BENUa BRUTTI SDN. BHD.</span>
-          </div>
+          <LastChange
+            authenticated={auth.isAdmin}
+            managementReady={accountsReady}
+            role={accountRole}
+            refreshKey={data}
+            onHistory={() => switchTab("activity")}
+          />
         </div>
       </aside>
       {mobileNav && (
