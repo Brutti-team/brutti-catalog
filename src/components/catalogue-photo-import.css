@@ -28,3 +28,7 @@
 @keyframes catalog-bulk-spin{to{transform:rotate(360deg)}}
 @media(max-width:600px){.catalog-bulk-upload{padding:0 18px 22px}.bulk-upload-actions{flex-wrap:wrap}.bulk-upload-actions .button{flex:1}}
 @media(prefers-reduced-motion:reduce){.bulk-upload-spinner{animation:none}}
+
+.admin-app .page-heading .catalog-import-trigger{margin-left:auto;min-height:44px;padding:10px 14px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:650;white-space:nowrap}
+.admin-app .page-heading .catalog-import-trigger + .button.primary{margin-left:0}
+@media (max-width:600px){.admin-app .page-heading .catalog-import-trigger{margin-left:0;font-size:11px;white-space:normal;text-align:center}}
