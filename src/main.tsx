@@ -5,6 +5,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import "./styles.css";
 import "./components/admin-workspace.css";
 import "./components/admin-enterprise.css";
+import "./components/admin-studio.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
