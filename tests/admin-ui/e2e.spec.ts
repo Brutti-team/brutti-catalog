@@ -144,6 +144,24 @@ async function expectReadable(page: Page, selectors: string[], darkSurface = fal
   }
 }
 
+test('Products exposes Bulk import photos above the filters and opens the ZIP picker', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  const nav = page.getByRole('navigation', { name: 'Admin navigation' });
+  await nav.getByRole('button', { name: /Products/ }).click();
+  const panel = page.locator('.table-panel');
+  const upload = panel.getByRole('button', { name: 'Bulk import photos', exact: true });
+  await expect(upload).toBeVisible();
+  await expect(upload).toBeEnabled();
+  await expect(panel.getByRole('heading', { name: /All products/ })).toBeVisible();
+  await upload.click();
+  const dialog = page.getByRole('dialog', { name: 'Attach original catalogue photos' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('input[type="file"]')).toHaveAttribute('accept', /zip/);
+  await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+});
+
 test('header provides my profile and a dark-mode toggle', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
   await backend(page);
