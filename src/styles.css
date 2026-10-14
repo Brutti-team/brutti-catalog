@@ -247,10 +247,21 @@ h3 {
   font-weight: 700;
   color: #708164;
 }
-.account > div:nth-child(2) {
+.account-profile-entry {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 9px;
   min-width: 0;
   flex: 1;
+  padding: 5px;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
 }
+.account-profile-entry:hover { background: #f1f5ef; }
+.account-entry-details { min-width: 0; flex: 1; }
+.account-profile-entry .avatar { flex: none; }
 .account strong {
   display: block;
   font-size: 10px;
