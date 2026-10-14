@@ -50,8 +50,10 @@ begin
     v_id := new.id;
     v_name := new.name;
     v_action := tg_table_name || '_updated';
-    if tg_table_name = 'products' and old.status is distinct from new.status then
-      v_action := 'product_' || new.status::text;
+    if tg_table_name = 'products' then
+      if old.status is distinct from new.status then
+        v_action := 'product_' || new.status::text;
+      end if;
     end if;
   end if;
 
