@@ -42,65 +42,14 @@ $$;
 revoke all on function public.catalog_my_role() from public, anon, authenticated;
 grant execute on function public.catalog_my_role() to authenticated;
 
--- Read-only, append-only server audit. Activity timestamps and actor identity
--- are NEVER provided by frontend code; only server triggers/RPC insert rows.
-create table public.catalog_activity (
-  id uuid primary key default gen_random_uuid(),
-  actor_id uuid references auth.users(id) on delete set null,
-  actor_email text not null default 'system',
-  action text not null,
-  resource_type text not null,
-  resource_name text not null default '',
-  resource_id uuid,
-  created_at timestamptz not null default now()
-);
-create index catalog_activity_created_idx on public.catalog_activity(created_at desc);
-alter table public.catalog_activity enable row level security;
-revoke all on public.catalog_activity from public, anon, authenticated;
-grant select on public.catalog_activity to authenticated;
+-- The separately approved 202610140001_catalog_activity.sql migration
+-- already creates catalog_activity and secure product/category triggers.
+-- This future role upgrade must NEVER recreate either of them.
+drop policy "Approved catalog administrators view activity" on public.catalog_activity;
 create policy "Managers see activity and editors see their own"
   on public.catalog_activity for select to authenticated
-  using (public.catalog_my_role() in ('super_admin','admin')
+  using (public.catalog_my_role() in ('super_admin', 'admin')
     or (public.catalog_my_role() = 'editor' and actor_id = auth.uid()));
-
-create function public.catalog_record_change()
-returns trigger language plpgsql security definer set search_path = '' as $$
-declare
-  item_id uuid;
-  item_name text;
-  action_name text;
-  actor_email text;
-begin
-  if tg_op = 'DELETE' then
-    item_id := old.id;
-    item_name := old.name;
-    action_name := lower(tg_table_name) || '_deleted';
-  elsif tg_op = 'INSERT' then
-    item_id := new.id;
-    item_name := new.name;
-    action_name := lower(tg_table_name) || '_created';
-  else
-    item_id := new.id;
-    item_name := new.name;
-    action_name := lower(tg_table_name) || '_updated';
-    if tg_table_name = 'products' then
-      if old.status is distinct from new.status then
-        action_name := 'product_' || new.status::text;
-      end if;
-    end if;
-  end if;
-  select coalesce(u.email, 'system') into actor_email
-    from auth.users u where u.id = auth.uid();
-  insert into public.catalog_activity(actor_id,actor_email,action,resource_type,resource_name,resource_id)
-  values (auth.uid(),coalesce(actor_email,'system'),action_name,tg_table_name,item_name,item_id);
-  return case when tg_op = 'DELETE' then old else new end;
-end;
-$$;
-revoke all on function public.catalog_record_change() from public, anon, authenticated;
-create trigger products_catalog_activity after insert or update or delete on public.products
-  for each row execute function public.catalog_record_change();
-create trigger categories_catalog_activity after insert or update or delete on public.categories
-  for each row execute function public.catalog_record_change();
 
 -- Super Admin can view ONLY identity/role/last-login fields; not credentials,
 -- tokens, sessions, password hashes or private auth metadata.
