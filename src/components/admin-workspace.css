@@ -1663,3 +1663,381 @@
     padding-bottom: 7px;
   }
 }
+
+/* Premium Brutti SaaS overview — scoped to admin, preserving public catalog. */
+.admin-app .topbar {
+  border-bottom: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+}
+.admin-app .topbar .breadcrumbs {
+  font-size: 13px;
+  gap: 13px;
+}
+.admin-app .topbar .breadcrumbs > strong {
+  font-weight: 720;
+}
+.admin-app .topbar .connection-pill {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 33px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 590;
+}
+.admin-app .topbar .connection-pill > span {
+  width: 7px;
+  height: 7px;
+  box-shadow: 0 0 0 3px var(--admin-success-border);
+}
+.admin-app .topbar .catalog-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 640;
+  min-height: 38px;
+  padding: 8px 11px;
+  border-radius: 9px;
+}
+.admin-app .topbar .catalog-link:hover {
+  background: var(--admin-surface-soft);
+  color: var(--admin-accent);
+}
+.admin-app .topbar .theme-toggle,
+.admin-app .topbar .header-signout {
+  border-radius: 11px;
+}
+.admin-app .topbar .header-profile {
+  min-height: 45px;
+  border-radius: 12px;
+  padding: 5px 10px 5px 5px;
+}
+.admin-app .topbar .header-profile .profile-avatar {
+  width: 37px;
+  height: 37px;
+  border-radius: 12px;
+}
+.admin-app .topbar .header-profile .profile-copy strong {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.admin-app .overview-heading {
+  margin: 24px 0 26px;
+  gap: 20px;
+  align-items: center;
+}
+.admin-app .overview-heading > div:first-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.admin-app .overview-heading .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.25px;
+  line-height: 1.3;
+  color: var(--admin-muted);
+}
+.admin-app .overview-heading .eyebrow::before {
+  content: "";
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--admin-accent);
+}
+.admin-app .overview-heading h1 {
+  font-family: "Manrope", "DM Sans", sans-serif;
+  color: var(--admin-text);
+  font-size: clamp(27px, 2.2vw, 34px);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -1.15px;
+}
+.admin-app .overview-heading p {
+  color: var(--admin-muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin-top: 9px;
+}
+.admin-app .overview-heading > .button.primary {
+  min-height: 44px;
+  padding: 11px 18px;
+  border-radius: 11px;
+  gap: 9px;
+  font-size: 12.5px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgb(20 48 30 / 12%);
+  transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+.admin-app .overview-heading > .button.primary:hover:not(:disabled) {
+  box-shadow: 0 7px 17px rgb(20 48 30 / 17%);
+  transform: translateY(-1px);
+}
+.admin-app .overview-stats {
+  gap: 16px;
+  margin: 0 0 22px;
+}
+.admin-app .overview-stats .overview-stat {
+  position: relative;
+  min-width: 0;
+  min-height: 170px;
+  border: 1px solid var(--admin-border);
+  border-radius: 15px;
+  background: var(--admin-surface);
+  box-shadow: 0 2px 9px rgb(17 43 26 / 2.5%);
+  padding: 21px 22px 19px;
+  transition: border-color 170ms ease, box-shadow 170ms ease, transform 170ms ease;
+}
+.admin-app .overview-stats .overview-stat:hover {
+  border-color: var(--admin-focus);
+  box-shadow: var(--admin-shadow-raised);
+  transform: translateY(-2px);
+}
+.admin-app .overview-stat > div:first-child {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--admin-muted);
+}
+.admin-app .overview-stat > div:first-child > span:first-child {
+  padding-top: 5px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--admin-muted);
+}
+.admin-app .overview-stat .overview-stat-icon {
+  width: 36px;
+  height: 36px;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 10px;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-accent);
+  background: var(--admin-surface-soft);
+}
+.admin-app .overview-stat > strong {
+  display: block;
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: 35px;
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -1.5px;
+  color: var(--admin-text);
+  margin: 15px 0 7px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .overview-stat > p {
+  font-size: 11.5px;
+  color: var(--admin-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+.admin-app .overview-feature {
+  height: auto;
+  min-height: 300px;
+  border-radius: 17px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-banner);
+  box-shadow: var(--admin-shadow);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.admin-app .overview-feature > div:first-child {
+  width: 60%;
+  padding: 38px 40px;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(90deg, var(--admin-banner) 75%, transparent 100%);
+}
+.admin-app .overview-feature .eyebrow {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.45px;
+  color: var(--admin-muted);
+}
+.admin-app .overview-feature h2 {
+  max-width: 460px;
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: clamp(24px, 2vw, 31px);
+  font-weight: 720;
+  letter-spacing: -1.05px;
+  line-height: 1.28;
+  color: var(--admin-text);
+}
+.admin-app .overview-feature p {
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  line-height: 1.8;
+  margin: 15px 0;
+}
+.admin-app .overview-feature button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 750;
+  color: var(--admin-accent);
+  margin-top: 4px;
+  padding: 9px 0;
+}
+.admin-app .overview-feature button:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.admin-app .overview-feature img {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 52%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 61%;
+}
+.admin-app .overview-feature .banner-caption {
+  right: 20px;
+  bottom: 18px;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.75px;
+  text-shadow: 0 1px 7px rgb(5 17 7 / 70%);
+}
+.admin-app .overview-collection {
+  border-radius: 15px;
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  overflow: hidden;
+}
+.admin-app .overview-collection .panel-heading {
+  padding: 23px 25px 20px;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .overview-collection .panel-heading h2 {
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.4px;
+}
+.admin-app .overview-collection .panel-heading p {
+  margin-top: 7px;
+  font-size: 12px;
+}
+.admin-app .overview-collection .panel-heading .text-button {
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 690;
+}
+@media (min-width: 801px) and (max-width: 1180px) {
+  .admin-app .overview-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-app .overview-feature > div:first-child {
+    width: 66%;
+    padding: 30px;
+  }
+}
+@media (max-width: 800px) {
+  .admin-app .overview-heading {
+    margin: 18px 0 20px;
+  }
+  .admin-app .overview-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .admin-app .overview-stats .overview-stat {
+    min-height: 150px;
+    padding: 16px;
+  }
+  .admin-app .overview-feature {
+    min-height: 260px;
+  }
+  .admin-app .overview-feature > div:first-child {
+    width: 67%;
+    padding: 25px;
+  }
+}
+@media (max-width: 600px) {
+  .admin-app .overview-heading {
+    align-items: flex-start;
+    gap: 16px;
+    margin: 8px 0 21px;
+  }
+  .admin-app .overview-heading h1 {
+    font-size: 26px;
+  }
+  .admin-app .overview-heading p {
+    font-size: 12.5px;
+  }
+  .admin-app .overview-heading > .button.primary {
+    min-height: 42px;
+    width: auto;
+    margin: 0;
+  }
+  .admin-app .overview-stats {
+    gap: 10px;
+  }
+  .admin-app .overview-stats .overview-stat {
+    min-height: 138px;
+    padding: 14px;
+    border-radius: 12px;
+  }
+  .admin-app .overview-stat .overview-stat-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+  .admin-app .overview-stat > div:first-child > span:first-child {
+    font-size: 11px;
+  }
+  .admin-app .overview-stat > strong {
+    font-size: 29px;
+    margin: 12px 0 6px;
+  }
+  .admin-app .overview-stat > p {
+    font-size: 10.5px;
+  }
+  .admin-app .overview-feature {
+    min-height: 260px;
+    border-radius: 13px;
+  }
+  .admin-app .overview-feature > div:first-child {
+    width: 74%;
+    padding: 22px 17px;
+    background: linear-gradient(90deg, var(--admin-banner) 75%, transparent 100%);
+  }
+  .admin-app .overview-feature .eyebrow {
+    font-size: 8px;
+    letter-spacing: 0.9px;
+  }
+  .admin-app .overview-feature h2 {
+    font-size: 21px;
+  }
+  .admin-app .overview-feature p {
+    font-size: 11px;
+    line-height: 1.65;
+  }
+  .admin-app .overview-feature button {
+    font-size: 11px;
+  }
+  .admin-app .overview-feature img {
+    width: 45%;
+  }
+  .admin-app .overview-collection .panel-heading {
+    padding: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app .overview-stat,
+  .admin-app .overview-heading > .button.primary {
+    transform: none !important;
+  }
+}
