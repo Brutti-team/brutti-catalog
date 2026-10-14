@@ -1333,13 +1333,13 @@
 /* Brutti SaaS navigation proportions: ordinary desktop sidebar, not a broad panel.
    Preserve the existing palette, responsiveness and signed-in header controls. */
 .admin-app {
-  --catalog-nav-width: 226px;
+  --catalog-nav-width: 264px;
 }
 @media (min-width: 801px) {
   .admin-app .sidebar {
     width: var(--catalog-nav-width);
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 18px;
+    padding-right: 18px;
     border-right: 1px solid var(--admin-border);
   }
   .admin-app .admin-main {
@@ -1350,7 +1350,7 @@
     margin-right: 10px;
   }
   .admin-app .sidebar > .brand .brutti-official-logo {
-    width: 108px;
+    width: 122px;
     max-width: 100%;
   }
   .admin-app .topbar {
@@ -1373,7 +1373,7 @@
 }
 .admin-app .sidebar nav .nav-item {
   border: 1px solid transparent;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 550;
   letter-spacing: -0.01em;
 }
