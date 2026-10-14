@@ -383,12 +383,6 @@ export default function App() {
               )}
             </button>
           ))}
-          <span className="nav-group-label nav-group-second">EXPLORE</span>
-          <button className="nav-item" onClick={() => navigate("/catalog")}>
-            <ArrowUpRight size={19} />
-            Public catalog
-            <ExternalLink size={13} className="nav-trailing" />
-          </button>
           <span className="nav-group-label nav-group-second">ACCOUNT</span>
           <button className={`nav-item ${tab === "profile" ? "active" : ""}`}
             onClick={() => switchTab("profile")}>
@@ -406,6 +400,12 @@ export default function App() {
               <History size={19} /> Activity log
             </button>
           )}
+          <span className="nav-group-label nav-group-second">EXPLORE</span>
+          <button className="nav-item" onClick={() => navigate("/catalog")}>
+            <ArrowUpRight size={19} />
+            Public catalog
+            <ExternalLink size={13} className="nav-trailing" />
+          </button>
         </nav>
         <div className="sidebar-bottom">
           <div className="sidebar-note">
