@@ -73,7 +73,7 @@ export default function CataloguePhotoImport({
               <ul>{result.errors.slice(0, 25).map((line, index) => <li key={index}>{line}</li>)}</ul>
             </details>}
           </div>
-        </div>
+        </div>}
         <div className="bulk-upload-actions">
           <button type="button" className="button secondary" disabled={busy} onClick={onClose}>Close</button>
           <button type="button" className="button primary" disabled={!file || busy}
