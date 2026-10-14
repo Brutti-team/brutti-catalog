@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback, useRef, type FormEvent } from "react"
 import {
   LayoutDashboard,
   Package,
+  Images,
   Layers,
   ArrowUpRight,
   Plus,
@@ -53,6 +54,7 @@ import ProductEditor from "./components/ProductEditor";
 import PublicCatalog from "./components/PublicCatalog";
 import Modal from "./components/Modal";
 import AccountCenter from "./components/AccountCenter";
+import CataloguePhotoImport from "./components/CataloguePhotoImport";
 import LastChange from "./components/LastChange";
 import { getAccountSummary, initials, roleLabel, type StaffRole } from "./lib/account-center";
 import { useAdminTheme } from "./lib/admin-theme";
@@ -110,6 +112,7 @@ export default function App() {
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("recent");
   const [editor, setEditor] = useState<Product | null>(null);
+  const [photoImportOpen, setPhotoImportOpen] = useState(false);
   const [catEditor, setCatEditor] = useState<Category | null>(null);
   const [catName, setCatName] = useState("");
   const [catDescription, setCatDescription] = useState("");
@@ -517,6 +520,12 @@ export default function App() {
                     : "Organise your collection into thoughtful categories."}
               </p>
             </div>
+            {tab === "products" && auth.isAdmin && (
+              <button type="button" className="button secondary catalog-import-trigger"
+                disabled={loading || busy} onClick={() => setPhotoImportOpen(true)}>
+                <Images size={17} aria-hidden="true" /> Bulk import photos
+              </button>
+            )}
             <button
               className="button primary"
               disabled={loading || busy}
@@ -959,6 +968,7 @@ export default function App() {
           </>)}
         </div>
       </main>
+      {photoImportOpen && <CataloguePhotoImport onClose={() => setPhotoImportOpen(false)} onDone={async () => { await refresh(true); }} />}
       {editor && (
         <ProductEditor
           key={editor.id}
