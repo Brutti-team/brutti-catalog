@@ -2,9 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mock = vi.hoisted(() => ({
   user: { id: "user-one", email: "integrator.brutti@gmail.com", user_metadata: { full_name: "Brutti Integrator" }, last_sign_in_at: null },
-  getUser: vi.fn(), updateUser: vi.fn(), rpc: vi.fn(), from: vi.fn(),
+  getUser: vi.fn(), getAuthState: vi.fn(), updateUser: vi.fn(), rpc: vi.fn(), from: vi.fn(),
 }));
 vi.mock("../src/lib/catalog", () => ({
+  getAuthState: mock.getAuthState,
   catalogClient: () => ({
     auth: { getUser: mock.getUser, updateUser: mock.updateUser },
     rpc: mock.rpc, from: mock.from,
@@ -14,6 +15,18 @@ vi.mock("../src/lib/catalog", () => ({
 beforeEach(() => {
   vi.clearAllMocks();
   mock.getUser.mockResolvedValue({ data: { user: mock.user }, error: null });
+  mock.getAuthState.mockResolvedValue({ authenticated: true, isAdmin: true, email: "integrator.brutti@gmail.com" });
+  mock.from.mockReturnValue({
+    select: () => ({
+      order: () => ({
+        limit: async () => ({ data: [{
+          id: "e1", actor_id: "user-one", actor_email: "integrator.brutti@gmail.com",
+          action: "products_created", resource_type: "products",
+          resource_name: "Rack A", created_at: "2026-10-14T04:00:00.000Z",
+        }], error: null }),
+      }),
+    }),
+  });
   mock.rpc.mockImplementation(async (fn: string) =>
     fn === "catalog_my_role"
       ? { data: "super_admin", error: null }
@@ -88,5 +101,24 @@ describe("catalog identities and staff management", () => {
     expect(safeDisplayName({ email: "user@example.com", user_metadata: {} })).toBe("user");
     expect(initials("Brutti Integrator")).toBe("BI");
     expect(roleLabel(null)).not.toBe("Super Admin");
+  });
+});
+
+describe("catalog audit access", () => {
+  it("reads actual activity for an approved catalog admin before role migration", async () => {
+    mock.rpc.mockResolvedValue({ data: null, error: { code: "PGRST202", message: "Role RPC missing" } });
+    const { listCatalogActivity, getLatestCatalogActivity } = await import("../src/lib/account-center");
+    await expect(getLatestCatalogActivity()).resolves.toMatchObject({
+      actor_email: "integrator.brutti@gmail.com", action: "products_created", resource_name: "Rack A",
+    });
+    await expect(listCatalogActivity()).resolves.toHaveLength(1);
+    expect(mock.from).toHaveBeenCalledWith("catalog_activity");
+  });
+  it("refuses activity history when membership is not verified", async () => {
+    mock.getAuthState.mockResolvedValue({ authenticated: true, isAdmin: false });
+    const { listCatalogActivity, getLatestCatalogActivity } = await import("../src/lib/account-center");
+    await expect(listCatalogActivity()).rejects.toThrow(/approved catalog administrator/);
+    await expect(getLatestCatalogActivity()).rejects.toThrow(/approved catalog administrator/);
+    expect(mock.from).not.toHaveBeenCalledWith("catalog_activity");
   });
 });
