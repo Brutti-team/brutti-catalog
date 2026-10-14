@@ -83,8 +83,10 @@ begin
     item_id := new.id;
     item_name := new.name;
     action_name := lower(tg_table_name) || '_updated';
-    if tg_table_name = 'products' and old.status is distinct from new.status then
-      action_name := 'product_' || new.status::text;
+    if tg_table_name = 'products' then
+      if old.status is distinct from new.status then
+        action_name := 'product_' || new.status::text;
+      end if;
     end if;
   end if;
   select coalesce(u.email, 'system') into actor_email
