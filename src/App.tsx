@@ -791,7 +791,6 @@ export default function App() {
                                     <strong>{p.name}</strong>
                                     <small>
                                       {p.sku}
-                                      <span className="catalog-product-updated"> · Updated {new Intl.DateTimeFormat("en-MY", { month: "short", day: "numeric", timeZone: "Asia/Kuala_Lumpur" }).format(new Date(p.updatedAt))}</span>
                                       {p.featured && (
                                         <span
                                           className="featured-dot"
@@ -802,6 +801,7 @@ export default function App() {
                                         </span>
                                       )}
                                     </small>
+                                    <span className="catalog-product-updated">Updated {new Intl.DateTimeFormat("en-MY", { month: "short", day: "numeric", timeZone: "Asia/Kuala_Lumpur" }).format(new Date(p.updatedAt))}</span>
                                   </span>
                                 </button>
                               </td>
