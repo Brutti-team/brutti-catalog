@@ -8,7 +8,7 @@ on:
       - .github/workflows/deploy-staging.yml
 
 # Staging uses only the separate brutti-catalog GitHub Pages site.
-# Approved staging refresh: premium Brutti SaaS Overview header, KPI cards, feature banner and collection panel; 264px refined sidebar retained,
+# Approved staging refresh: 96 real Brutti 2025 Draft products plus one-click verified original-photo ZIP upload action; existing premium dashboard and 264px sidebar retained,
 # header-only My Profile and live server-sourced Last Change and Activity Log in MYT.
 # Separate staff-role proposal stays UNAPPLIED. Audit migration was owner-approved
 # and applied independently, preserving product/category and access data.
