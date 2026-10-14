@@ -156,7 +156,7 @@ test('header provides my profile and a dark-mode toggle', async ({ page }) => {
   await expect(header.locator('.profile-copy small')).toHaveText('Catalog administrator');
   await expect(header.locator('.profile-avatar')).toHaveText('AF');
   await expect(page.locator('.sidebar .account')).toHaveCount(0);
-  await expect(page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: 'My profile', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: 'My profile', exact: true })).toHaveCount(0);
 });
 
 test('header profile opens the existing account form and saved Auth metadata updates the header', async ({ page }) => {
@@ -255,7 +255,7 @@ test('blocked theme storage still allows the admin UI and theme switch', async (
   expect(errors).toEqual([]);
 });
 
-test('unavailable management RPC keeps Users and Activity hidden after theme and profile changes', async ({ page }) => {
+test('unavailable role-management RPC keeps Users hidden but approved admins can view Activity after theme changes', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
   const navigation = page.getByRole('navigation', { name: 'Admin navigation' });
@@ -263,7 +263,7 @@ test('unavailable management RPC keeps Users and Activity hidden after theme and
   await page.getByRole('button', { name: 'Open my profile', exact: true }).click();
   await expect(page.getByLabel('Display name', { exact: true })).toBeVisible();
   await expect(navigation.getByRole('button', { name: 'Users', exact: true })).toHaveCount(0);
-  await expect(navigation.getByRole('button', { name: 'Activity log', exact: true })).toHaveCount(0);
+  await expect(navigation.getByRole('button', { name: 'Activity log', exact: true })).toBeVisible();
   await expect(page.locator('.profile-copy small')).toHaveText('Catalog administrator');
 });
 
@@ -297,7 +297,7 @@ test('dark admin navigation leaves the public catalog light and preserves the sa
 test('dark theme covers table, navigation, product and category forms, and account surfaces with readable text', async ({ page }) => {
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
-  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.sidebar .nav-group-label', '.sidebar-note p', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
+  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.sidebar .nav-group-label', '.last-change-placeholder', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
   const searchPlaceholder = await colors(page.getByLabel('Search products', { exact: true }), '::placeholder');
   expect(searchPlaceholder.contrast, `Search placeholder: ${JSON.stringify(searchPlaceholder)}`).toBeGreaterThanOrEqual(4.5);
   for (const selector of ['.theme-toggle svg', '.header-signout svg']) {
