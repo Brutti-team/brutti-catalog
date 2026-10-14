@@ -194,7 +194,7 @@ export default function App() {
 
   useEffect(() => {
     if (!toast) return;
-    const id = setTimeout(() => setToast(""), 4000);
+    const id = setTimeout(() => setToast(""), toast.startsWith("Upload completed") ? 7000 : 4000);
     return () => clearTimeout(id);
   }, [toast]);
   const navigate = (dest: string) => {
@@ -970,7 +970,15 @@ export default function App() {
           </>)}
         </div>
       </main>
-      {photoImportOpen && <CataloguePhotoImport onClose={() => setPhotoImportOpen(false)} onDone={async () => { await refresh(true); }} />}
+      {photoImportOpen && (
+        <CataloguePhotoImport
+          onClose={() => setPhotoImportOpen(false)}
+          onDone={async ({ ready, total, attached, skipped }) => {
+            await refresh(true);
+            setToast(`Upload completed: ${ready}/${total} photos ready · ${attached} newly attached, ${skipped} already linked.`);
+          }}
+        />
+      )}
       {editor && (
         <ProductEditor
           key={editor.id}
