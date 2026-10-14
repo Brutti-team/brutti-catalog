@@ -49,6 +49,11 @@ export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const MAX_PRODUCT_IMAGES = 8;
 let client: SupabaseClient | undefined;
 
+/** Shared public-client accessor for authenticated profile and staff RPCs. */
+export function catalogClient(): SupabaseClient {
+  return supabase();
+}
+
 function supabase(): SupabaseClient {
   if (!url || !key)
     throw new Error(
