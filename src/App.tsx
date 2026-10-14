@@ -14,8 +14,6 @@ import {
   SlidersHorizontal,
   Grid2X2,
   List,
-  Camera,
-  CircleCheck,
   MoreHorizontal,
   Pencil,
   Copy,
