@@ -736,16 +736,16 @@ export default function App() {
                   )}
                 </div>
                 <div className="filters">
-                  <label className="sr-only" htmlFor="status-filter">
-                    Filter by status
-                  </label>
                   {tab === "overview" && (
-                    <select id="status-filter" value={status} onChange={(e) => setStatus(e.target.value)}>
-                      <option value="all">All statuses</option>
-                      <option value="published">Published</option>
-                      <option value="draft">Draft</option>
-                      <option value="archived">Archived</option>
-                    </select>
+                    <>
+                      <label className="sr-only" htmlFor="status-filter">Filter by status</label>
+                      <select id="status-filter" value={status} onChange={(e) => setStatus(e.target.value)}>
+                        <option value="all">All statuses</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </>
                   )}
                   <label className="sr-only" htmlFor="category-filter">
                     Filter by category
