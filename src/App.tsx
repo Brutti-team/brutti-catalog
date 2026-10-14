@@ -520,12 +520,6 @@ export default function App() {
                     : "Organise your collection into thoughtful categories."}
               </p>
             </div>
-            {tab === "products" && auth.isAdmin && (
-              <button type="button" className="button secondary catalog-import-trigger"
-                disabled={loading || busy} onClick={() => setPhotoImportOpen(true)}>
-                <Images size={17} aria-hidden="true" /> Bulk import photos
-              </button>
-            )}
             <button
               className="button primary"
               disabled={loading || busy}
@@ -615,6 +609,14 @@ export default function App() {
                     onClick={() => switchTab("products")}
                   >
                     View all products <ArrowRight size={15} />
+                  </button>
+                )}
+                {tab === "products" && (
+                  <button type="button" className="button secondary catalog-import-trigger"
+                    aria-label="Bulk import photos"
+                    disabled={loading || busy}
+                    onClick={() => setPhotoImportOpen(true)}>
+                    <Images size={18} aria-hidden="true" /> Bulk import photos
                   </button>
                 )}
               </div>
