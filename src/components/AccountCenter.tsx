@@ -21,7 +21,7 @@ function dateText(value: string | null): string {
   if (!value) return "Never";
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "Unknown"
-    : new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "short" }).format(date);
+    : new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kuala_Lumpur" }).format(date) + " MYT";
 }
 function actionText(event: ActivityEntry): string {
   return event.action.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase());
@@ -181,10 +181,7 @@ export default function AccountCenter({
             </div>
       )}
       {view === "activity" && !pending && account && (
-        !account.managementReady || !account.role
-          ? <div className="account-empty"><Clock3 size={28} /><h2>Activity tracking is pending</h2>
-              <p>Database audit triggers must be approved and installed before the system can record who edited products. Older actions cannot be reconstructed reliably.</p></div>
-          : <div className="account-table-wrap">
+          <div className="account-table-wrap">
               <div className="account-table-title"><Clock3 size={19}/><strong>Recent changes</strong><span>{events.length}</span></div>
               {!events.length ? <div className="account-empty"><Clock3 size={24}/><p>No activity has been recorded yet.</p></div> : (
               <div className="account-timeline">{events.map(item => <div className="account-event" key={item.id}>
