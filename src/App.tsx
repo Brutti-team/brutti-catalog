@@ -738,7 +738,7 @@ export default function App() {
                       <button className="catalog-gallery-card" type="button" key={p.id}
                         onClick={() => setEditor(p)} aria-label={`Edit ${p.name}`}>
                         <div className="catalog-gallery-photo">
-                          <SafeImage src={p.images[0]?.url || "/images/placeholder.svg"} alt="" />
+                          <SafeImage src={p.images[0]?.url || "/images/placeholder.svg"} alt="" loading="lazy" decoding="async" />
                           <span className={`status-badge status-${p.status}`}><i />{label(p.status)}</span>
                         </div>
                         <div className="catalog-gallery-body">
