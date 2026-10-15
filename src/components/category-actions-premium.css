@@ -1,0 +1,151 @@
+/* Brutti Catalog | Category card controls
+   Dedicated admin-scoped finishing layer; deliberately does not change
+   the stretched View products hit area or its keyboard focus ring. */
+.admin-app .category-card .category-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 9px;
+  padding-top: 17px;
+  border-top: 1px solid var(--admin-border);
+}
+.admin-app .category-card .category-card-actions .text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 0 1 auto;
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-surface-soft);
+  color: var(--admin-text);
+  box-shadow: none;
+  font-size: 11.5px;
+  font-weight: 750;
+  line-height: 1.25;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 170ms ease, border-color 170ms ease,
+    color 170ms ease, box-shadow 170ms ease;
+}
+.admin-app .category-card .category-card-actions .text-button svg {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+}
+/* IMPORTANT: Do not set position, transform, filter, contain or overflow
+   on .category-view-products. Its full-card ::after overlay is positioned
+   against .category-card (admin-enterprise.css), not the visible button. */
+.admin-app .category-card .category-card-actions .category-view-products {
+  color: #fff;
+  background: #27573f;
+  border-color: #27573f;
+  box-shadow: 0 3px 9px rgb(28 77 47 / 10%);
+}
+.admin-app .category-card:hover .category-card-actions .category-view-products,
+.admin-app .category-card .category-card-actions .category-view-products:hover {
+  color: #fff;
+  background: #346b50;
+  border-color: #346b50;
+  box-shadow: 0 5px 13px rgb(28 77 47 / 13%);
+}
+.admin-app .category-card .category-card-actions .category-view-products svg {
+  transition: translate 180ms ease;
+}
+.admin-app .category-card:hover .category-card-actions .category-view-products svg {
+  translate: 2px 0;
+}
+/* Edit remains an independent button above the full-card overlay. */
+.admin-app .category-card .category-card-actions .text-button:not(.category-view-products) {
+  color: var(--admin-accent);
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+}
+.admin-app .category-card .category-card-actions .text-button:not(.category-view-products):hover {
+  background: var(--admin-selected);
+  border-color: var(--admin-focus);
+  color: var(--admin-accent);
+  box-shadow: 0 3px 9px rgb(26 63 39 / 6%);
+}
+/* Delete is intentionally subdued; populated categories cannot be deleted. */
+.admin-app .category-card .category-card-actions .icon-button.danger-text {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--admin-danger-border);
+  border-radius: 10px;
+  color: var(--admin-danger-text);
+  background: var(--admin-danger-bg);
+  box-shadow: none;
+  transition: background-color 170ms ease, border-color 170ms ease, color 170ms ease;
+}
+.admin-app .category-card .category-card-actions .icon-button.danger-text svg {
+  width: 16px;
+  height: 16px;
+}
+.admin-app .category-card .category-card-actions .icon-button.danger-text:hover:not(:disabled) {
+  background: var(--admin-danger-bg);
+  border-color: var(--admin-danger-text);
+}
+.admin-app .category-card .category-card-actions .icon-button.danger-text:disabled {
+  opacity: .54;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+/* Explicit dark-mode treatment, preserving depth without glowing buttons. */
+.admin-app[data-theme="dark"] .category-card .category-card-actions .category-view-products {
+  background: #476c53;
+  border-color: #547f60;
+  color: #f4fff5;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 13%);
+}
+.admin-app[data-theme="dark"] .category-card:hover .category-card-actions .category-view-products,
+.admin-app[data-theme="dark"] .category-card .category-card-actions .category-view-products:hover {
+  background: #587c63;
+  border-color: #769680;
+  color: #fff;
+}
+.admin-app[data-theme="dark"] .category-card .category-card-actions .text-button:not(.category-view-products) {
+  background: #2a3d30;
+  border-color: #455c4a;
+  color: #d1e5d4;
+}
+.admin-app[data-theme="dark"] .category-card .category-card-actions .text-button:not(.category-view-products):hover {
+  background: #334e3c;
+  border-color: #779981;
+}
+@media (max-width: 600px) {
+  .admin-app .category-card .category-card-actions { gap: 7px; padding-top: 14px; }
+  .admin-app .category-card .category-card-actions .text-button {
+    min-height: 38px;
+    padding-inline: 10px;
+    border-radius: 9px;
+    font-size: 11px;
+  }
+  .admin-app .category-card .category-card-actions .icon-button.danger-text {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    border-radius: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app .category-card .category-card-actions :is(.text-button,.icon-button),
+  .admin-app .category-card .category-card-actions .text-button svg {
+    transition: none;
+  }
+  .admin-app .category-card:hover .category-card-actions .category-view-products svg {
+    translate: none;
+  }
+}
