@@ -11,6 +11,7 @@ import "./components/catalog-sidebar.css";
 import "./components/catalog-collection.css";
 import "./components/catalog-overview-colors.css";
 import "./components/catalog-overview-experience.css";
+import "./components/category-actions-premium.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
