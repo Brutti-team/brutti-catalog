@@ -257,6 +257,13 @@ test('Overview analytics uses distinct semantic colours without changing underly
   })));
   expect(new Set(metrics.map(m => m.gradient)).size).toBe(4);
   expect(new Set(metrics.map(m => m.accent)).size).toBe(4);
+  // Match the requested distinctly coloured violet, cyan, coral and gold surfaces.
+  expect(metrics.map(m => m.accent)).toEqual([
+    'rgb(120, 86, 187)',
+    'rgb(18, 131, 163)',
+    'rgb(196, 93, 114)',
+    'rgb(181, 133, 37)',
+  ]);
   expect(new Set(metrics.map(m => m.iconFill)).size).toBe(4);
   for (const metric of metrics) expect(metric.gradient).toContain('linear-gradient');
   await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
