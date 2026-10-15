@@ -31,6 +31,15 @@ export async function inspectBackend(config = backendConfig(), options = {}) {
   const categoryRows = categoryRead.ok && Array.isArray(categoryRead.data) ? categoryRead.data : null;
   const productRows = productRead.ok && Array.isArray(productRead.data) ? productRead.data : null;
   const categories = categoryRows?.map(category => category.name) ?? [];
+  // Categories are editable through the live admin. The original PDF manifest
+  // is an import-time snapshot, NOT a permanent constraint on staff categories.
+  // Still require real, well-formed, unique public category rows.
+  const validCategoryRows = Boolean(categoryRows?.length &&
+    categoryRows.every(category =>
+      typeof category?.id === 'string' && category.id.trim() &&
+      typeof category?.name === 'string' && category.name.trim()) &&
+    new Set(categoryRows.map(category => category.id)).size === categoryRows.length &&
+    new Set(categories).size === categoryRows.length);
   const missing = CATEGORY_NAMES.filter(name => !categories.includes(name));
   const unexpected = categories.filter(name => !CATEGORY_NAMES.includes(name));
   const openapiColumns = Object.keys(schemaRead.data?.definitions?.products?.properties || {});
@@ -50,7 +59,7 @@ export async function inspectBackend(config = backendConfig(), options = {}) {
   const unpublishedVisible = productRows === null ? null : productRows.some(product => product.status !== 'published');
   return {
     inspectedAt: new Date().toISOString(), project: url, readOnly: true,
-    requiredReadsPassed: Boolean(categoryRows && productRows && columnsRead.ok && categories.length === CATEGORY_NAMES.length && !missing.length && !unexpected.length && !unpublishedVisible),
+    requiredReadsPassed: Boolean(validCategoryRows && productRows && columnsRead.ok && !unpublishedVisible),
     categories, missing, unexpected,
     categoryReads: requestEvidence(categoryRead), productReads: requestEvidence(productRead),
     productColumns,
@@ -67,7 +76,7 @@ export async function inspectBackend(config = backendConfig(), options = {}) {
     }])),
     anonymouslyVisibleProductsInFirst1000: productRows?.length ?? null,
     unpublishedVisible,
-    note: 'Anonymous reads cannot prove total products/admins, bucket policies, or full RLS. An empty public response does not prove Draft/Archived isolation. Run the owner-only read-only inspection SQL before schema/import changes.',
+    note: 'Category additions/renames made in Admin are permitted. Missing/unexpected compare to the original PDF import only. Anonymous reads cannot prove total products/admins, bucket policies, or full RLS. An empty public response does not prove Draft/Archived isolation. Run the owner-only read-only inspection SQL before schema/import changes.',
   };
 }
 
