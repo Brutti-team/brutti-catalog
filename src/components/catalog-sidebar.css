@@ -1,0 +1,364 @@
+/* Brutti Catalog 3.0 — dedicated navigation rail.
+   Loaded after the shared SaaS layers so navigation has one predictable finish.
+   This file never styles public catalog pages or database-backed content. */
+
+.admin-app {
+  --catalog-nav-width: 270px;
+}
+
+/* One deep forest surface, without oversized bright selection pills. */
+.admin-app .sidebar,
+.admin-app[data-theme="dark"] .sidebar {
+  --rail-ink: #eef7f0;
+  --rail-muted: #c4d8cc;
+  --rail-caption: #a6c1b1;
+  --rail-border: rgb(205 234 215 / 12%);
+  --rail-hover: rgb(193 235 206 / 9%);
+  width: var(--catalog-nav-width);
+  padding: 14px 14px 14px;
+  color: var(--rail-ink);
+  background-color: #10271e;
+  background-image:
+    radial-gradient(ellipse at 105% -8%, rgb(91 151 112 / 15%) 0%, transparent 46%),
+    linear-gradient(180deg, #112a21 0%, #0f241c 100%);
+  border-right: 1px solid rgb(184 225 192 / 13%);
+  box-shadow: 4px 0 24px rgb(2 25 13 / 10%);
+  overflow: hidden;
+}
+
+/* Recognizable Brutti wordmark, given space instead of an oversized card. */
+.admin-app .sidebar > .brand {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  width: 100%;
+  min-height: 76px;
+  height: auto;
+  margin: 0 0 15px;
+  padding: 3px 9px 15px;
+  border: 0;
+  border-bottom: 1px solid var(--rail-border);
+  border-radius: 0;
+}
+.admin-app .sidebar > .brand .brutti-official-logo,
+.admin-app[data-theme="dark"] .sidebar > .brand .brutti-official-logo {
+  display: block;
+  width: 115px;
+  height: 53px;
+  max-width: 115px;
+  max-height: 53px;
+  margin: 0;
+  object-fit: contain;
+  object-position: left center;
+  filter: grayscale(1) brightness(0) invert(1);
+  opacity: .97;
+}
+.admin-app .sidebar-brand-mark {
+  padding: 5px 7px;
+  border: 1px solid var(--rail-border);
+  border-radius: 6px;
+  color: #b9d1c1;
+  background: rgb(255 255 255 / 3%);
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 1.25px;
+  line-height: 1;
+}
+
+/* Context cue, not an interactive-looking second application header. */
+.admin-app .sidebar .workspace-label {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 67px;
+  margin: 0 0 21px;
+  padding: 10px 11px;
+  background: linear-gradient(110deg, rgb(181 229 193 / 10%), rgb(181 229 193 / 3%));
+  border: 1px solid rgb(184 225 192 / 17%);
+  border-radius: 13px;
+  box-shadow: inset 0 1px rgb(255 255 255 / 5%);
+}
+.admin-app .sidebar .workspace-label .workspace-symbol {
+  display: grid;
+  flex: 0 0 35px;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  border: 1px solid rgb(175 225 188 / 17%);
+  border-radius: 10px;
+  background: #264c3a;
+  box-shadow: none;
+  color: #e0f2e4;
+}
+.admin-app .sidebar .workspace-label .workspace-meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.admin-app .sidebar .workspace-label .workspace-meta strong {
+  color: #f5fbf6;
+  font-size: 13px;
+  font-weight: 740;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  white-space: normal;
+}
+.admin-app .sidebar .workspace-label .workspace-meta small {
+  color: #bfd5c6;
+  font-size: 10.5px;
+  font-weight: 450;
+  line-height: 1.3;
+  white-space: normal;
+}
+
+/* Clear groups; no bright scroll track or surprise scrollbar arrows. */
+.admin-app .sidebar nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 1px 12px 0;
+  scrollbar-width: none;
+}
+.admin-app .sidebar nav::-webkit-scrollbar {
+  display: none;
+}
+.admin-app .sidebar .nav-group-label {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 11px;
+  align-items: center;
+  width: 100%;
+  padding: 0 11px 10px;
+  margin: 0;
+  color: var(--rail-caption);
+  font-size: 10px;
+  font-weight: 780;
+  line-height: 1.3;
+  letter-spacing: 1.35px;
+}
+.admin-app .sidebar .nav-group-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgb(205 234 215 / 11%);
+}
+.admin-app .sidebar .nav-group-second {
+  padding-top: 26px;
+}
+.admin-app .sidebar nav .nav-item {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 2px 0;
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background-color: transparent;
+  color: var(--rail-muted);
+  box-shadow: none;
+  font-size: 13.5px;
+  font-weight: 550;
+  letter-spacing: -.01em;
+  line-height: 1.3;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+.admin-app .sidebar nav .nav-icon {
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #b5d0bf;
+  background: rgb(255 255 255 / 3%);
+  box-shadow: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.admin-app .sidebar nav .nav-item:hover:not(.active) {
+  color: #ffffff;
+  background-color: var(--rail-hover);
+  border-color: rgb(205 234 215 / 8%);
+}
+.admin-app .sidebar nav .nav-item:hover:not(.active) .nav-icon {
+  background: rgb(213 241 218 / 10%);
+  color: #f0fff3;
+}
+
+/* Same restrained selection in light and dark workspace themes. */
+.admin-app .sidebar nav .nav-item.active,
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active {
+  color: #f6fff8;
+  background-color: #284b39;
+  background-image: linear-gradient(100deg, rgb(164 222 177 / 9%), rgb(164 222 177 / 2%));
+  border-color: rgb(182 225 193 / 23%);
+  box-shadow: inset 3px 0 0 #acd8b4;
+  font-weight: 740;
+}
+.admin-app .sidebar nav .nav-item.active .nav-icon,
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
+  color: #f3fff5;
+  background-color: #365e47;
+  border-color: rgb(209 239 214 / 11%);
+  box-shadow: none;
+}
+.admin-app .sidebar nav .nav-count,
+.admin-app[data-theme="dark"] .sidebar nav .nav-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 30px;
+  height: 25px;
+  margin-left: auto;
+  padding: 3px 7px;
+  border: 1px solid rgb(205 234 215 / 14%);
+  border-radius: 7px;
+  background: rgb(255 255 255 / 6%);
+  color: #eaf9ee;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .sidebar nav .nav-item.active .nav-count,
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-count {
+  color: #f4fff6;
+  background: rgb(231 252 230 / 11%);
+  border-color: rgb(221 245 218 / 14%);
+}
+.admin-app .sidebar nav .nav-item:focus-visible,
+.admin-app .sidebar a:focus-visible,
+.admin-app .sidebar .sidebar-public-link:focus-visible {
+  outline: 2px solid #c4f2ca;
+  outline-offset: 3px;
+}
+
+/* A separate utility exit anchors the rail; never crowds the main navigation. */
+.admin-app .sidebar .sidebar-utility {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 14px 0 2px;
+  border-top: 1px solid var(--rail-border);
+}
+.admin-app .sidebar .sidebar-public-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 58px;
+  padding: 10px 11px;
+  border: 1px solid rgb(192 235 205 / 16%);
+  border-radius: 12px;
+  background: #1a3c2e;
+  color: #f2fbf4;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.admin-app .sidebar .sidebar-public-link:hover {
+  background: #244c39;
+  border-color: rgb(190 231 198 / 30%);
+}
+.admin-app .sidebar .sidebar-public-icon {
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(205 234 215 / 12%);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 7%);
+  color: #e0f4e5;
+}
+.admin-app .sidebar .sidebar-public-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.admin-app .sidebar .sidebar-public-copy strong {
+  font-size: 12.5px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+.admin-app .sidebar .sidebar-public-copy small {
+  color: #c0dac9;
+  font-size: 10px;
+  line-height: 1.3;
+}
+.admin-app .sidebar .sidebar-public-arrow {
+  flex: 0 0 auto;
+  color: #d6eadc;
+}
+.admin-app .sidebar .sidebar-copyright {
+  display: block;
+  padding: 0 9px;
+  color: #abc7b4;
+  font-size: 10px;
+  font-weight: 450;
+  letter-spacing: .01em;
+  line-height: 1.5;
+}
+
+@media (max-height: 690px) {
+  .admin-app .sidebar > .brand {
+    min-height: 65px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  .admin-app .sidebar .workspace-label {
+    min-height: 57px;
+    margin-bottom: 14px;
+    padding: 8px 10px;
+  }
+  .admin-app .sidebar .nav-group-second {
+    padding-top: 15px;
+  }
+  .admin-app .sidebar nav .nav-item {
+    min-height: 42px;
+  }
+  .admin-app .sidebar .sidebar-utility {
+    padding-top: 10px;
+    gap: 7px;
+  }
+  .admin-app .sidebar .sidebar-public-link {
+    min-height: 49px;
+    padding: 7px 9px;
+  }
+}
+@media (max-width: 800px) {
+  .admin-app .sidebar,
+  .admin-app[data-theme="dark"] .sidebar {
+    width: min(286px, 88vw);
+    padding: 13px 14px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app .sidebar nav .nav-item,
+  .admin-app .sidebar nav .nav-icon,
+  .admin-app .sidebar .sidebar-public-link {
+    transition: none;
+  }
+}

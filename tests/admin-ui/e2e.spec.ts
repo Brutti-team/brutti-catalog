@@ -144,6 +144,61 @@ async function expectReadable(page: Page, selectors: string[], darkSurface = fal
   }
 }
 
+test('premium sidebar has clear workspace hierarchy and a pinned public-catalog action', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  const sidebar = page.locator('.admin-app .sidebar');
+  const navigation = page.getByRole('navigation', { name: 'Admin navigation' });
+  await expect(sidebar.locator('.sidebar-brand-mark')).toHaveText('STUDIO');
+  await expect(sidebar.locator('.workspace-label .workspace-meta strong')).toHaveText('Brutti Catalog');
+  await expect(navigation.locator('.nav-group-label').first()).toHaveText('WORKSPACE');
+  await expect(navigation.locator('.nav-group-label').last()).toHaveText('OPERATIONS');
+  await expect(sidebar.locator('.sidebar-last-change')).toHaveCount(0);
+  await expect(sidebar.locator('.sidebar-utility .sidebar-public-link')).toBeVisible();
+  await expect(navigation.getByRole('button', { name: 'Overview', exact: true })).toHaveAttribute('aria-current', 'page');
+  await navigation.getByRole('button', { name: /Products/ }).click();
+  await expect(navigation.getByRole('button', { name: /Products/ })).toHaveAttribute('aria-current', 'page');
+  await expect(navigation.getByRole('button', { name: 'Overview', exact: true })).not.toHaveAttribute('aria-current', 'page');
+
+  const styles = await sidebar.evaluate(el => {
+    const computed = getComputedStyle(el);
+    return { background: computed.backgroundColor, width: el.getBoundingClientRect().width };
+  });
+  expect(styles.width).toBeGreaterThanOrEqual(260);
+  expect(styles.width).toBeLessThanOrEqual(280);
+  expect(styles.background).toBe('rgb(16, 39, 30)');
+
+  await expectReadable(page, [
+    '.sidebar .workspace-meta strong',
+    '.sidebar .workspace-meta small',
+    '.sidebar .nav-group-label',
+    '.sidebar nav .nav-item.active',
+    '.sidebar .sidebar-public-copy strong',
+    '.sidebar .sidebar-public-copy small',
+  ], true);
+});
+
+test('premium sidebar remains useful on narrow mobile and short screens', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 600 });
+  await backend(page, { savedTheme: 'dark' });
+  await openAdmin(page);
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  const sidebar = page.locator('.admin-app .sidebar');
+  await expect(sidebar).toBeVisible();
+  await expect(sidebar.locator('.sidebar-public-link')).toBeVisible();
+  await expect(sidebar.locator('.workspace-meta strong')).toBeVisible();
+  await expect(sidebar.locator('.sidebar-last-change')).toHaveCount(0);
+  const measurements = await sidebar.evaluate(el => ({
+    width: el.getBoundingClientRect().width,
+    viewport: window.innerWidth,
+    horizontalOverflow: el.scrollWidth > el.clientWidth,
+  }));
+  expect(measurements.width).toBeLessThan(measurements.viewport);
+  expect(measurements.horizontalOverflow).toBe(false);
+  await sidebar.getByRole('button', { name: 'Public catalog' }).click();
+  await expect(page.getByRole('heading', { name: 'Good design. Better living.' })).toBeVisible();
+});
+
 test('latest change appears only on Overview, not in sidebar, and opens Activity Log', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
