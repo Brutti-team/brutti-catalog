@@ -440,14 +440,20 @@ test('category cards open products from image or description while Edit stays se
   const nav = page.getByRole('navigation', { name: 'Admin navigation' });
   await nav.getByRole('button', { name: 'Categories', exact: true }).click();
 
-  const card = page.locator('.category-card').first();
-  await card.locator('.category-cover').click();
+  // Simulate a real pointer click in the card image, which is intentionally
+  // covered by the stretched View products target (not a click on the image DOM node).
+  const clickCardArea = async (selector: string) => {
+    const bounds = await page.locator('.category-card').first().locator(selector).boundingBox();
+    expect(bounds).not.toBeNull();
+    await page.mouse.click(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
+  };
+  await clickCardArea('.category-cover');
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
   await expect(page.locator('.product-cell').first()).toContainText(fixtureProduct.name);
 
   await nav.getByRole('button', { name: 'Categories', exact: true }).click();
-  await page.locator('.category-card').first().locator('.category-card-body > p').click();
+  await clickCardArea('.category-card-body > p');
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
 
