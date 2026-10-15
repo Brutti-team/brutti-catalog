@@ -21,7 +21,6 @@ import {
   Trash2,
   ChevronRight,
   ArrowRight,
-  Leaf,
   Menu,
   X,
   LogOut,
