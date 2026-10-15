@@ -463,3 +463,156 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-app .catalog-command-actions button { transition: none; transform: none !important; }
 }
+
+
+/* Activity is workspace data, not navigation. Keep the sidebar dedicated to routes. */
+.admin-app .catalog-last-activity {
+  display: grid;
+  grid-template-columns: minmax(165px, .85fr) minmax(0, 2fr) auto;
+  align-items: center;
+  gap: 17px;
+  margin: 0 0 19px;
+  padding: 17px 21px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 15px;
+  box-shadow: var(--admin-shadow);
+  min-width: 0;
+}
+.admin-app .catalog-last-activity-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.admin-app .catalog-last-activity-icon {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--admin-surface-soft);
+  color: var(--admin-accent);
+  border: 1px solid var(--admin-border);
+  border-radius: 11px;
+}
+.admin-app .catalog-last-activity-kicker {
+  display: block;
+  color: var(--admin-muted);
+  letter-spacing: 1px;
+  font-size: 9px;
+  font-weight: 780;
+  line-height: 1.6;
+}
+.admin-app .catalog-last-activity-heading h2 {
+  margin: 2px 0 0;
+  color: var(--admin-text);
+  font-size: 15px;
+  font-weight: 760;
+  line-height: 1.35;
+  letter-spacing: -.02em;
+}
+.admin-app .catalog-last-activity-details {
+  min-width: 0;
+  padding-left: 17px;
+  border-left: 1px solid var(--admin-border);
+}
+.admin-app .catalog-last-activity-details > strong {
+  display: block;
+  color: var(--admin-text);
+  font-size: 13px;
+  font-weight: 760;
+  line-height: 1.5;
+}
+.admin-app .catalog-last-activity-resource {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--admin-text);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.admin-app .catalog-last-activity-meta {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+  color: var(--admin-muted);
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.admin-app .catalog-last-activity-meta time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-last-activity-placeholder {
+  margin: 0;
+  min-width: 0;
+  padding-left: 17px;
+  border-left: 1px solid var(--admin-border);
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.admin-app .catalog-last-activity-action {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  white-space: nowrap;
+  padding: 9px 12px;
+  color: var(--admin-accent);
+  background: var(--admin-surface-soft);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 740;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+.admin-app .catalog-last-activity-action:hover {
+  background: var(--admin-selected);
+  border-color: var(--admin-focus);
+}
+.admin-app .catalog-last-activity-action:focus-visible {
+  outline: 2px solid var(--admin-focus);
+  outline-offset: 3px;
+}
+@media (max-width: 1120px) {
+  .admin-app .catalog-last-activity {
+    grid-template-columns: minmax(130px, .85fr) minmax(0, 2fr);
+    gap: 13px;
+  }
+  .admin-app .catalog-last-activity-action {
+    grid-column: 2;
+    justify-self: start;
+    min-height: 34px;
+  }
+}
+@media (max-width: 680px) {
+  .admin-app .catalog-last-activity {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 17px;
+  }
+  .admin-app .catalog-last-activity-details,
+  .admin-app .catalog-last-activity-placeholder {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .admin-app .catalog-last-activity-resource {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .admin-app .catalog-last-activity-action {
+    grid-column: 1;
+    width: 100%;
+    justify-self: stretch;
+  }
+}
