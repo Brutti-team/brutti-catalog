@@ -442,13 +442,6 @@ export default function App() {
             <ExternalLink size={13} className="nav-trailing" />
           </button>
         </nav>
-        <div className="sidebar-bottom">
-          <LastChange
-            authenticated={auth.isAdmin}
-            refreshKey={data}
-            onHistory={() => switchTab("activity")}
-          />
-        </div>
       </aside>
       {mobileNav && (
         <button
@@ -656,6 +649,11 @@ export default function App() {
                   </div>
                 </section>
               </div>
+              <LastChange
+                authenticated={auth.isAdmin}
+                refreshKey={data}
+                onHistory={() => switchTab("activity")}
+              />
             </>
           )}
           {tab !== "categories" ? (
