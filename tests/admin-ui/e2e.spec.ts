@@ -149,7 +149,7 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   await openAdmin(page);
   const sidebar = page.locator('.admin-app .sidebar');
   const navigation = page.getByRole('navigation', { name: 'Admin navigation' });
-  await expect(sidebar.locator('.sidebar-brand-mark')).toHaveText('STUDIO');
+  await expect(sidebar.locator('.sidebar-brand-mark')).toHaveCount(0);
   await expect(sidebar.locator('.workspace-label .workspace-meta strong')).toHaveText('Brutti Catalog');
   await expect(navigation.locator('.nav-group-label').first()).toHaveText('WORKSPACE');
   await expect(navigation.locator('.nav-group-label').last()).toHaveText('OPERATIONS');
@@ -167,12 +167,23 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   expect(styles.width).toBeGreaterThanOrEqual(298);
   expect(styles.width).toBeLessThanOrEqual(302);
   expect(styles.background).toBe('rgb(16, 39, 30)');
+  // Premium rail: no extra boxed workspace/active-icon panels or filled footer cards.
+  const railSurface = await sidebar.evaluate(el => ({
+    workspaceBorder: getComputedStyle(el.querySelector('.workspace-label')!).borderTopWidth,
+    workspaceFill: getComputedStyle(el.querySelector('.workspace-label')!).backgroundColor,
+    activeIconFill: getComputedStyle(el.querySelector('.nav-item.active .nav-icon')!).backgroundColor,
+    footerFill: getComputedStyle(el.querySelector('.sidebar-public-link')!).backgroundColor,
+  }));
+  expect(railSurface.workspaceBorder).toBe('0px');
+  expect(railSurface.workspaceFill).toBe('rgba(0, 0, 0, 0)');
+  expect(railSurface.activeIconFill).toBe('rgba(0, 0, 0, 0)');
+  expect(railSurface.footerFill).toBe('rgba(0, 0, 0, 0)');
   const menuMetrics = await sidebar.locator('nav .nav-item').first().evaluate(el => ({
     font: Number.parseFloat(getComputedStyle(el).fontSize),
     height: el.getBoundingClientRect().height,
     icon: el.querySelector('.nav-icon')?.getBoundingClientRect().width ?? 0,
   }));
-  expect(menuMetrics.font).toBeGreaterThanOrEqual(15);
+  expect(menuMetrics.font).toBeGreaterThanOrEqual(14);
   expect(menuMetrics.height).toBeGreaterThanOrEqual(53);
   expect(menuMetrics.icon).toBeGreaterThanOrEqual(37);
 

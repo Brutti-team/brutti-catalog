@@ -1,128 +1,121 @@
-/* Brutti Catalog 3.0 — dedicated navigation rail.
-   Loaded after the shared SaaS layers so navigation has one predictable finish.
-   This file never styles public catalog pages or database-backed content. */
-
+/* Brutti Catalog | refined OS-style navigation rail
+   Deliberately replaces the old card-within-card sidebar treatment.
+   Scoped to the admin shell; public catalog styling and data are untouched. */
 .admin-app {
   --catalog-nav-width: 300px;
 }
-
-/* One deep forest surface, without oversized bright selection pills. */
 .admin-app .sidebar,
 .admin-app[data-theme="dark"] .sidebar {
-  --rail-ink: #eef7f0;
-  --rail-muted: #c4d8cc;
-  --rail-caption: #a6c1b1;
-  --rail-border: rgb(205 234 215 / 12%);
-  --rail-hover: rgb(193 235 206 / 9%);
+  --rail-text: #eaf4ed;
+  --rail-muted: #c0d4c5;
+  --rail-label: #aac0b0;
+  --rail-separator: rgb(213 239 220 / 10%);
+  --rail-hover: rgb(226 250 232 / 7%);
+  --rail-selected: #254536;
   width: var(--catalog-nav-width);
-  padding: 16px 17px 16px;
-  color: var(--rail-ink);
-  background-color: #10271e;
-  background-image:
-    radial-gradient(ellipse at 105% -8%, rgb(91 151 112 / 15%) 0%, transparent 46%),
-    linear-gradient(180deg, #112a21 0%, #0f241c 100%);
-  border-right: 1px solid rgb(184 225 192 / 13%);
-  box-shadow: 4px 0 24px rgb(2 25 13 / 10%);
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 13px 17px 15px;
   overflow: hidden;
+  color: var(--rail-text);
+  border-right: 1px solid #254333;
+  background: #10271e;
+  box-shadow: 2px 0 15px rgb(5 24 13 / 7%);
+  scrollbar-width: none;
 }
+.admin-app .sidebar::-webkit-scrollbar { display: none; }
 
-/* Recognizable Brutti wordmark, given space instead of an oversized card. */
+/* Let the Brutti wordmark stand alone; no second brand badge. */
 .admin-app .sidebar > .brand {
   display: flex;
   flex: 0 0 auto;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: space-between;
-  gap: 9px;
   width: 100%;
-  min-height: 82px;
+  min-height: 77px;
   height: auto;
-  margin: 0 0 18px;
-  padding: 4px 10px 17px;
+  margin: 0 0 12px;
+  padding: 0 10px 12px;
   border: 0;
-  border-bottom: 1px solid var(--rail-border);
+  border-bottom: 1px solid var(--rail-separator);
   border-radius: 0;
 }
 .admin-app .sidebar > .brand .brutti-official-logo,
 .admin-app[data-theme="dark"] .sidebar > .brand .brutti-official-logo {
   display: block;
-  width: 132px;
-  height: 60px;
-  max-width: 132px;
-  max-height: 60px;
+  width: 130px;
+  height: 57px;
+  max-height: 57px;
+  max-width: 130px;
   margin: 0;
   object-fit: contain;
   object-position: left center;
   filter: grayscale(1) brightness(0) invert(1);
-  opacity: .97;
-}
-.admin-app .sidebar-brand-mark {
-  padding: 6px 8px;
-  border: 1px solid var(--rail-border);
-  border-radius: 6px;
-  color: #b9d1c1;
-  background: rgb(255 255 255 / 3%);
-  font-size: 9px;
-  font-weight: 750;
-  letter-spacing: 1.25px;
-  line-height: 1;
+  opacity: .98;
 }
 
-/* Context cue, not an interactive-looking second application header. */
+/* Lightweight workspace identity, not a bordered promotional card. */
 .admin-app .sidebar .workspace-label {
   display: flex;
-  flex: 0 0 auto;
-  justify-content: flex-start;
   align-items: center;
-  gap: 11px;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  gap: 12px;
   width: 100%;
-  min-height: 75px;
-  margin: 0 0 24px;
-  padding: 12px 13px;
-  background: linear-gradient(110deg, rgb(181 229 193 / 10%), rgb(181 229 193 / 3%));
-  border: 1px solid rgb(184 225 192 / 17%);
-  border-radius: 13px;
-  box-shadow: inset 0 1px rgb(255 255 255 / 5%);
+  min-height: 63px;
+  margin: 0 0 19px;
+  padding: 6px 10px;
+  background: transparent;
+  background-image: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--rail-text);
 }
 .admin-app .sidebar .workspace-label .workspace-symbol {
   display: grid;
-  flex: 0 0 40px;
+  flex: 0 0 34px;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 1px solid rgb(175 225 188 / 17%);
-  border-radius: 10px;
-  background: #264c3a;
-  box-shadow: none;
-  color: #e0f2e4;
-}
-.admin-app .sidebar .workspace-label .workspace-meta {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
+  width: 34px;
+  height: 34px;
   padding: 0;
   border: 0;
-  background: none;
+  border-radius: 9px;
+  background: rgb(205 240 215 / 7%);
+  box-shadow: none;
+  color: #cbe6d1;
+}
+.admin-app .sidebar .workspace-label .workspace-symbol svg { width: 19px; height: 19px; }
+.admin-app .sidebar .workspace-label .workspace-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 .admin-app .sidebar .workspace-label .workspace-meta strong {
-  color: #f5fbf6;
-  font-size: 15px;
+  color: #f1f8f3;
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: 14px;
   font-weight: 740;
-  line-height: 1.2;
-  letter-spacing: -.02em;
+  letter-spacing: -.025em;
+  line-height: 1.18;
   white-space: normal;
 }
 .admin-app .sidebar .workspace-label .workspace-meta small {
-  color: #bfd5c6;
-  font-size: 12px;
-  font-weight: 450;
+  color: #bed0c1;
+  font-size: 11.5px;
+  font-weight: 475;
+  letter-spacing: 0;
   line-height: 1.3;
   white-space: normal;
 }
 
-/* Clear groups; no bright scroll track or surprise scrollbar arrows. */
+/* A quiet typographic hierarchy, not lines and stacked boxes. */
 .admin-app .sidebar nav {
   display: flex;
   flex: 1 1 auto;
@@ -130,94 +123,97 @@
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0 1px 12px 0;
+  padding: 0 0 14px;
   scrollbar-width: none;
 }
-.admin-app .sidebar nav::-webkit-scrollbar {
-  display: none;
-}
+.admin-app .sidebar nav::-webkit-scrollbar { display: none; }
 .admin-app .sidebar .nav-group-label {
-  display: flex;
+  display: block;
   flex: 0 0 auto;
-  gap: 11px;
-  align-items: center;
-  width: 100%;
-  padding: 0 13px 12px;
   margin: 0;
-  color: var(--rail-caption);
-  font-size: 11px;
-  font-weight: 780;
-  line-height: 1.3;
-  letter-spacing: 1.35px;
+  padding: 0 13px 10px;
+  color: var(--rail-label);
+  font-size: 10px;
+  font-weight: 740;
+  letter-spacing: 1.4px;
+  line-height: 1.4;
 }
-.admin-app .sidebar .nav-group-label::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: rgb(205 234 215 / 11%);
-}
-.admin-app .sidebar .nav-group-second {
-  padding-top: 28px;
-}
+.admin-app .sidebar .nav-group-label::after { display: none; }
+.admin-app .sidebar .nav-group-second { padding-top: 25px; }
+
+/* Icons are unboxed, active state is subtle with a thin left indicator. */
 .admin-app .sidebar nav .nav-item {
-  position: relative;
   display: flex;
-  flex: 0 0 auto;
+  position: relative;
   align-items: center;
-  gap: 12px;
+  flex: 0 0 auto;
+  gap: 13px;
+  width: 100%;
   min-height: 54px;
-  margin: 3px 0;
-  padding: 8px 13px;
+  margin: 1px 0;
+  padding: 8px 14px;
+  background: transparent;
+  background-image: none;
   border: 1px solid transparent;
-  border-radius: 11px;
-  background-color: transparent;
-  color: var(--rail-muted);
+  border-radius: 10px;
   box-shadow: none;
-  font-size: 15px;
-  font-weight: 570;
+  color: var(--rail-muted);
+  font-size: 14px;
+  font-weight: 580;
   letter-spacing: -.01em;
   line-height: 1.3;
-  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+  text-align: left;
+  transition: background-color 140ms ease, color 140ms ease;
 }
 .admin-app .sidebar nav .nav-icon {
   display: grid;
-  flex: 0 0 38px;
   place-items: center;
+  flex: 0 0 38px;
   width: 38px;
   height: 38px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  color: #b5d0bf;
-  background: rgb(255 255 255 / 3%);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
-  transition: background-color 160ms ease, color 160ms ease;
+  color: #c3dbc8;
+  transition: color 140ms ease;
 }
+.admin-app .sidebar nav .nav-icon > svg { width: 20px; height: 20px; }
 .admin-app .sidebar nav .nav-item:hover:not(.active) {
-  color: #ffffff;
-  background-color: var(--rail-hover);
-  border-color: rgb(205 234 215 / 8%);
+  background: var(--rail-hover);
+  border-color: transparent;
+  color: #f8fff9;
 }
 .admin-app .sidebar nav .nav-item:hover:not(.active) .nav-icon {
-  background: rgb(213 241 218 / 10%);
-  color: #f0fff3;
+  color: #effdf2;
+  background: transparent;
 }
-
-/* Same restrained selection in light and dark workspace themes. */
 .admin-app .sidebar nav .nav-item.active,
 .admin-app[data-theme="dark"] .sidebar nav .nav-item.active {
-  color: #f6fff8;
-  background-color: #284b39;
-  background-image: linear-gradient(100deg, rgb(164 222 177 / 9%), rgb(164 222 177 / 2%));
-  border-color: rgb(182 225 193 / 23%);
-  box-shadow: inset 3px 0 0 #acd8b4;
+  color: #f9fffa;
+  background: var(--rail-selected);
+  background-image: none;
+  border-color: transparent;
+  box-shadow: none;
   font-weight: 740;
+}
+.admin-app .sidebar nav .nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: #b8dec1;
 }
 .admin-app .sidebar nav .nav-item.active .nav-icon,
 .admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
-  color: #f3fff5;
-  background-color: #365e47;
-  border-color: rgb(209 239 214 / 11%);
+  background: transparent;
+  border-color: transparent;
   box-shadow: none;
+  color: #effaf1;
 }
 .admin-app .sidebar nav .nav-count,
 .admin-app[data-theme="dark"] .sidebar nav .nav-count {
@@ -225,60 +221,56 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  min-width: 34px;
-  height: 28px;
+  min-width: 32px;
+  height: 26px;
   margin-left: auto;
   padding: 3px 7px;
-  border: 1px solid rgb(205 234 215 / 14%);
+  border: 0;
   border-radius: 7px;
-  background: rgb(255 255 255 / 6%);
-  color: #eaf9ee;
-  font-size: 12px;
-  font-weight: 700;
+  background: rgb(217 239 222 / 9%);
+  color: #deefe2;
+  font-size: 11.5px;
+  font-weight: 730;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .admin-app .sidebar nav .nav-item.active .nav-count,
 .admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-count {
-  color: #f4fff6;
-  background: rgb(231 252 230 / 11%);
-  border-color: rgb(221 245 218 / 14%);
-}
-.admin-app .sidebar nav .nav-item:focus-visible,
-.admin-app .sidebar a:focus-visible,
-.admin-app .sidebar .sidebar-public-link:focus-visible {
-  outline: 2px solid #c4f2ca;
-  outline-offset: 3px;
+  background: rgb(210 243 222 / 13%);
+  color: #f5fff8;
+  border-color: transparent;
 }
 
-/* A separate utility exit anchors the rail; never crowds the main navigation. */
+/* Footer is an understated utility link rather than another giant card. */
 .admin-app .sidebar .sidebar-utility {
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
   width: 100%;
   margin: 0;
-  padding: 14px 0 2px;
-  border-top: 1px solid var(--rail-border);
+  padding: 11px 0 0;
+  border-top: 1px solid var(--rail-separator);
 }
 .admin-app .sidebar .sidebar-public-link {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   width: 100%;
-  min-height: 66px;
-  padding: 11px 13px;
-  border: 1px solid rgb(192 235 205 / 16%);
-  border-radius: 12px;
-  background: #1a3c2e;
-  color: #f2fbf4;
-  text-align: left;
+  min-height: 57px;
+  padding: 8px 11px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #eef7f0;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  text-align: left;
+  box-shadow: none;
+  transition: background-color 140ms ease;
 }
 .admin-app .sidebar .sidebar-public-link:hover {
-  background: #244c39;
-  border-color: rgb(190 231 198 / 30%);
+  background: var(--rail-hover);
+  border-color: transparent;
 }
 .admin-app .sidebar .sidebar-public-icon {
   display: grid;
@@ -286,68 +278,62 @@
   place-items: center;
   width: 38px;
   height: 38px;
-  border: 1px solid rgb(205 234 215 / 12%);
-  border-radius: 10px;
-  background: rgb(255 255 255 / 7%);
-  color: #e0f4e5;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #cbe5d1;
 }
+.admin-app .sidebar .sidebar-public-icon > svg { width: 20px; height: 20px; }
 .admin-app .sidebar .sidebar-public-copy {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   flex-direction: column;
-  gap: 3px;
   min-width: 0;
+  gap: 4px;
 }
 .admin-app .sidebar .sidebar-public-copy strong {
-  font-size: 14px;
-  font-weight: 750;
-  line-height: 1.3;
+  color: #f0fbf2;
+  font-size: 13.5px;
+  font-weight: 710;
+  line-height: 1.25;
 }
 .admin-app .sidebar .sidebar-public-copy small {
-  color: #c0dac9;
-  font-size: 11.5px;
+  color: #c1d4c5;
+  font-size: 11px;
+  font-weight: 480;
   line-height: 1.3;
 }
 .admin-app .sidebar .sidebar-public-arrow {
   flex: 0 0 auto;
-  color: #d6eadc;
+  color: #c3dec9;
 }
-.admin-app .sidebar .sidebar-copyright {
-  display: block;
-  padding: 0 9px;
-  color: #abc7b4;
-  font-size: 10px;
-  font-weight: 450;
-  letter-spacing: .01em;
-  line-height: 1.5;
+.admin-app .sidebar nav .nav-item:focus-visible,
+.admin-app .sidebar a:focus-visible,
+.admin-app .sidebar .sidebar-public-link:focus-visible {
+  outline: 2px solid #c4efcc;
+  outline-offset: 3px;
 }
 
+/* Preserve content alignment, readable Profile cards and mobile ergonomics. */
+@media (min-width: 801px) {
+  .admin-app .admin-main {
+    margin-left: var(--catalog-nav-width);
+    min-width: 0;
+  }
+}
+@media (min-width: 801px) and (max-width: 1050px) {
+  .admin-app .admin-content { padding-left: 18px; padding-right: 18px; }
+  .admin-app .account-center .account-cards { grid-template-columns: minmax(0, 1fr); }
+  .admin-app .account-center .account-mini { grid-column: 1; }
+}
 @media (max-height: 690px) {
-  .admin-app .sidebar > .brand {
-    min-height: 65px;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-  }
-  .admin-app .sidebar .workspace-label {
-    min-height: 57px;
-    margin-bottom: 14px;
-    padding: 8px 10px;
-  }
-  .admin-app .sidebar .nav-group-second {
-    padding-top: 15px;
-  }
-  .admin-app .sidebar nav .nav-item {
-    min-height: 46px;
-    padding-block: 5px;
-  }
-  .admin-app .sidebar .sidebar-utility {
-    padding-top: 10px;
-    gap: 7px;
-  }
-  .admin-app .sidebar .sidebar-public-link {
-    min-height: 49px;
-    padding: 7px 9px;
-  }
+  .admin-app .sidebar > .brand { min-height: 66px; margin-bottom: 8px; padding-bottom: 8px; }
+  .admin-app .sidebar .workspace-label { min-height: 55px; margin-bottom: 10px; padding: 4px 9px; }
+  .admin-app .sidebar .nav-group-second { padding-top: 13px; }
+  .admin-app .sidebar nav .nav-item { min-height: 45px; padding-block: 4px; }
+  .admin-app .sidebar .sidebar-utility { padding-top: 6px; }
+  .admin-app .sidebar .sidebar-public-link { min-height: 47px; padding-block: 5px; }
 }
 @media (max-width: 800px) {
   .admin-app .sidebar,
@@ -359,38 +345,5 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-app .sidebar nav .nav-item,
   .admin-app .sidebar nav .nav-icon,
-  .admin-app .sidebar .sidebar-public-link {
-    transition: none;
-  }
-}
-
-/* Scale the glyphs with the OS-sized navigation instead of leaving tiny icons. */
-.admin-app .sidebar nav .nav-icon > svg {
-  width: 21px;
-  height: 21px;
-}
-.admin-app .sidebar .workspace-symbol > svg,
-.admin-app .sidebar .sidebar-public-icon > svg {
-  width: 21px;
-  height: 21px;
-}
-@media (min-width: 801px) {
-  .admin-app .admin-main {
-    margin-left: var(--catalog-nav-width);
-    min-width: 0;
-  }
-}
-/* With the wider rail, keep Profile cards inside a short landscape viewport.
-   Preserve desktop two-column Profile on normal screens. */
-@media (min-width: 801px) and (max-width: 1050px) {
-  .admin-app .admin-content {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-  .admin-app .account-center .account-cards {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .admin-app .account-center .account-mini {
-    grid-column: 1;
-  }
+  .admin-app .sidebar .sidebar-public-link { transition: none; }
 }
