@@ -65,6 +65,52 @@ describe('public inspector OpenAPI fallback', () => {
     expect(JSON.stringify(result)).not.toContain(config.key);
   });
 
+  it('permits legitimate staff category additions and renames while reporting original import differences', async () => {
+    const editedCategories = [
+      ...categories.filter((category: { name: string }) => category.name !== 'Displays & Panels'),
+      { id: 'category-custom-kiosks', name: 'Kiosks' },
+      { id: 'category-renamed-panels', name: 'Panels' },
+    ];
+    const fetchImpl = vi.fn(async (input: string) => {
+      const url = new URL(input);
+      if (url.pathname === '/rest/v1/') return response({}, 401);
+      if (url.pathname.endsWith('/categories')) return response(editedCategories);
+      return response([]);
+    });
+    const result = await inspectBackend(config, { fetchImpl });
+    expect(result.requiredReadsPassed).toBe(true);
+    expect(result.categories).toContain('Kiosks');
+    expect(result.categories).toContain('Panels');
+    expect(result.missing).toContain('Displays & Panels');
+    expect(result.unexpected).toContain('Kiosks');
+    expect(result.note).toMatch(/Category additions\/renames made in Admin are permitted/);
+  });
+
+  it('rejects an empty or duplicated category response even when API status is 200', async () => {
+    for (const badCategories of [[], [categories[0], categories[0]], [{ id: '', name: '' }]]) {
+      const fetchImpl = async (input: string) => {
+        const url = new URL(input);
+        if (url.pathname.endsWith('/categories')) return response(badCategories);
+        return response([]);
+      };
+      expect((await inspectBackend(config, { fetchImpl })).requiredReadsPassed).toBe(false);
+    }
+  });
+
+  it('still blocks public exposure of non-published products', async () => {
+    const fetchImpl = async (input: string) => {
+      const url = new URL(input);
+      if (url.pathname.endsWith('/categories')) return response([...categories, { id: 'custom', name: 'Kiosks' }]);
+      if (url.pathname.endsWith('/products') && url.searchParams.get('select') === 'id,status') {
+        return response([{ id: 'secret-draft', status: 'draft' }]);
+      }
+      return response([]);
+    };
+    const result = await inspectBackend(config, { fetchImpl });
+    expect(result.requiredReadsPassed).toBe(false);
+    expect(result.unpublishedVisible).toBe(true);
+  });
+
   it('does not describe failed public reads as an empty catalog', async () => {
     const fetchImpl = async (input: string) => new URL(input).pathname.endsWith('/categories')
       ? response(categories) : response({ code: '42501' }, 401);
