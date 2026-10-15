@@ -288,7 +288,7 @@ test('enterprise overview shows real catalog health and review actions', async (
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
 });
 
-test('Overview analytics uses distinct semantic colours without changing underlying counts', async ({ page }) => {
+test('Overview analytics uses a unified premium palette without changing real counts', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
   const cards = page.locator('.overview-stats .overview-stat');
@@ -298,26 +298,23 @@ test('Overview analytics uses distinct semantic colours without changing underly
     accent: getComputedStyle(el).borderTopColor,
     iconFill: getComputedStyle(el.querySelector('.overview-stat-icon')!).backgroundColor,
   })));
-  expect(new Set(metrics.map(m => m.gradient)).size).toBe(4);
-  expect(new Set(metrics.map(m => m.accent)).size).toBe(4);
-  // Match the requested distinctly coloured violet, cyan, coral and gold surfaces.
-  expect(metrics.map(m => m.accent)).toEqual([
-    'rgb(120, 86, 187)',
-    'rgb(18, 131, 163)',
-    'rgb(196, 93, 114)',
-    'rgb(181, 133, 37)',
-  ]);
-  expect(new Set(metrics.map(m => m.iconFill)).size).toBe(4);
-  for (const metric of metrics) expect(metric.gradient).toContain('linear-gradient');
+  // All four stat cards share one coherent neutral / forest-green treatment.
+  expect(new Set(metrics.map(m => m.gradient)).size).toBe(1);
+  expect(new Set(metrics.map(m => m.accent)).size).toBe(1);
+  expect(new Set(metrics.map(m => m.iconFill)).size).toBe(1);
+  expect(metrics[0].gradient).toContain('linear-gradient');
   await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
   await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
   await expect(page.locator('.catalog-category-bar')).toHaveCount(5);
+  const bars = await page.locator('.catalog-category-track > span').evaluateAll(items =>
+    items.map(el => getComputedStyle(el).backgroundColor));
+  expect(new Set(bars.slice(1)).size).toBe(1);
   const activity = page.locator('.catalog-last-activity');
   await expect(activity).toBeVisible();
-  const activityStyle = await activity.evaluate(el => getComputedStyle(el).backgroundImage);
-  expect(activityStyle).toContain('linear-gradient');
+  const activityFill = await activity.evaluate(el => getComputedStyle(el).backgroundColor);
+  expect(activityFill).toBe('rgb(255, 255, 255)');
   await expectReadable(page, ['.overview-stat > strong', '.catalog-studio-panel-head h2', '.catalog-category-name', '.catalog-last-activity-heading h2']);
 });
 
@@ -327,6 +324,9 @@ test('Overview colours preserve dark-mode contrast and mobile width', async ({ p
   await openAdmin(page);
   await expectTheme(page, 'dark');
   await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(4);
+  const darkCards = await page.locator('.overview-stats .overview-stat').evaluateAll(items => items.map(
+    el => [getComputedStyle(el).backgroundImage, getComputedStyle(el).borderTopColor]));
+  expect(new Set(darkCards.map(value => value.join('|'))).size).toBe(1);
   await expectReadable(page, [
     '.overview-stats .overview-stat:nth-child(1) > strong',
     '.overview-stats .overview-stat:nth-child(2) > strong',
