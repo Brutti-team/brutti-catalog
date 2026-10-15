@@ -434,6 +434,55 @@ test('quick status filters and category card navigation find matching products',
   await expect(page.locator('.product-cell').first()).toContainText('Admin UI fixture shelf');
 });
 
+test('category actions have premium hierarchy without sacrificing Edit and disabled Delete', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  await page.getByRole('navigation', { name: 'Admin navigation' })
+    .getByRole('button', { name: 'Categories', exact: true }).click();
+  const card = page.locator('.category-card').first();
+  const view = card.getByRole('button', { name: 'View products' });
+  const edit = card.getByRole('button', { name: 'Edit category' });
+  const remove = card.locator('.icon-button.danger-text');
+  await expect(view).toBeVisible();
+  await expect(edit).toBeVisible();
+  await expect(remove).toBeDisabled(); // Populated categories cannot be deleted.
+  const styles = await card.evaluate(el => {
+    const controls = [...el.querySelectorAll<HTMLButtonElement>('.category-card-actions button')];
+    return controls.map(button => {
+      const css = getComputedStyle(button);
+      return { height: button.getBoundingClientRect().height, background: css.backgroundColor, radius: css.borderRadius };
+    });
+  });
+  expect(styles).toHaveLength(3);
+  for (const s of styles) {
+    expect(s.height).toBeGreaterThanOrEqual(39);
+    expect(parseFloat(s.radius)).toBeGreaterThanOrEqual(9);
+    expect(s.background).not.toBe('rgba(0, 0, 0, 0)');
+  }
+  expect(styles[0].background).not.toBe(styles[1].background);
+  expect(styles[1].background).not.toBe(styles[2].background);
+  await edit.click();
+  await expect(page.getByRole('dialog', { name: 'Edit category' })).toBeVisible();
+});
+
+test('premium category actions fit a phone in dark mode and remain accessible', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await backend(page, { savedTheme: 'dark' });
+  await openAdmin(page);
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.getByRole('navigation', { name: 'Admin navigation' })
+    .getByRole('button', { name: 'Categories', exact: true }).click();
+  const card = page.locator('.category-card').first();
+  await expect(card.getByRole('button', { name: 'View products' })).toBeVisible();
+  await expect(card.getByRole('button', { name: 'Edit category' })).toBeVisible();
+  await expect(card.locator('.icon-button.danger-text')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expectReadable(page, [
+    '.category-card .category-view-products',
+    '.category-card .category-card-actions .text-button:not(.category-view-products)',
+  ], true);
+});
+
 test('category cards open products from image or description while Edit stays separate', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
