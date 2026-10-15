@@ -283,7 +283,7 @@ test('collection inventory uses premium table hierarchy and live search filters'
   await panel.getByLabel('Search products').fill('not-a-real-product-name');
   await expect(panel.locator('.catalog-collection-overview-meta')).toContainText('Showing 0 of 0 matching products');
   await expect(panel.getByRole('heading', { name: 'No pieces found' })).toBeVisible();
-  await panel.getByRole('button', { name: 'Clear filters' }).click();
+  await panel.locator('.catalog-collection-reset').click();
   await expect(panel.locator('.catalog-inventory-table tbody tr')).toHaveCount(1);
   await panel.getByRole('button', { name: `Edit ${fixtureProduct.name}`, exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'Edit product', exact: true })).toBeVisible();
