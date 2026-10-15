@@ -372,6 +372,25 @@
 }
 .admin-app .category-card-actions .text-button { font-size: 11px; font-weight: 750; }
 .admin-app .category-card-actions .icon-button { margin-left: auto; }
+/* Stretch the existing View products button across the card, without placing
+   a clickable wrapper around nested Edit/Delete buttons. Accessible by keyboard. */
+.admin-app .category-card { position: relative; }
+.admin-app .category-card .category-view-products::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  cursor: pointer;
+}
+.admin-app .category-card .category-view-products:focus-visible::after {
+  outline: 3px solid var(--admin-focus);
+  outline-offset: -4px;
+}
+.admin-app .category-card .category-card-actions > :not(.category-view-products) {
+  position: relative;
+  z-index: 2;
+}
 /* Forms, dialogs and team pages share the same density and surfaces */
 .admin-app .modal {
   max-height: min(92dvh, 1020px); border-radius: 17px;
