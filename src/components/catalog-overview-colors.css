@@ -1,43 +1,47 @@
 /* Brutti Catalog | Overview palette
-   A restrained multi-tone dashboard: evergreen, mint, amber and blue.
+   A vivid yet restrained stat palette: violet, cyan, coral and golden yellow.
    Scoped to the overview-only cards; no product data, permissions or public UI. */
 
 .admin-app .overview-stats .overview-stat {
-  --stat-tone: #286449;
-  --stat-icon-bg: #d5eadc;
-  --stat-text: #214c39;
+  --stat-tone: #7856bb;
+  --stat-icon-bg: #e4d9fa;
+  --stat-text: #4f347f;
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid #cbded0;
+  border: 1px solid #decff5;
   border-top: 3px solid var(--stat-tone);
   border-radius: 16px;
-  background: linear-gradient(135deg, #e6f4eb 0%, #f3f9f5 100%);
+  background: linear-gradient(135deg, #eee7ff 0%, #faf7ff 100%);
   box-shadow: 0 5px 17px rgb(36 82 59 / 6%);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
+/* Override the legacy first-child top-border specificity from admin-studio.css. */
+.admin-app .overview-stats .overview-stat:first-child {
+  border-top-color: #7856bb;
+}
 .admin-app .overview-stats .overview-stat:nth-child(2) {
-  --stat-tone: #2d8570;
-  --stat-icon-bg: #d0eee6;
-  --stat-text: #21604f;
-  background: linear-gradient(135deg, #e4f5f0 0%, #f3faf7 100%);
-  border-color: #c8e6db;
+  --stat-tone: #1283a3;
+  --stat-icon-bg: #d2f0fa;
+  --stat-text: #08576f;
+  background: linear-gradient(135deg, #dff5fc 0%, #f4fbff 100%);
+  border-color: #bde6f2;
   border-top-color: var(--stat-tone);
 }
 .admin-app .overview-stats .overview-stat:nth-child(3) {
-  --stat-tone: #b77536;
-  --stat-icon-bg: #f8e2bd;
-  --stat-text: #81501f;
-  background: linear-gradient(135deg, #fff1dc 0%, #fff9ef 100%);
-  border-color: #efdcbf;
+  --stat-tone: #c45d72;
+  --stat-icon-bg: #fbd7df;
+  --stat-text: #87384c;
+  background: linear-gradient(135deg, #ffe8ed 0%, #fff7f8 100%);
+  border-color: #f2cdd7;
   border-top-color: var(--stat-tone);
 }
 .admin-app .overview-stats .overview-stat:nth-child(4) {
-  --stat-tone: #527da7;
-  --stat-icon-bg: #dce8f8;
-  --stat-text: #335779;
-  background: linear-gradient(135deg, #e9f0fc 0%, #f5f8fd 100%);
-  border-color: #d6e2f0;
+  --stat-tone: #b58525;
+  --stat-icon-bg: #fbe5ab;
+  --stat-text: #775213;
+  background: linear-gradient(135deg, #fff1c9 0%, #fffaf0 100%);
+  border-color: #f0dca8;
   border-top-color: var(--stat-tone);
 }
 .admin-app .overview-stats .overview-stat::after {
@@ -50,7 +54,7 @@
   bottom: -57px;
   border-radius: 50%;
   background: var(--stat-tone);
-  opacity: .055;
+  opacity: .085;
   pointer-events: none;
 }
 .admin-app .overview-stats .overview-stat:hover {
@@ -237,35 +241,35 @@
 
 /* Dark mode uses deep tonal surfaces and explicitly readable type. */
 .admin-app[data-theme="dark"] .overview-stats .overview-stat {
-  --stat-tone: #72bd96;
-  --stat-icon-bg: #365c49;
-  --stat-text: #e5f6eb;
-  background: linear-gradient(135deg, #244335, #20362c);
-  border-color: #345d48;
+  --stat-tone: #c1a5f4;
+  --stat-icon-bg: #50416f;
+  --stat-text: #f0e7ff;
+  background: linear-gradient(135deg, #3d3158, #2c2644);
+  border-color: #62507e;
   border-top-color: var(--stat-tone);
 }
 .admin-app[data-theme="dark"] .overview-stats .overview-stat:nth-child(2) {
-  --stat-tone: #72cdb9;
-  --stat-icon-bg: #315e53;
-  --stat-text: #e4faf4;
-  background: linear-gradient(135deg, #23473f, #203831);
-  border-color: #386459;
+  --stat-tone: #8be0f2;
+  --stat-icon-bg: #24576a;
+  --stat-text: #e2f9ff;
+  background: linear-gradient(135deg, #234d5f, #1c3647);
+  border-color: #3b697b;
   border-top-color: var(--stat-tone);
 }
 .admin-app[data-theme="dark"] .overview-stats .overview-stat:nth-child(3) {
-  --stat-tone: #e1b675;
-  --stat-icon-bg: #5a472d;
-  --stat-text: #fff0d3;
-  background: linear-gradient(135deg, #453829, #392f23);
-  border-color: #655035;
+  --stat-tone: #f4a7b8;
+  --stat-icon-bg: #633846;
+  --stat-text: #ffe8ef;
+  background: linear-gradient(135deg, #5b3344, #412a37);
+  border-color: #77485b;
   border-top-color: var(--stat-tone);
 }
 .admin-app[data-theme="dark"] .overview-stats .overview-stat:nth-child(4) {
-  --stat-tone: #9fc2ef;
-  --stat-icon-bg: #354e6c;
-  --stat-text: #e7f1ff;
-  background: linear-gradient(135deg, #2c4059, #243547);
-  border-color: #405774;
+  --stat-tone: #f2d27d;
+  --stat-icon-bg: #69512d;
+  --stat-text: #fff3cf;
+  background: linear-gradient(135deg, #554527, #3b3526);
+  border-color: #73623a;
   border-top-color: var(--stat-tone);
 }
 .admin-app[data-theme="dark"] .catalog-health-card {
