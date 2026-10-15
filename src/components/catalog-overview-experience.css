@@ -1,0 +1,343 @@
+/* Brutti Catalog · Overview Experience 2026
+   A subtle motion system and assisted review layer. All selectors admin-only.
+   Motion is non-blocking, respects reduced motion, and never changes records. */
+
+.admin-app .catalog-overview-automations {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  min-height: 58px;
+  padding: 12px 18px;
+  margin: -2px 0 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: 13px;
+  background: var(--admin-surface);
+  box-shadow: 0 4px 16px rgb(24 54 38 / 3%);
+  animation: catalog-appear .42s ease-out both;
+}
+.admin-app .catalog-auto-sync,
+.admin-app .catalog-auto-sync-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-app .catalog-auto-sync { min-width: 0; }
+.admin-app .catalog-auto-sync > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.admin-app .catalog-auto-sync strong {
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 780;
+  line-height: 1.3;
+}
+.admin-app .catalog-auto-sync small {
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+.admin-app .catalog-auto-sync-dot {
+  position: relative;
+  flex: 0 0 9px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3d9d72;
+  box-shadow: 0 0 0 3px rgb(61 157 114 / 11%);
+}
+.admin-app .catalog-auto-sync-dot::after {
+  position: absolute;
+  content: "";
+  inset: -5px;
+  border: 1px solid #5eb78f;
+  border-radius: 50%;
+  animation: catalog-sync-pulse 3.4s ease-out infinite;
+}
+.admin-app .catalog-auto-sync-dot.has-error {
+  background: #c78943;
+  box-shadow: 0 0 0 3px rgb(199 137 67 / 13%);
+}
+.admin-app .catalog-auto-sync-dot.has-error::after { animation: none; border-color: #c78943; }
+.admin-app .catalog-auto-sync-tools { gap: 13px; margin-left: auto; }
+.admin-app .catalog-auto-sync-time {
+  color: var(--admin-muted);
+  white-space: nowrap;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-auto-sync-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 7px 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-surface-soft);
+  color: var(--admin-accent);
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.admin-app .catalog-auto-sync-button:hover:not(:disabled) {
+  background: var(--admin-selected);
+  border-color: var(--admin-focus);
+  transform: translateY(-1px);
+}
+.admin-app .catalog-auto-sync-button:disabled { cursor: wait; opacity: .66; }
+.admin-app .catalog-auto-sync-button:focus-visible,
+.admin-app .catalog-auto-review-action:focus-visible {
+  outline: 2px solid var(--admin-focus);
+  outline-offset: 3px;
+}
+.admin-app .catalog-auto-sync-button svg.is-spinning { animation: catalog-spin .85s linear infinite; }
+
+/* Staggered, lightweight dashboard entrance. No looping card movement. */
+.admin-app .overview-stats .overview-stat {
+  animation: catalog-appear .54s cubic-bezier(.22, 1, .36, 1) both;
+  box-shadow: 0 3px 10px rgb(25 42 37 / 3%), 0 16px 36px rgb(25 42 37 / 5%);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.admin-app .overview-stats .overview-stat:nth-child(1) { animation-delay: .045s; }
+.admin-app .overview-stats .overview-stat:nth-child(2) { animation-delay: .105s; }
+.admin-app .overview-stats .overview-stat:nth-child(3) { animation-delay: .165s; }
+.admin-app .overview-stats .overview-stat:nth-child(4) { animation-delay: .225s; }
+.admin-app .overview-stats .overview-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgb(25 42 37 / 11%);
+}
+.admin-app .overview-stats .overview-stat .overview-stat-icon {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 30%);
+  transition: transform .25s cubic-bezier(.22, 1, .36, 1), box-shadow .2s ease;
+}
+.admin-app .overview-stats .overview-stat:hover .overview-stat-icon {
+  transform: translateY(-2px) rotate(-5deg);
+  box-shadow: 0 4px 9px rgb(22 31 29 / 9%);
+}
+.admin-app .overview-stats .overview-stat > strong { letter-spacing: -1.35px; }
+
+/* Operational panels share a clean rhythm with category micro-interactions. */
+.admin-app .catalog-operations { align-items: stretch; }
+.admin-app .catalog-health-card,
+.admin-app .catalog-insights-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 5px 14px rgb(22 55 38 / 3%), 0 18px 38px rgb(22 55 38 / 3%);
+  animation: catalog-appear .5s ease-out .19s both;
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.admin-app .catalog-health-card:hover,
+.admin-app .catalog-insights-card:hover {
+  box-shadow: 0 12px 38px rgb(22 55 38 / 8%);
+}
+.admin-app .catalog-health-card .catalog-studio-panel-head h2,
+.admin-app .catalog-insights-card .catalog-studio-panel-head h2 {
+  font-size: 18px;
+  letter-spacing: -.45px;
+}
+.admin-app .catalog-health-card .catalog-progress-row progress::-webkit-progress-value {
+  transform-origin: left;
+  animation: catalog-fill .85s cubic-bezier(.16,1,.3,1) .28s both;
+}
+.admin-app .catalog-insights-card .catalog-category-bar {
+  transition: background-color .2s ease, transform .18s ease;
+}
+.admin-app .catalog-insights-card .catalog-category-bar:hover { transform: translateX(2px); }
+.admin-app .catalog-insights-card .catalog-category-track > span {
+  transform-origin: left;
+  animation: catalog-fill .7s cubic-bezier(.22,1,.36,1) both;
+}
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(1) .catalog-category-track > span { animation-delay: .14s; }
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(2) .catalog-category-track > span { animation-delay: .22s; }
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(3) .catalog-category-track > span { animation-delay: .30s; }
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(4) .catalog-category-track > span { animation-delay: .38s; }
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(5) .catalog-category-track > span { animation-delay: .46s; }
+
+/* Automated missing-data checks: small, actionable and read-only. */
+.admin-app .catalog-auto-review {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 16px;
+  margin-top: 19px;
+  padding: 15px 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-surface-soft);
+}
+.admin-app .catalog-auto-review-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.admin-app .catalog-auto-review-icon {
+  display: grid;
+  flex: 0 0 33px;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border-radius: 9px;
+  background: var(--admin-selected);
+  color: var(--admin-accent);
+}
+.admin-app .catalog-auto-review-heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.admin-app .catalog-auto-review-heading strong {
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 760;
+}
+.admin-app .catalog-auto-review-heading small {
+  color: var(--admin-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+.admin-app .catalog-auto-review-metrics {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.admin-app .catalog-auto-review-metrics > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 29px;
+  padding: 5px 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-surface);
+  color: var(--admin-muted);
+  font-size: 10px;
+  line-height: 1.3;
+}
+.admin-app .catalog-auto-review-metrics strong {
+  color: var(--admin-accent);
+  font-size: 11px;
+  font-weight: 790;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-auto-review-action {
+  display: inline-flex;
+  grid-row: 1;
+  grid-column: 2;
+  align-self: center;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-surface);
+  color: var(--admin-accent);
+  font-size: 10.5px;
+  font-weight: 760;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease;
+}
+.admin-app .catalog-auto-review-action:hover {
+  background: var(--admin-selected);
+  border-color: var(--admin-focus);
+}
+.admin-app .catalog-last-activity {
+  animation: catalog-appear .5s ease-out .3s both;
+  transition: box-shadow .22s ease, border-color .22s ease;
+}
+.admin-app .catalog-last-activity:hover { box-shadow: 0 12px 30px rgb(26 62 41 / 9%); }
+.admin-app .catalog-last-activity-action { transition: background-color .16s ease, border-color .16s ease, transform .16s ease; }
+.admin-app .catalog-last-activity-action:hover { transform: translateY(-1px); }
+
+.admin-app[data-theme="dark"] .catalog-overview-automations {
+  box-shadow: 0 5px 17px rgb(0 0 0 / 15%);
+}
+.admin-app[data-theme="dark"] .catalog-auto-sync-dot {
+  background: #81d6aa;
+}
+.admin-app[data-theme="dark"] .catalog-auto-sync-dot::after { border-color: #80d6aa; }
+.admin-app[data-theme="dark"] .catalog-auto-review {
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+}
+.admin-app[data-theme="dark"] .catalog-auto-review-metrics > span {
+  background: var(--admin-surface);
+}
+.admin-app[data-theme="dark"] .catalog-auto-review-heading strong,
+.admin-app[data-theme="dark"] .catalog-auto-review-metrics strong {
+  color: var(--admin-text);
+}
+.admin-app[data-theme="dark"] .catalog-auto-review-action { background: var(--admin-surface); color: var(--admin-text); }
+.admin-app[data-theme="dark"] .catalog-auto-review-action:hover { background: var(--admin-selected); }
+@media (max-width: 1000px) {
+  .admin-app .catalog-auto-review { grid-template-columns: minmax(0, 1fr); }
+  .admin-app .catalog-auto-review-action { grid-column: 1; grid-row: auto; justify-self: start; }
+  .admin-app .catalog-auto-review-metrics { grid-column: 1; }
+}
+@media (max-width: 680px) {
+  .admin-app .catalog-overview-automations { align-items: flex-start; padding: 12px; gap: 11px; }
+  .admin-app .catalog-auto-sync-tools { width: 100%; justify-content: space-between; margin-left: 0; }
+  .admin-app .catalog-auto-sync small { font-size: 10px; }
+  .admin-app .catalog-auto-sync-time { font-size: 10px; }
+  .admin-app .catalog-auto-review { padding: 12px; }
+  .admin-app .catalog-health-card .catalog-studio-panel-head h2,
+  .admin-app .catalog-insights-card .catalog-studio-panel-head h2 { font-size: 16px; }
+}
+@media (max-width: 370px) {
+  .admin-app .catalog-auto-sync-tools { flex-wrap: wrap; }
+  .admin-app .catalog-auto-sync-button { width: 100%; }
+}
+@keyframes catalog-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes catalog-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes catalog-sync-pulse {
+  0%, 32% { opacity: .7; transform: scale(.75); }
+  62%, 100% { opacity: 0; transform: scale(1.85); }
+}
+@keyframes catalog-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .admin-app .catalog-overview-automations,
+  .admin-app .overview-stats .overview-stat,
+  .admin-app .catalog-health-card,
+  .admin-app .catalog-insights-card,
+  .admin-app .catalog-last-activity,
+  .admin-app .catalog-insights-card .catalog-category-track > span,
+  .admin-app .catalog-health-card .catalog-progress-row progress::-webkit-progress-value,
+  .admin-app .catalog-auto-sync-dot::after,
+  .admin-app .catalog-auto-sync-button svg.is-spinning {
+    animation: none !important;
+  }
+  .admin-app .overview-stats .overview-stat,
+  .admin-app .overview-stats .overview-stat .overview-stat-icon,
+  .admin-app .catalog-health-card,
+  .admin-app .catalog-insights-card,
+  .admin-app .catalog-insights-card .catalog-category-bar,
+  .admin-app .catalog-last-activity,
+  .admin-app .catalog-last-activity-action,
+  .admin-app .catalog-auto-sync-button {
+    transition: none !important;
+  }
+  .admin-app .overview-stats .overview-stat:hover,
+  .admin-app .catalog-insights-card .catalog-category-bar:hover,
+  .admin-app .catalog-last-activity-action:hover,
+  .admin-app .catalog-auto-sync-button:hover {
+    transform: none !important;
+  }
+}

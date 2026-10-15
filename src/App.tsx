@@ -25,6 +25,8 @@ import {
   X,
   LogOut,
   LoaderCircle,
+  RefreshCw,
+  Sparkles,
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
@@ -97,6 +99,8 @@ export default function App() {
     categories: [],
   });
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [auth, setAuth] = useState({
     authenticated: false,
@@ -135,15 +139,22 @@ export default function App() {
   const refresh = useCallback(async (background = false) => {
     const request = ++catalogRequest.current;
     if (!background) setLoading(true);
+    if (background) setSyncing(true);
     setError(null);
     try {
       const next = await loadCatalog();
-      if (request === catalogRequest.current) setData(next);
+      if (request === catalogRequest.current) {
+        setData(next);
+        setLastSyncedAt(Date.now());
+      }
     } catch (e) {
       if (request === catalogRequest.current)
         setError(e instanceof Error ? e.message : "Unable to load the catalog.");
     } finally {
-      if (request === catalogRequest.current) setLoading(false);
+      if (request === catalogRequest.current) {
+        setLoading(false);
+        setSyncing(false);
+      }
     }
   }, []);
   const refreshAuth = useCallback(async () => {
@@ -331,6 +342,16 @@ export default function App() {
   const withPhotos = data.products.filter((p) => p.images.length > 0).length;
   const photoCoverage = data.products.length ? Math.round(withPhotos / data.products.length * 100) : 0;
   const liveCoverage = data.products.length ? Math.round(publishedCount / data.products.length * 100) : 0;
+  // Read-only checks of real Draft data. Never change product status or invent specifications.
+  const draftsForReview = data.products.filter(p => p.status === "draft");
+  const reviewGaps = {
+    dimensions: draftsForReview.filter(p => ![p.width, p.depth, p.height].every(n => Number.isFinite(n) && n > 0)).length,
+    materials: draftsForReview.filter(p => !p.materials.trim()).length,
+    descriptions: draftsForReview.filter(p => !p.description.trim()).length,
+  };
+  const lastSyncText = lastSyncedAt === null ? "Waiting for first sync" : `Updated ${new Intl.DateTimeFormat("en-MY", {
+    timeZone: "Asia/Kuala_Lumpur", hour: "numeric", minute: "2-digit",
+  }).format(new Date(lastSyncedAt))} MYT`;
   const stats = [
     {
       title: "Total products",
@@ -591,6 +612,23 @@ export default function App() {
           )}
           {tab === "overview" && (
             <>
+              <div className="catalog-overview-automations" aria-label="Automatic catalog updates">
+                <div className="catalog-auto-sync">
+                  <span className={`catalog-auto-sync-dot ${error ? "has-error" : ""}`} aria-hidden="true" />
+                  <div>
+                    <strong>{error ? "Sync needs attention" : syncing ? "Checking for updates" : "Auto-sync enabled"}</strong>
+                    <small>Checks for product changes every 30 seconds while this tab is visible</small>
+                  </div>
+                </div>
+                <div className="catalog-auto-sync-tools">
+                  <span className="catalog-auto-sync-time">{lastSyncText}</span>
+                  <button type="button" className="catalog-auto-sync-button" disabled={loading || syncing}
+                    onClick={() => void refresh(true)} aria-label="Refresh catalog now">
+                    <RefreshCw size={15} aria-hidden="true" className={syncing ? "is-spinning" : ""} />
+                    Refresh now
+                  </button>
+                </div>
+              </div>
               <div className="stats-grid overview-stats">
                 {stats.map((s) => (
                   <article className="stat-card overview-stat" key={s.title}>
@@ -627,6 +665,24 @@ export default function App() {
                     <div><span>Published products</span><strong>{publishedCount} / {data.products.length}</strong></div>
                     <progress max={100} value={liveCoverage} aria-label="Published products" />
                     <small>{liveCoverage}% of the catalog is public</small>
+                  </div>
+                  <div className="catalog-auto-review" aria-label="Automatic draft quality checks">
+                    <div className="catalog-auto-review-heading">
+                      <span className="catalog-auto-review-icon"><Sparkles size={16} aria-hidden="true" /></span>
+                      <div>
+                        <strong>Automatic draft checks</strong>
+                        <small>Missing details are flagged, never filled in automatically.</small>
+                      </div>
+                    </div>
+                    <div className="catalog-auto-review-metrics">
+                      <span><strong>{reviewGaps.dimensions}</strong> dimensions to verify</span>
+                      <span><strong>{reviewGaps.materials}</strong> materials missing</span>
+                      <span><strong>{reviewGaps.descriptions}</strong> descriptions missing</span>
+                    </div>
+                    <button className="catalog-auto-review-action" type="button"
+                      onClick={() => { switchTab("products"); setStatus("draft"); }}>
+                      Review drafts <ArrowUpRight size={14} aria-hidden="true" />
+                    </button>
                   </div>
                 </section>
                 <section className="catalog-insights-card">
