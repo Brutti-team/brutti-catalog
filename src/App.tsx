@@ -1128,7 +1128,7 @@ export default function App() {
                             "A thoughtful category for your collection."}
                         </p>
                         <div className="category-card-actions">
-                          <button type="button" className="text-button"
+                          <button type="button" className="text-button category-view-products"
                             onClick={() => { switchTab("products"); setCategory(c.id); }}>
                             View products <ArrowRight size={14} aria-hidden="true" />
                           </button>

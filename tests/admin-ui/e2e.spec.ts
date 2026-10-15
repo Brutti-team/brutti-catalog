@@ -434,6 +434,42 @@ test('quick status filters and category card navigation find matching products',
   await expect(page.locator('.product-cell').first()).toContainText('Admin UI fixture shelf');
 });
 
+test('category cards open products from image or description while Edit stays separate', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  const nav = page.getByRole('navigation', { name: 'Admin navigation' });
+  await nav.getByRole('button', { name: 'Categories', exact: true }).click();
+
+  // Simulate a real pointer click in the card image, which is intentionally
+  // covered by the stretched View products target (not a click on the image DOM node).
+  const clickCardArea = async (selector: string) => {
+    const bounds = await page.locator('.category-card').first().locator(selector).boundingBox();
+    expect(bounds).not.toBeNull();
+    await page.mouse.click(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
+  };
+  await clickCardArea('.category-cover');
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
+  await expect(page.locator('.product-cell').first()).toContainText(fixtureProduct.name);
+
+  await nav.getByRole('button', { name: 'Categories', exact: true }).click();
+  await clickCardArea('.category-card-body > p');
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
+
+  await nav.getByRole('button', { name: 'Categories', exact: true }).click();
+  await page.locator('.category-card').first().getByRole('button', { name: 'Edit category' }).click();
+  await expect(page.getByRole('dialog', { name: 'Edit category' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Close dialog' }).click();
+
+  const keyboardButton = page.locator('.category-card').first().getByRole('button', { name: 'View products' });
+  await keyboardButton.focus();
+  await expect(keyboardButton).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
+});
+
 test('premium Products Workbench shows live metadata and clean status controls', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
