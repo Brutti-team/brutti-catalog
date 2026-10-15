@@ -389,13 +389,12 @@ export default function App() {
           onClick={() => switchTab("overview")}
         >
           <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="brutti-official-logo" />
-          <span className="sidebar-brand-mark" aria-hidden="true">STUDIO</span>
         </a>
         <div className="workspace-label" aria-label="Current workspace: Brutti Catalog">
           <span className="workspace-symbol" aria-hidden="true"><Layers size={19} strokeWidth={1.9} /></span>
           <span className="workspace-meta">
             <strong>Brutti Catalog</strong>
-            <small>Management workspace</small>
+            <small>Product management</small>
           </span>
         </div>
         <nav aria-label="Admin navigation">
@@ -447,7 +446,6 @@ export default function App() {
             </span>
             <ArrowUpRight size={16} className="sidebar-public-arrow" aria-hidden="true" />
           </button>
-          <span className="sidebar-copyright">© {new Date().getFullYear()} Benua Brutti</span>
         </div>
       </aside>
       {mobileNav && (
