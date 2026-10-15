@@ -10,23 +10,14 @@ Updated 14 October 2026. **Real import completed** in Supabase project `lgdjoxaf
 - Source descriptions and photos are from the real 104-page *Brutti Catalogue 2025.pdf*. **33 pages** have specific description and photographed evidence; **63 pages** contain repeated/copy-pasted headers, dimensions or material claims. Those copied claims were excluded; practical, clearly descriptive working names were assigned using photographic visual evidence, not fake official model names.
 - Nine distinct printed starting prices stored with `price_basis = 'starting-from'`. Repeated generic RM797 entries are *not* treated as confirmed prices. Other prices are null.
 - Original dimensions are not mapped to numeric width/depth/height unless absolutely verified; unverified values remain 0 in Draft (publishing requires positive valid dimensions).
-- The initial SQL import was verified in Supabase with exactly **96 Draft records, 96 different SKUs, zero initial images**. An additive unique index on normalized SKU prevents accidental repeats.
+- The initial SQL import created **96 Draft records with 96 distinct SKUs**. A later verified admin upload attached **one original WebP photo to each of the 96 products**. An additive unique index on normalized SKU prevents accidental repeats.
 - The server Activity Log records the SQL import as a System action because trusted owner-side SQL was used, **not** as a browser user.
 
-## Original product photos
+## Original product photos — uploaded and verified
 
-All 96 original source-photo candidates are available in a private user conversation file:
-`Brutti_Catalogue_2025_Admin_Photo_Upload.zip` (~5.4 MB).
-The bundle is **ZIP_STORED** (uncompressed), with 96 WebP photos under `photos/page-###.webp` and `manifest.json` mapping each photo to a real catalog SKU and SHA-256 digest.
+Live read-only checks on **15 October 2026** confirm **96 Draft products, 96 nonempty image arrays, 96 unique image references, and 96 corresponding Storage objects** in the public `product-images` bucket. The images are already in place and should **not** be uploaded again just to complete setup.
 
-For the user to attach the photos to these existing Drafts:
-
-1. Download that ZIP from the ChatGPT conversation, **without modifying it or unzipping it**.
-2. Sign in to the already approved staging at `https://brutti-team.github.io/brutti-catalog/admin/`.
-3. Open **Products**, then **Bulk import photos**.
-4. Select the ZIP and press **Attach photos to Draft products**.
-5. Keep the browser tab open. The app validates all 96 photos before making uploads and shows per-item progress, completion and retry errors.
-6. After upload, refresh Products and inspect actual thumbnails, images, name and category against the original PDF. Fix uncertain descriptions and dimensions manually before any publishing.
+The original validated ZIP remains available in the user's file library as `Brutti_Catalogue_2025_Admin_Photo_Upload.zip` for disaster recovery or a controlled, explicitly approved reattachment. The import UI skips existing photos without overwriting them. A complete successful import automatically closes its dialog and shows a success notification; partial failures remain visible for retry.
 
 ## Safety
 
@@ -39,6 +30,6 @@ For the user to attach the photos to these existing Drafts:
 
 ## Outstanding release gates
 
-This import deliberately does **not** mean every factual field is verified. Staff should review the images, labels, price bases and dimensional details of at least 63 visually classified items, then use the existing editor to correct products individually before publishing. The new upload workflow is a user-initiated action; the browser cannot read the user's ChatGPT local file without selecting it.
+Having all 96 photos attached **does not** mean every factual field is verified. Staff should review the images, labels, price bases and dimensional details of at least 63 visually classified items, then use the existing editor to correct products individually before publishing. The upload workflow is only needed for controlled recovery; current Draft products already reference their real photos.
 
-Do not merge PR #1 or change `brutti.my` without separate approval.
+PR #1 was successfully merged into `main` on 15 October 2026. The separate Brutti website workflow was updated to assemble isolated catalog routes; verify the GitHub Pages deployment before declaring the custom-domain routes live.
