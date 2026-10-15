@@ -231,6 +231,49 @@ test('latest change appears only on Overview, not in sidebar, and opens Activity
   await expect(snapshot).toHaveCount(0);
 });
 
+test('Overview auto sync and read-only draft checks remain actionable', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  const sync = page.getByLabel('Automatic catalog updates');
+  await expect(sync).toBeVisible();
+  await expect(sync).toContainText('Auto-sync enabled');
+  await expect(sync).toContainText('every 30 seconds');
+  await expect(sync).toContainText('Updated');
+  const refreshNow = sync.getByRole('button', { name: 'Refresh catalog now' });
+  await expect(refreshNow).toBeEnabled();
+  await refreshNow.click();
+  await expect(sync).toContainText('Auto-sync enabled');
+  await expect(page.locator('.product-cell strong')).toHaveText(fixtureProduct.name);
+  const checks = page.getByLabel('Automatic draft quality checks');
+  await expect(checks).toContainText('Missing details are flagged');
+  await expect(checks).toContainText('0 dimensions to verify');
+  await expect(checks).toContainText('0 materials missing');
+  await expect(checks).toContainText('0 descriptions missing');
+  await checks.getByRole('button', { name: 'Review drafts' }).click();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Filter by status')).toHaveValue('draft');
+});
+
+test('Premium Overview animations respect reduced motion without removing real metrics', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await backend(page, { savedTheme: 'dark' });
+  await openAdmin(page);
+  const animations = await page.evaluate(() => ({
+    tile: getComputedStyle(document.querySelector('.overview-stat')!).animationName,
+    category: getComputedStyle(document.querySelector('.catalog-category-track > span')!).animationName,
+    pulse: getComputedStyle(document.querySelector('.catalog-auto-sync-dot')!, '::after').animationName,
+    sync: getComputedStyle(document.querySelector('.catalog-overview-automations')!).animationName,
+  }));
+  expect(animations).toEqual({ tile: 'none', category: 'none', pulse: 'none', sync: 'none' });
+  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(4);
+  await expect(page.getByLabel('Automatic draft quality checks')).toBeVisible();
+  await expectReadable(page, [
+    '.catalog-auto-sync strong', '.catalog-auto-sync small',
+    '.catalog-auto-review-heading strong', '.catalog-auto-review-heading small',
+    '.catalog-auto-review-metrics > span',
+  ], true);
+});
+
 test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
