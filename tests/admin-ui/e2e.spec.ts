@@ -255,6 +255,58 @@ test('studio overview category bars navigate to product filters without changing
   await expect(page.locator('.product-cell').first()).toBeVisible();
 });
 
+test('collection inventory uses premium table hierarchy and live search filters', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  const panel = page.locator('.overview-collection.catalog-collection-v3');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('.catalog-collection-eyebrow')).toContainText('PRODUCT INVENTORY');
+  await expect(panel.locator('.catalog-collection-count')).toHaveText('1');
+  await expect(panel.locator('.catalog-collection-overview-meta')).toContainText('Showing 1 of 1 matching products');
+  await expect(panel.locator('.catalog-inventory-table tbody tr')).toHaveCount(1);
+  const metrics = await panel.evaluate(el => {
+    const rect = (selector: string) => el.querySelector(selector)!.getBoundingClientRect();
+    return {
+      titleSize: parseFloat(getComputedStyle(el.querySelector('.panel-heading h2')!).fontSize),
+      searchHeight: rect('.table-toolbar .search-input').height,
+      imageWidth: rect('.table-scroll .product-cell img').width,
+      editWidth: rect('.row-actions .icon-button').width,
+      tableScrollable: el.querySelector('.table-scroll')!.scrollWidth >= el.querySelector('.table-scroll')!.clientWidth,
+    };
+  });
+  expect(metrics.titleSize).toBeGreaterThanOrEqual(23);
+  expect(metrics.searchHeight).toBeGreaterThanOrEqual(48);
+  expect(metrics.imageWidth).toBeGreaterThanOrEqual(63);
+  expect(metrics.editWidth).toBeGreaterThanOrEqual(35);
+  expect(metrics.tableScrollable).toBe(true);
+
+  await panel.getByLabel('Search products').fill('not-a-real-product-name');
+  await expect(panel.locator('.catalog-collection-overview-meta')).toContainText('Showing 0 of 0 matching products');
+  await expect(panel.getByRole('heading', { name: 'No pieces found' })).toBeVisible();
+  await panel.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(panel.locator('.catalog-inventory-table tbody tr')).toHaveCount(1);
+  await panel.getByRole('button', { name: `Edit ${fixtureProduct.name}`, exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Edit product', exact: true })).toBeVisible();
+});
+
+test('collection inventory remains readable in dark mode and on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await backend(page, { savedTheme: 'dark' });
+  await openAdmin(page);
+  const panel = page.locator('.overview-collection.catalog-collection-v3');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('.table-toolbar .search-input')).toBeVisible();
+  await expect(panel.locator('.catalog-collection-overview-meta')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expectReadable(page, [
+    '.overview-collection .catalog-collection-eyebrow',
+    '.overview-collection .panel-heading h2',
+    '.overview-collection .catalog-collection-results',
+    '.overview-collection .table-scroll .product-cell strong',
+    '.overview-collection .table-scroll .price-cell',
+  ], true);
+});
+
 test('catalog products toggle between persistent Table and Gallery views', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
