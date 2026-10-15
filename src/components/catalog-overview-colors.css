@@ -16,6 +16,10 @@
   box-shadow: 0 5px 17px rgb(36 82 59 / 6%);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
+/* Override the legacy first-child top-border specificity from admin-studio.css. */
+.admin-app .overview-stats .overview-stat:first-child {
+  border-top-color: #7856bb;
+}
 .admin-app .overview-stats .overview-stat:nth-child(2) {
   --stat-tone: #1283a3;
   --stat-icon-bg: #d2f0fa;
