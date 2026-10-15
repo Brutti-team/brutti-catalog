@@ -21,7 +21,6 @@ import {
   Trash2,
   ChevronRight,
   ArrowRight,
-  Leaf,
   Menu,
   X,
   LogOut,
@@ -662,12 +661,16 @@ export default function App() {
             </>
           )}
           {tab !== "categories" ? (
-            <section className={`table-panel ${tab === "overview" ? "overview-collection" : "catalog-products-panel"}`}>
+            <section className={`table-panel catalog-collection-v3 ${tab === "overview" ? "overview-collection" : "catalog-products-panel"}`}>
               <div className="panel-heading">
-                <div>
+                <div className="catalog-collection-heading-main">
+                  <span className="catalog-collection-eyebrow">
+                    <span className="catalog-collection-eyebrow-dot" aria-hidden="true" />
+                    PRODUCT INVENTORY
+                  </span>
                   <h2>
                     {tab === "overview" ? "The collection" : "All products"}{" "}
-                    <span>{data.products.length}</span>
+                    <span className="catalog-collection-count">{data.products.length}</span>
                   </h2>
                   <p>
                     {tab === "overview"
@@ -780,6 +783,20 @@ export default function App() {
                   </label>
                 </div>
               </div>
+              {tab === "overview" && (
+                <div className="catalog-collection-overview-meta" aria-live="polite" aria-atomic="true">
+                  <span className="catalog-collection-results">
+                    <span className="catalog-collection-results-dot" aria-hidden="true" />
+                    Showing <strong>{Math.min(6, filtered.length)}</strong> of <strong>{filtered.length}</strong> matching products
+                  </span>
+                  {(search || status !== "all" || category !== "all") && (
+                    <button type="button" className="catalog-collection-reset" onClick={() => { setSearch(""); setStatus("all"); setCategory("all"); }}>
+                      <X size={14} aria-hidden="true" /> Clear filters
+                    </button>
+                  )}
+                  <span className="catalog-collection-help">Select a product to view or edit details</span>
+                </div>
+              )}
               {tab === "products" && (
                 <div className="catalog-products-filter-summary" role="status">
                   <span><strong>{filtered.length}</strong> matching {filtered.length === 1 ? "product" : "products"}</span>
@@ -812,7 +829,7 @@ export default function App() {
                 </div>
               ) : (
               <div className="table-scroll">
-                <table>
+                <table className="catalog-inventory-table">
                   <thead>
                     <tr>
                       <th>Product</th>
@@ -837,7 +854,7 @@ export default function App() {
                       : filtered
                           .slice(0, tab === "overview" ? 6 : filtered.length)
                           .map((p) => (
-                            <tr key={p.id}>
+                            <tr key={p.id} className="catalog-inventory-row">
                               <td>
                                 <button
                                   className="product-cell"
@@ -1018,7 +1035,7 @@ export default function App() {
                   of {data.products.length} products
                 </span>
                 <span>
-                  <Leaf size={12} /> Brutti Catalog Workspace
+                  <ShieldCheck size={13} aria-hidden="true" /> Staff workspace
                 </span>
               </footer>
             </section>
