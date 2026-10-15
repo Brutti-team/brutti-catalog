@@ -245,6 +245,52 @@ test('enterprise overview shows real catalog health and review actions', async (
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
 });
 
+test('Overview analytics uses distinct semantic colours without changing underlying counts', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  const cards = page.locator('.overview-stats .overview-stat');
+  await expect(cards).toHaveCount(4);
+  const metrics = await cards.evaluateAll(items => items.map(el => ({
+    gradient: getComputedStyle(el).backgroundImage,
+    accent: getComputedStyle(el).borderTopColor,
+    iconFill: getComputedStyle(el.querySelector('.overview-stat-icon')!).backgroundColor,
+  })));
+  expect(new Set(metrics.map(m => m.gradient)).size).toBe(4);
+  expect(new Set(metrics.map(m => m.accent)).size).toBe(4);
+  expect(new Set(metrics.map(m => m.iconFill)).size).toBe(4);
+  for (const metric of metrics) expect(metric.gradient).toContain('linear-gradient');
+  await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
+  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
+  await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
+  await expect(page.locator('.catalog-category-bar')).toHaveCount(5);
+  const activity = page.locator('.catalog-last-activity');
+  await expect(activity).toBeVisible();
+  const activityStyle = await activity.evaluate(el => getComputedStyle(el).backgroundImage);
+  expect(activityStyle).toContain('linear-gradient');
+  await expectReadable(page, ['.overview-stat > strong', '.catalog-studio-panel-head h2', '.catalog-category-name', '.catalog-last-activity-heading h2']);
+});
+
+test('Overview colours preserve dark-mode contrast and mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await backend(page, { savedTheme: 'dark' });
+  await openAdmin(page);
+  await expectTheme(page, 'dark');
+  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(4);
+  await expectReadable(page, [
+    '.overview-stats .overview-stat:nth-child(1) > strong',
+    '.overview-stats .overview-stat:nth-child(2) > strong',
+    '.overview-stats .overview-stat:nth-child(3) > strong',
+    '.overview-stats .overview-stat:nth-child(4) > strong',
+    '.catalog-health-card .catalog-studio-kicker',
+    '.catalog-insights-card .catalog-studio-kicker',
+    '.catalog-last-activity-kicker',
+    '.catalog-last-activity-heading h2',
+  ], true);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
 test('studio overview category bars navigate to product filters without changing data', async ({ page }) => {
   await backend(page);
   await openAdmin(page);

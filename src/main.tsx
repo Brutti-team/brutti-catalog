@@ -9,6 +9,7 @@ import "./components/admin-studio.css";
 import "./components/admin-products.css";
 import "./components/catalog-sidebar.css";
 import "./components/catalog-collection.css";
+import "./components/catalog-overview-colors.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
