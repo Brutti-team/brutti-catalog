@@ -784,7 +784,7 @@ export default function App() {
                 </div>
               </div>
               {tab === "overview" && (
-                <div className="catalog-collection-overview-meta" role="status">
+                <div className="catalog-collection-overview-meta" aria-live="polite" aria-atomic="true">
                   <span className="catalog-collection-results">
                     <span className="catalog-collection-results-dot" aria-hidden="true" />
                     Showing <strong>{Math.min(6, filtered.length)}</strong> of <strong>{filtered.length}</strong> matching products
