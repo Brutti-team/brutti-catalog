@@ -380,3 +380,17 @@
     min-width: 0;
   }
 }
+/* With the wider rail, keep Profile cards inside a short landscape viewport.
+   Preserve desktop two-column Profile on normal screens. */
+@media (min-width: 801px) and (max-width: 1050px) {
+  .admin-app .admin-content {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .admin-app .account-center .account-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-app .account-center .account-mini {
+    grid-column: 1;
+  }
+}
