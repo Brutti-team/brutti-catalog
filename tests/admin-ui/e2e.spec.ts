@@ -164,9 +164,17 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
     const computed = getComputedStyle(el);
     return { background: computed.backgroundColor, width: el.getBoundingClientRect().width };
   });
-  expect(styles.width).toBeGreaterThanOrEqual(260);
-  expect(styles.width).toBeLessThanOrEqual(280);
+  expect(styles.width).toBeGreaterThanOrEqual(298);
+  expect(styles.width).toBeLessThanOrEqual(302);
   expect(styles.background).toBe('rgb(16, 39, 30)');
+  const menuMetrics = await sidebar.locator('nav .nav-item').first().evaluate(el => ({
+    font: Number.parseFloat(getComputedStyle(el).fontSize),
+    height: el.getBoundingClientRect().height,
+    icon: el.querySelector('.nav-icon')?.getBoundingClientRect().width ?? 0,
+  }));
+  expect(menuMetrics.font).toBeGreaterThanOrEqual(15);
+  expect(menuMetrics.height).toBeGreaterThanOrEqual(53);
+  expect(menuMetrics.icon).toBeGreaterThanOrEqual(37);
 
   await expectReadable(page, [
     '.sidebar .workspace-meta strong',
