@@ -144,6 +144,19 @@ async function expectReadable(page: Page, selectors: string[], darkSurface = fal
   }
 }
 
+test('latest change appears only on Overview, not in sidebar, and opens Activity Log', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  const snapshot = page.getByRole('region', { name: 'Latest catalog change' });
+  await expect(snapshot).toBeVisible();
+  await expect(snapshot.getByRole('heading', { name: 'Latest change' })).toBeVisible();
+  await expect(page.locator('.sidebar .catalog-last-activity')).toHaveCount(0);
+  await expect(page.locator('.sidebar .sidebar-last-change')).toHaveCount(0);
+  await snapshot.getByRole('button', { name: 'View activity log' }).click();
+  await expect(page.getByRole('heading', { name: 'Activity history.' })).toBeVisible();
+  await expect(snapshot).toHaveCount(0);
+});
+
 test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
@@ -394,7 +407,7 @@ test('dark admin navigation leaves the public catalog light and preserves the sa
 test('dark theme covers table, navigation, product and category forms, and account surfaces with readable text', async ({ page }) => {
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
-  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.sidebar .nav-group-label', '.last-change-placeholder', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
+  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.sidebar .nav-group-label', '.catalog-last-activity-placeholder', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
   const searchPlaceholder = await colors(page.getByLabel('Search products', { exact: true }), '::placeholder');
   expect(searchPlaceholder.contrast, `Search placeholder: ${JSON.stringify(searchPlaceholder)}`).toBeGreaterThanOrEqual(4.5);
   for (const selector of ['.theme-toggle svg', '.header-signout svg']) {

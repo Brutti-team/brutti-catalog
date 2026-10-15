@@ -69,34 +69,38 @@ export default function LastChange({
   const visibleStatus = authenticated ? (status === "not-enabled" ? "loading" : status) : "not-enabled";
 
   return (
-    <section className="sidebar-last-change" aria-label="Latest catalog change">
-      <div className="last-change-heading">
-        <span className="last-change-icon"><History size={15} aria-hidden="true" /></span>
-        <span>LAST CHANGE</span>
+    <section className="catalog-last-activity" aria-label="Latest catalog change">
+      <div className="catalog-last-activity-heading">
+        <span className="catalog-last-activity-icon"><History size={18} aria-hidden="true" /></span>
+        <div>
+          <span className="catalog-last-activity-kicker">ACTIVITY SNAPSHOT</span>
+          <h2>Latest change</h2>
+        </div>
       </div>
       {visibleStatus === "ready" && latest ? (
-        <div className="last-change-details">
+        <div className="catalog-last-activity-details">
           <strong title={activityLabel(latest)}>{activityLabel(latest)}</strong>
-          <p title={latest.resource_name || latest.resource_type}>
+          <span className="catalog-last-activity-resource" title={latest.resource_name || latest.resource_type}>
             {latest.resource_name || latest.resource_type}
-          </p>
-          <span className="last-change-by" title={latest.actor_email}>
-            By {latest.actor_email || "System"}
           </span>
-          <time dateTime={latest.created_at}>
-            <Clock3 size={12} aria-hidden="true" /> {formatActivityTime(latest.created_at)}
-          </time>
+          <span className="catalog-last-activity-meta">
+            <span title={latest.actor_email}>By {latest.actor_email || "System"}</span>
+            <span className="catalog-last-activity-separator" aria-hidden="true">·</span>
+            <time dateTime={latest.created_at}>
+              <Clock3 size={13} aria-hidden="true" /> {formatActivityTime(latest.created_at)}
+            </time>
+          </span>
         </div>
       ) : (
-        <p className="last-change-placeholder">
+        <p className="catalog-last-activity-placeholder">
           {visibleStatus === "loading" ? "Checking latest changes…"
             : visibleStatus === "empty" ? "No changes recorded yet."
               : visibleStatus === "error" ? "Activity history is temporarily unavailable."
                 : "Recording will start after your administrator account is verified."}
         </p>
       )}
-      {canRead && <button type="button" className="last-change-link" onClick={onHistory}>
-        View history <ArrowUpRight size={13} aria-hidden="true" />
+      {canRead && <button type="button" className="catalog-last-activity-action" onClick={onHistory}>
+        View activity log <ArrowUpRight size={15} aria-hidden="true" />
       </button>}
     </section>
   );
