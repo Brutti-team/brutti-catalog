@@ -251,7 +251,7 @@ test('Overview auto sync and read-only draft checks remain actionable', async ({
   await expect(checks).toContainText('0 descriptions missing');
   await checks.getByRole('button', { name: 'Review drafts' }).click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
-  await expect(page.getByLabel('Filter by status')).toHaveValue('draft');
+  await expect(page.getByRole('group', { name: 'Quick product status filters' }).getByRole('button', { name: /Draft/ })).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('Premium Overview animations respect reduced motion without removing real metrics', async ({ page }) => {
