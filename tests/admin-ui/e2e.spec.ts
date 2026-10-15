@@ -434,6 +434,36 @@ test('quick status filters and category card navigation find matching products',
   await expect(page.locator('.product-cell').first()).toContainText('Admin UI fixture shelf');
 });
 
+test('category cards open products from image or description while Edit stays separate', async ({ page }) => {
+  await backend(page);
+  await openAdmin(page);
+  const nav = page.getByRole('navigation', { name: 'Admin navigation' });
+  await nav.getByRole('button', { name: 'Categories', exact: true }).click();
+
+  const card = page.locator('.category-card').first();
+  await card.locator('.category-cover').click();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
+  await expect(page.locator('.product-cell').first()).toContainText(fixtureProduct.name);
+
+  await nav.getByRole('button', { name: 'Categories', exact: true }).click();
+  await page.locator('.category-card').first().locator('.category-card-body > p').click();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
+
+  await nav.getByRole('button', { name: 'Categories', exact: true }).click();
+  await page.locator('.category-card').first().getByRole('button', { name: 'Edit category' }).click();
+  await expect(page.getByRole('dialog', { name: 'Edit category' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Close dialog' }).click();
+
+  const keyboardButton = page.locator('.category-card').first().getByRole('button', { name: 'View products' });
+  await keyboardButton.focus();
+  await expect(keyboardButton).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
+});
+
 test('premium Products Workbench shows live metadata and clean status controls', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
