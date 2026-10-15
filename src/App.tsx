@@ -29,7 +29,6 @@ import {
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
-  ExternalLink,
   Moon,
   Sun,
   UsersRound,
@@ -390,17 +389,17 @@ export default function App() {
           onClick={() => switchTab("overview")}
         >
           <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="brutti-official-logo" />
+          <span className="sidebar-brand-mark" aria-hidden="true">STUDIO</span>
         </a>
-        <div className="workspace-label">
-          <span className="workspace-symbol" aria-hidden="true"><Layers size={17} /></span>
+        <div className="workspace-label" aria-label="Current workspace: Brutti Catalog">
+          <span className="workspace-symbol" aria-hidden="true"><Layers size={19} strokeWidth={1.9} /></span>
           <span className="workspace-meta">
-            <strong>Catalog Workspace</strong>
-            <small>Product management</small>
+            <strong>Brutti Catalog</strong>
+            <small>Management workspace</small>
           </span>
-          <span className="workspace-indicator" aria-label="Current workspace"><span aria-hidden="true" /></span>
         </div>
         <nav aria-label="Admin navigation">
-          <span className="nav-group-label">MANAGE</span>
+          <span className="nav-group-label">WORKSPACE</span>
           {(
             [
               { id: "overview", text: "Overview", icon: LayoutDashboard },
@@ -411,9 +410,10 @@ export default function App() {
             <button
               key={n.id}
               className={`nav-item ${tab === n.id ? "active" : ""}`}
+              aria-current={tab === n.id ? "page" : undefined}
               onClick={() => switchTab(n.id)}
             >
-              <span className="nav-icon" aria-hidden="true"><n.icon size={18} /></span>
+              <span className="nav-icon" aria-hidden="true"><n.icon size={19} strokeWidth={1.9} /></span>
               {n.text}
               {n.id === "products" && (
                 <span className="nav-count">{data.products.length}</span>
@@ -421,27 +421,34 @@ export default function App() {
             </button>
           ))}
           {auth.isAdmin && (
-            <span className="nav-group-label nav-group-second">TEAM</span>
+            <span className="nav-group-label nav-group-second">OPERATIONS</span>
           )}
           {accountsReady && accountRole === "super_admin" && (
             <button className={`nav-item ${tab === "users" ? "active" : ""}`}
+              aria-current={tab === "users" ? "page" : undefined}
               onClick={() => switchTab("users")}>
-              <span className="nav-icon" aria-hidden="true"><UsersRound size={18} /></span> Users
+              <span className="nav-icon" aria-hidden="true"><UsersRound size={19} strokeWidth={1.9} /></span> Users
             </button>
           )}
           {auth.isAdmin && (
             <button className={`nav-item ${tab === "activity" ? "active" : ""}`}
+              aria-current={tab === "activity" ? "page" : undefined}
               onClick={() => switchTab("activity")}>
-              <span className="nav-icon" aria-hidden="true"><History size={18} /></span> Activity log
+              <span className="nav-icon" aria-hidden="true"><History size={19} strokeWidth={1.9} /></span> Activity log
             </button>
           )}
-          <span className="nav-group-label nav-group-second">EXPLORE</span>
-          <button className="nav-item" onClick={() => navigate("/catalog")}>
-            <span className="nav-icon" aria-hidden="true"><ArrowUpRight size={18} /></span>
-            Public catalog
-            <ExternalLink size={13} className="nav-trailing" />
-          </button>
         </nav>
+        <div className="sidebar-utility">
+          <button type="button" className="sidebar-public-link" onClick={() => navigate("/catalog")}>
+            <span className="sidebar-public-icon" aria-hidden="true"><Grid2X2 size={18} strokeWidth={1.9} /></span>
+            <span className="sidebar-public-copy">
+              <strong>Public catalog</strong>
+              <small>Customer view</small>
+            </span>
+            <ArrowUpRight size={16} className="sidebar-public-arrow" aria-hidden="true" />
+          </button>
+          <span className="sidebar-copyright">© {new Date().getFullYear()} Benua Brutti</span>
+        </div>
       </aside>
       {mobileNav && (
         <button
