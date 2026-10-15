@@ -1,0 +1,92 @@
+name: Validate Brutti Catalog production code
+
+on:
+  push:
+    branches:
+      - feat/catalog-phase-one
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      verify_production_config:
+        description: "Verify repository public Supabase bindings and configured Pages build (no deployment)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript checks
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Install browser test dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser regression tests (intercepted backend only)
+        run: npm run test:e2e
+
+      - name: Local schema and policy tests (no production connection)
+        run: npm run test:db
+
+      - name: Set up Python for PDF evidence helpers
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test PDF evidence extraction (synthetic fixtures only)
+        run: |
+          python -m pip install -r scripts/pdf-requirements.txt
+          python -m unittest discover -s scripts -p 'test_*.py'
+
+      - name: Compile source-only Pages and additive website artifacts
+        env:
+          GITHUB_PAGES: "true"
+          VITE_SUPABASE_URL: ""
+          VITE_SUPABASE_ANON_KEY: ""
+          VITE_SUPABASE_PUBLISHABLE_KEY: ""
+        run: |
+          npm run build:pages
+          npm run build:site
+
+  verify-production-config:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feat/catalog-phase-one') || (github.event_name == 'workflow_dispatch' && inputs.verify_production_config)
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || vars.VITE_SUPABASE_ANON_KEY }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Validate public credentials, real reads and configured Pages build
+        run: npm run build:configured
+
+# Deployment deliberately disabled until the existing Brutti Supabase project,
+# verified staff permissions, import and public routing are approved.

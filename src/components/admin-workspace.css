@@ -1,0 +1,2043 @@
+/* Admin-only finishing layer; the public catalog keeps its own styles. */
+.admin-app {
+  --admin-bg: #f5f7f3;
+  --admin-surface: #ffffff;
+  --admin-surface-soft: #f0f4ee;
+  --admin-surface-hover: #edf3ea;
+  --admin-text: #263c2f;
+  --admin-muted: #617264;
+  --admin-border: #e0e7dc;
+  --admin-accent: #2d573f;
+  --admin-accent-hover: #234832;
+  --admin-on-accent: #ffffff;
+  --admin-selected: #e8f0e4;
+  --admin-focus: #52775e;
+  --admin-success-bg: #edf5e9;
+  --admin-success-text: #48683c;
+  --admin-success-border: #dbe8d3;
+  --admin-warning-bg: #faf4e6;
+  --admin-warning-text: #816b32;
+  --admin-warning-border: #eadebf;
+  --admin-danger-bg: #fff2ed;
+  --admin-danger-text: #96503f;
+  --admin-danger-border: #efd7cc;
+  --admin-banner: #edf1e7;
+  --admin-shadow: 0 3px 15px rgb(34 56 39 / 4%);
+  --admin-shadow-raised: 0 8px 24px rgb(34 56 39 / 7%);
+  --admin-overlay: rgb(22 39 30 / 48%);
+  --green: var(--admin-accent);
+  --ink: var(--admin-text);
+  --muted: var(--admin-muted);
+  --border: var(--admin-border);
+  --text-primary: var(--admin-text);
+  color-scheme: light;
+  min-height: 100dvh;
+  color: var(--admin-text);
+  background: var(--admin-bg);
+}
+
+.admin-app[data-theme="dark"] {
+  --admin-bg: #18231e;
+  --admin-surface: #202e26;
+  --admin-surface-soft: #25362c;
+  --admin-surface-hover: #2c3e32;
+  --admin-text: #e8eee8;
+  --admin-muted: #a3b3a7;
+  --admin-border: #3a4b3f;
+  --admin-accent: #a9c8a4;
+  --admin-accent-hover: #bbd8b5;
+  --admin-on-accent: #1c3123;
+  --admin-selected: #304835;
+  --admin-focus: #98ba97;
+  --admin-success-bg: #2b3f2c;
+  --admin-success-text: #b8d2aa;
+  --admin-success-border: #486147;
+  --admin-warning-bg: #3b3727;
+  --admin-warning-text: #d9c791;
+  --admin-warning-border: #5e5538;
+  --admin-danger-bg: #3f2e28;
+  --admin-danger-text: #e0b1a2;
+  --admin-danger-border: #65473c;
+  --admin-banner: #273a2b;
+  --admin-shadow: 0 3px 16px rgb(8 20 13 / 12%);
+  --admin-shadow-raised: 0 8px 28px rgb(8 20 13 / 22%);
+  --admin-overlay: rgb(10 23 16 / 70%);
+  color-scheme: dark;
+}
+
+.admin-app :is(.muted, .eyebrow, .tiny, .section-label) {
+  color: var(--admin-muted);
+}
+
+.admin-app :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--admin-focus);
+  outline-offset: 3px;
+}
+
+.admin-app :is(input, select, textarea):focus {
+  outline: 2px solid var(--admin-focus);
+  border-color: var(--admin-focus);
+}
+
+.admin-app :is(input, select, textarea) {
+  color: var(--admin-text);
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  border-radius: 8px;
+  accent-color: var(--admin-accent);
+}
+
+.admin-app :is(input, textarea)::placeholder {
+  color: var(--admin-muted);
+  opacity: 1;
+}
+
+.admin-app :is(input, select, textarea):disabled,
+.admin-app .account-settings input[readonly] {
+  color: var(--admin-muted);
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .sidebar {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  padding-top: 29px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.admin-app .sidebar > .brand {
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.admin-app[data-theme="dark"] .brutti-official-logo {
+  filter: brightness(2.35) saturate(0.65);
+}
+
+.admin-app :is(.workspace-label, .nav-group-label, .nav-trailing) {
+  color: var(--admin-muted);
+}
+
+.admin-app .workspace-label {
+  padding-top: 19px;
+  padding-bottom: 19px;
+  font-size: 11px;
+}
+
+.admin-app .workspace-label span {
+  background: var(--admin-surface-soft);
+  padding: 3px 6px;
+}
+
+.admin-app .nav-group-label {
+  font-size: 11px;
+  letter-spacing: 1.3px;
+}
+
+.admin-app .nav-group-second {
+  padding-top: 27px;
+}
+
+.admin-app .nav-item {
+  color: var(--admin-muted);
+  border-radius: 9px;
+  min-height: 44px;
+  transition:
+    background-color 150ms,
+    color 150ms;
+}
+
+.admin-app .nav-item:hover {
+  color: var(--admin-text);
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .nav-item.active {
+  color: var(--admin-accent);
+  background: var(--admin-selected);
+}
+
+.admin-app .nav-count {
+  color: var(--admin-accent);
+  background: var(--admin-success-bg);
+  border-radius: 5px;
+  padding: 3px 6px;
+}
+
+.admin-app .sidebar-note {
+  margin-top: 28px;
+  border-color: var(--admin-border);
+  border-radius: 11px;
+  background: var(--admin-surface-soft);
+  color: var(--admin-accent);
+}
+
+.admin-app :is(.sidebar-note p, .sidebar-note > span) {
+  color: var(--admin-muted);
+}
+
+.admin-app .topbar {
+  height: auto;
+  min-height: 78px;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+.admin-app .breadcrumbs {
+  min-width: 0;
+  flex: 1 1 150px;
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.admin-app .breadcrumbs strong {
+  color: var(--admin-text);
+  font-weight: 550;
+}
+
+.admin-app .topbar-actions {
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.admin-app .connection-pill {
+  color: var(--admin-success-text);
+  border-color: var(--admin-success-border);
+  background: var(--admin-success-bg);
+  padding: 6px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.admin-app .connection-pill > span {
+  background: var(--admin-success-text);
+}
+
+.admin-app .catalog-link {
+  color: var(--admin-muted);
+  padding: 9px 5px;
+  border-radius: 7px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.admin-app .catalog-link:hover {
+  color: var(--admin-accent);
+}
+
+.admin-app .header-profile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  max-width: 220px;
+  padding: 5px 9px 5px 5px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  text-align: left;
+  color: var(--admin-text);
+}
+
+.admin-app .header-profile:hover {
+  border-color: var(--admin-border);
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .header-profile.active {
+  border-color: var(--admin-border);
+  background: var(--admin-selected);
+}
+
+.admin-app .profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 11px;
+  background: var(--admin-selected);
+  color: var(--admin-accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-app .profile-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.admin-app .profile-copy strong {
+  color: var(--admin-text);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-app .profile-copy small {
+  color: var(--admin-muted);
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.admin-app :is(.theme-toggle, .header-signout) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  flex: none;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  color: var(--admin-muted);
+  background: var(--admin-surface);
+}
+
+.admin-app .theme-toggle {
+  padding: 9px 11px;
+  font-size: 11px;
+}
+
+.admin-app .header-signout {
+  width: 40px;
+  padding: 8px;
+}
+
+.admin-app :is(.theme-toggle, .header-signout):hover {
+  color: var(--admin-text);
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .admin-content {
+  padding-top: 26px;
+}
+
+.admin-app .page-heading {
+  margin-top: 32px;
+  margin-bottom: 27px;
+}
+
+.admin-app .page-heading h1 {
+  color: var(--admin-text);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.admin-app :is(.page-heading p, .page-heading .eyebrow) {
+  color: var(--admin-muted);
+}
+
+.admin-app .button {
+  border-radius: 8px;
+  font-weight: 600;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.admin-app .primary {
+  color: var(--admin-on-accent);
+  background: var(--admin-accent);
+  box-shadow: 0 2px 4px rgb(27 50 32 / 8%);
+}
+
+.admin-app .primary:hover {
+  background: var(--admin-accent-hover);
+}
+
+.admin-app .secondary {
+  color: var(--admin-text);
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+.admin-app .secondary:hover {
+  background: var(--admin-surface-soft);
+}
+
+.admin-app :is(.stat-card, .table-panel, .category-card) {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  border-radius: 12px;
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-app .stat-card {
+  padding: 21px;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.admin-app .stat-card:hover {
+  box-shadow: var(--admin-shadow-raised);
+}
+
+.admin-app .stat-card > div {
+  color: var(--admin-accent);
+}
+
+.admin-app .stat-card > div > span {
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.admin-app .stat-card > strong {
+  color: var(--admin-text);
+  margin: 17px 0 8px;
+}
+
+.admin-app .stat-card p {
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.admin-app .collection-banner {
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-banner);
+  height: auto;
+  min-height: 245px;
+}
+
+.admin-app .collection-banner > div:first-child {
+  background: linear-gradient(90deg, var(--admin-banner) 94%, transparent);
+}
+
+.admin-app .collection-banner :is(h2, button) {
+  color: var(--admin-accent);
+}
+
+.admin-app .collection-banner :is(p, .eyebrow) {
+  color: var(--admin-muted);
+}
+
+.admin-app .panel-heading {
+  padding-top: 24px;
+  gap: 12px;
+}
+
+.admin-app .panel-heading h2 {
+  color: var(--admin-text);
+}
+
+.admin-app .panel-heading h2 > span {
+  color: var(--admin-accent);
+  background: var(--admin-selected);
+  padding: 4px 7px;
+}
+
+.admin-app .panel-heading p {
+  color: var(--admin-muted);
+}
+
+.admin-app .text-button {
+  color: var(--admin-accent);
+}
+
+.admin-app :is(.search-input, .filters select, .sort-field) {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  border-radius: 8px;
+  color: var(--admin-muted);
+}
+
+.admin-app .search-input {
+  min-height: 40px;
+}
+
+.admin-app .search-input input {
+  background: transparent;
+  color: var(--admin-text);
+}
+
+.admin-app .search-input:focus-within {
+  outline: 2px solid var(--admin-focus);
+  outline-offset: 2px;
+}
+
+.admin-app .search-input input:focus {
+  outline: none;
+}
+
+.admin-app .filters select {
+  min-height: 40px;
+  color: var(--admin-text);
+}
+
+.admin-app th {
+  color: var(--admin-muted);
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+  font-weight: 600;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.admin-app td {
+  color: var(--admin-muted);
+  border-color: var(--admin-border);
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.admin-app tbody tr:hover {
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .product-cell {
+  min-width: 200px;
+}
+
+.admin-app .product-cell strong {
+  color: var(--admin-text);
+}
+
+.admin-app .product-cell > span {
+  min-width: 0;
+}
+
+.admin-app .product-cell :is(strong, small) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.admin-app .product-cell small {
+  color: var(--admin-muted);
+}
+
+.admin-app :is(.featured-dot, .price-cell) {
+  color: var(--admin-accent);
+}
+
+.admin-app :is(.product-cell img, .category-cover, .image-editor-photo) {
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .status-badge {
+  padding: 5px 8px;
+}
+
+.admin-app
+  :is(.status-published, .category-count, .account-role, .account-success) {
+  color: var(--admin-success-text);
+  background: var(--admin-success-bg);
+  border-color: var(--admin-success-border);
+}
+
+.admin-app .status-draft {
+  color: var(--admin-warning-text);
+  background: var(--admin-warning-bg);
+  border-color: var(--admin-warning-border);
+}
+
+.admin-app .status-archived {
+  color: var(--admin-muted);
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+}
+
+.admin-app .icon-button {
+  color: var(--admin-muted);
+  border-radius: 7px;
+  min-width: 30px;
+  min-height: 30px;
+}
+
+.admin-app :is(.icon-button, .dropdown button):hover {
+  color: var(--admin-text);
+  background: var(--admin-surface-hover);
+}
+
+.admin-app .dropdown {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+  border-radius: 9px;
+  box-shadow: var(--admin-shadow-raised);
+}
+
+.admin-app .dropdown button {
+  border-radius: 5px;
+}
+
+.admin-app .danger-text {
+  color: var(--admin-danger-text) !important;
+}
+
+.admin-app .table-footer {
+  border-color: var(--admin-border);
+  color: var(--admin-muted);
+  line-height: 1.6;
+  gap: 12px;
+}
+
+.admin-app .workspace-footer {
+  color: var(--admin-muted);
+  line-height: 1.7;
+  gap: 14px;
+}
+
+.admin-app .category-card-body {
+  padding: 23px;
+}
+
+.admin-app .category-card-body h2 {
+  color: var(--admin-text);
+}
+
+.admin-app .category-card-body > p {
+  color: var(--admin-muted);
+}
+
+.admin-app :is(.demo-banner, .editor-note) {
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+  border-radius: 9px;
+  color: var(--admin-muted);
+}
+
+.admin-app .demo-banner :is(strong, button) {
+  color: var(--admin-accent);
+}
+
+.admin-app .demo-dot {
+  background: var(--admin-accent);
+}
+
+.admin-app .notice {
+  border-radius: 9px;
+  overflow-wrap: anywhere;
+}
+
+.admin-app .error {
+  color: var(--admin-danger-text);
+  background: var(--admin-danger-bg);
+  border-color: var(--admin-danger-border);
+}
+
+.admin-app :is(.empty-state, .account-empty) {
+  color: var(--admin-text);
+}
+
+.admin-app :is(.empty-state > svg, .account-empty svg) {
+  color: var(--admin-accent);
+}
+
+.admin-app :is(.empty-state p, .account-empty p) {
+  color: var(--admin-muted);
+  line-height: 1.7;
+}
+
+.admin-app .toast {
+  color: var(--admin-on-accent);
+  background: var(--admin-accent);
+  box-shadow: var(--admin-shadow-raised);
+  border-radius: 10px;
+}
+
+.admin-app .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--admin-surface-soft),
+    var(--admin-surface-hover),
+    var(--admin-surface-soft)
+  );
+  background-size: 200% 100%;
+}
+
+.admin-app .nav-backdrop {
+  background: var(--admin-overlay);
+}
+
+.admin-app .modal {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+  border-radius: 15px;
+  box-shadow: 0 24px 90px rgb(12 30 19 / 30%);
+}
+
+.admin-app .modal::backdrop {
+  background: var(--admin-overlay);
+}
+
+.admin-app :is(.modal-heading, .editor-footer) {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+.admin-app :is(.modal-heading .eyebrow, .editor-note .eyebrow, .editor-note p) {
+  color: var(--admin-muted);
+}
+
+.admin-app :is(.editor-form, .category-form, .access-card) label {
+  color: var(--admin-text);
+  font-size: 12px;
+}
+
+.admin-app
+  :is(
+    .editor-form input:not([type="checkbox"]),
+    .editor-form textarea,
+    .editor-form select,
+    .category-form input,
+    .category-form textarea,
+    .access-card input
+  ) {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+  font-size: 12px;
+}
+
+.admin-app
+  :is(.editor-form input, .editor-form select, .editor-form textarea):disabled {
+  color: var(--admin-muted);
+  background: var(--admin-surface-soft);
+}
+
+.admin-app :is(.price-input > span, .checkbox-field small, .image-order) {
+  color: var(--admin-muted);
+}
+
+.admin-app
+  :is(
+    .form-section > p,
+    .editor-note p,
+    .editor-preview p,
+    .checkbox-field small,
+    .image-order,
+    .upload-zone > span,
+    .image-editor-photo > span
+  ) {
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.admin-app .section-label {
+  font-size: 11px;
+}
+
+.admin-app .checkbox-field input {
+  accent-color: var(--admin-accent);
+}
+
+.admin-app .upload-zone {
+  color: var(--admin-accent);
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+  border-radius: 10px;
+}
+
+.admin-app .upload-zone:hover {
+  background: var(--admin-surface-hover);
+  border-color: var(--admin-accent);
+}
+
+.admin-app .upload-zone > span {
+  color: var(--admin-muted);
+}
+
+.admin-app :is(.image-editor-photo > span, .image-remove) {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-app .image-remove:hover {
+  color: var(--admin-danger-text);
+  background: var(--admin-danger-bg);
+}
+
+.admin-app .image-editor-item input {
+  font-size: 11px !important;
+}
+
+.admin-app .editor-preview {
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+  color: var(--admin-text);
+  border-radius: 10px;
+}
+
+.admin-app .preview-placeholder {
+  background: var(--admin-selected);
+  color: var(--admin-accent);
+}
+
+.admin-app .access-page {
+  background: var(--admin-bg);
+}
+
+.admin-app .access-card {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  width: 100%;
+}
+
+.admin-app :is(.access-card > svg, .access-card .eyebrow) {
+  color: var(--admin-accent);
+}
+
+.admin-app .account-center {
+  color: var(--admin-text);
+  padding-top: 7px;
+}
+
+.admin-app .account-heading p {
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.admin-app
+  :is(
+    .account-identity,
+    .account-settings,
+    .account-mini,
+    .account-table-wrap,
+    .account-empty
+  ) {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  border-radius: 12px;
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-app .account-initials {
+  color: var(--admin-accent);
+  background: var(--admin-selected);
+  border-radius: 15px;
+}
+
+.admin-app
+  :is(
+    .account-identity-body p,
+    .account-hint,
+    .account-mini p,
+    .account-table-title span,
+    .account-muted,
+    .account-privacy
+  ) {
+  color: var(--admin-muted);
+}
+
+.admin-app .account-settings label {
+  color: var(--admin-text);
+}
+
+.admin-app .account-settings input {
+  color: var(--admin-text);
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+.admin-app .account-table-title {
+  border-color: var(--admin-border);
+  color: var(--admin-text);
+}
+
+.admin-app .account-table th {
+  color: var(--admin-muted);
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .account-table td {
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+
+.admin-app .account-table :is(th, td) {
+  white-space: normal;
+}
+
+.admin-app .account-table td :is(span, small) {
+  color: var(--admin-muted);
+}
+
+.admin-app .account-table select {
+  color: var(--admin-text);
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+.admin-app .account-table select:disabled {
+  color: var(--admin-muted);
+  background: var(--admin-surface-soft);
+}
+
+.admin-app .account-event {
+  border-color: var(--admin-border);
+}
+
+.admin-app .account-event-dot {
+  background: var(--admin-accent);
+}
+
+.admin-app .account-event-main {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-app .account-event-main :is(span, p) {
+  color: var(--admin-muted);
+}
+
+.admin-app .account-privacy > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+@media (min-width: 1500px) {
+  .admin-app .collection-banner {
+    min-height: 275px;
+  }
+}
+
+@media (max-width: 1150px) {
+  .admin-app .topbar {
+    gap: 12px;
+  }
+
+  .admin-app .topbar-actions {
+    gap: 8px;
+  }
+
+  .admin-app .stat-card {
+    padding: 18px 15px;
+  }
+}
+
+@media (max-width: 800px) {
+  .admin-app .sidebar {
+    padding-bottom: 14px;
+  }
+
+  .admin-app .topbar {
+    padding: 12px 20px;
+  }
+
+  .admin-app .mobile-menu {
+    width: 36px;
+    min-height: 36px;
+  }
+
+  .admin-app .breadcrumbs {
+    flex-basis: 130px;
+    gap: 8px;
+  }
+
+  .admin-app .header-profile {
+    max-width: 190px;
+  }
+
+  .admin-app .account-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-app .topbar {
+    padding: 11px 16px 13px;
+    gap: 8px;
+  }
+
+  .admin-app .breadcrumbs {
+    flex: 1 1 100%;
+    font-size: 11px;
+  }
+
+  .admin-app .topbar-actions {
+    width: 100%;
+    flex-shrink: 1;
+    margin-left: 0;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .admin-app .header-profile {
+    order: 1;
+    flex: 1 1 140px;
+    max-width: none;
+    padding-left: 0;
+  }
+
+  .admin-app .theme-toggle {
+    order: 2;
+    padding: 9px;
+  }
+
+  .admin-app .header-signout {
+    order: 3;
+  }
+
+  .admin-app .catalog-link {
+    order: 4;
+    font-size: 11px;
+  }
+
+  .admin-app .connection-pill {
+    order: 5;
+    font-size: 10px;
+    margin-left: auto;
+  }
+
+  .admin-app .admin-content {
+    padding-top: 18px;
+  }
+
+  .admin-app .page-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 26px;
+  }
+
+  .admin-app .page-heading p {
+    font-size: 13px;
+  }
+
+  .admin-app .page-heading .button {
+    min-height: 40px;
+  }
+
+  .admin-app .stat-card {
+    padding: 18px 14px;
+  }
+
+  .admin-app .collection-banner > div:first-child {
+    background: linear-gradient(90deg, var(--admin-banner) 94%, transparent);
+  }
+
+  .admin-app .collection-banner {
+    min-height: 230px;
+  }
+
+  .admin-app .panel-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .admin-app .table-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-app .workspace-footer {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .admin-app .notice {
+    flex-wrap: wrap;
+  }
+
+  .admin-app .category-card-body {
+    padding: 21px;
+  }
+
+  .admin-app .account-heading {
+    gap: 18px;
+  }
+
+  .admin-app .account-identity-body {
+    width: 100%;
+  }
+
+  .admin-app .account-table-title {
+    padding: 20px;
+  }
+
+  .admin-app .section-label {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .admin-app .editor-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-app .field-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-app .field-trio {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-app .image-editor-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-app .editor-form > .notice {
+    margin-left: 19px;
+    margin-right: 19px;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-app .topbar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .admin-app .topbar-actions {
+    gap: 6px;
+  }
+
+  .admin-app .header-profile {
+    flex-basis: 135px;
+    gap: 7px;
+    padding-right: 2px;
+  }
+
+  .admin-app .profile-avatar {
+    width: 31px;
+    height: 31px;
+  }
+
+  .admin-app .theme-toggle {
+    gap: 5px;
+    padding: 8px;
+  }
+
+  .admin-app .header-signout {
+    width: 36px;
+  }
+
+  .admin-app .admin-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .admin-app .collection-banner h2 {
+    font-size: 19px;
+  }
+
+  .admin-app .collection-banner > div:first-child {
+    width: 70%;
+    padding-left: 15px;
+  }
+
+  .admin-app .editor-footer .button-row {
+    width: 100%;
+  }
+
+  .admin-app .editor-footer .button {
+    flex: 1;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .admin-app .account-profile-actions .button {
+    width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+@media (max-height: 560px) and (max-width: 1000px) {
+  .admin-app .sidebar-note {
+    margin-top: 22px;
+    padding: 18px 15px;
+  }
+
+  .admin-app .sidebar-note > span {
+    margin-top: 14px;
+  }
+
+  .admin-app .modal {
+    max-height: 94dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-app,
+  .admin-app *,
+  .admin-app *::before,
+  .admin-app *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Compact catalog navigation. The profile remains in the header only.
+   Only the navigation scrolls when the viewport is genuinely too short. */
+.admin-app .sidebar {
+  overflow-y: hidden;
+  padding-top: 22px;
+}
+.admin-app .sidebar > .brand {
+  margin-bottom: 13px;
+}
+.admin-app .workspace-label {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.admin-app .sidebar nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 5px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--admin-border) transparent;
+}
+.admin-app .nav-group-label {
+  padding-bottom: 7px;
+}
+.admin-app .nav-group-second {
+  padding-top: 18px;
+}
+.admin-app .nav-item {
+  min-height: 41px;
+  padding: 9px 12px;
+  margin: 2px 0;
+  gap: 10px;
+  line-height: 1.35;
+  font-size: 14px;
+}
+.admin-app .nav-item > svg {
+  flex: none;
+}
+.admin-app .nav-trailing {
+  flex: none;
+}
+.admin-app .sidebar-bottom {
+  margin-top: auto;
+  flex: none;
+  padding: 12px 0 17px;
+}
+.admin-app .sidebar-last-change {
+  padding: 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-surface-soft);
+  box-shadow: var(--admin-shadow);
+  min-width: 0;
+}
+.admin-app .last-change-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--admin-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+}
+.admin-app .last-change-icon {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--admin-accent);
+  background: var(--admin-selected);
+  flex: none;
+}
+.admin-app .last-change-details {
+  margin-top: 12px;
+  min-width: 0;
+}
+.admin-app .last-change-details strong {
+  display: block;
+  color: var(--admin-text);
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 650;
+}
+.admin-app .last-change-details p {
+  color: var(--admin-muted);
+  font-size: 12px;
+  margin: 4px 0 8px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.admin-app .last-change-by {
+  display: block;
+  color: var(--admin-text);
+  opacity: .85;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-app .last-change-details time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  color: var(--admin-muted);
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .last-change-placeholder {
+  margin: 12px 0 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.admin-app .last-change-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 0 0;
+  margin-top: 6px;
+  border: 0;
+  color: var(--admin-accent);
+  font-size: 11px;
+  font-weight: 600;
+  background: transparent;
+}
+.admin-app .last-change-link:hover {
+  text-decoration: underline;
+}
+@media (max-height: 610px) {
+  .admin-app .sidebar {
+    padding-top: 13px;
+  }
+  .admin-app .sidebar > .brand {
+    margin-bottom: 7px;
+  }
+  .admin-app .workspace-label {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+  .admin-app .sidebar-bottom {
+    padding-top: 8px;
+    padding-bottom: 10px;
+  }
+  .admin-app .sidebar-last-change {
+    padding: 11px;
+  }
+}
+
+/* Brutti SaaS navigation proportions: ordinary desktop sidebar, not a broad panel.
+   Preserve the existing palette, responsiveness and signed-in header controls. */
+.admin-app {
+  --catalog-nav-width: 264px;
+}
+@media (min-width: 801px) {
+  .admin-app .sidebar {
+    width: var(--catalog-nav-width);
+    padding-left: 18px;
+    padding-right: 18px;
+    border-right: 1px solid var(--admin-border);
+  }
+  .admin-app .admin-main {
+    margin-left: var(--catalog-nav-width);
+  }
+  .admin-app .sidebar > .brand {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .admin-app .sidebar > .brand .brutti-official-logo {
+    width: 122px;
+    max-width: 100%;
+  }
+  .admin-app .topbar {
+    min-height: 72px;
+    padding: 10px 30px;
+  }
+  .admin-app .admin-content {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+@media (min-width: 1120px) {
+  .admin-app .topbar {
+    flex-wrap: nowrap;
+  }
+  .admin-app .topbar-actions {
+    flex-wrap: nowrap;
+    gap: 9px;
+  }
+}
+.admin-app .sidebar nav .nav-item {
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+}
+.admin-app .sidebar nav .nav-item.active {
+  border-color: var(--admin-border);
+  box-shadow: inset 3px 0 0 var(--admin-accent);
+  font-weight: 700;
+}
+.admin-app .sidebar nav .nav-item:focus-visible,
+.admin-app .last-change-link:focus-visible {
+  outline-offset: 2px;
+}
+.admin-app .sidebar-last-change {
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.admin-app .sidebar-last-change:hover {
+  border-color: var(--admin-focus);
+  box-shadow: var(--admin-shadow-raised);
+}
+.admin-app .header-profile {
+  min-height: 42px;
+}
+
+/* 2026 premium sidebar: Brutti identity, calmer visual rhythm, genuine SaaS controls.
+   Scoped to the admin shell; no public catalog styles are changed. */
+.admin-app .sidebar {
+  background: var(--admin-surface);
+  border-right: 1px solid var(--admin-border);
+  box-shadow: 3px 0 20px rgb(27 64 39 / 2%);
+}
+.admin-app .sidebar > .brand {
+  width: auto;
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px 13px 18px;
+  margin: 0 0 5px;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .sidebar .brutti-official-logo {
+  width: 119px;
+  max-height: 66px;
+  object-fit: contain;
+  object-position: left center;
+}
+.admin-app .workspace-label {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 72px;
+  border: 0;
+  border-radius: 12px;
+  margin: 6px 0 15px;
+  padding: 11px 12px;
+  background: var(--admin-surface-soft);
+  font-size: inherit;
+  letter-spacing: normal;
+  color: var(--admin-text);
+}
+.admin-app .workspace-label .workspace-symbol {
+  width: 37px;
+  height: 37px;
+  padding: 0;
+  border: 1px solid var(--admin-border);
+  border-radius: 11px;
+  background: var(--admin-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--admin-accent);
+  box-shadow: 0 2px 7px rgb(30 56 35 / 4%);
+}
+.admin-app .workspace-label .workspace-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.admin-app .workspace-label .workspace-meta strong {
+  display: block;
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 750;
+  color: var(--admin-text);
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+.admin-app .workspace-label .workspace-meta small {
+  font-size: 10.5px;
+  letter-spacing: 0;
+  font-weight: 450;
+  color: var(--admin-muted);
+  white-space: nowrap;
+}
+.admin-app .workspace-label .workspace-indicator {
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--admin-border);
+  border-radius: 50%;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: var(--admin-surface);
+}
+.admin-app .workspace-label .workspace-indicator > span {
+  width: 6px;
+  height: 6px;
+  display: block;
+  border-radius: 50%;
+  background: var(--admin-accent);
+  padding: 0;
+  border: 0;
+}
+.admin-app .sidebar nav {
+  padding-top: 1px;
+  padding-bottom: 14px;
+}
+.admin-app .sidebar .nav-group-label {
+  display: flex;
+  align-items: center;
+  padding: 0 12px 8px;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.35;
+  font-weight: 760;
+  letter-spacing: 1.15px;
+  color: var(--admin-muted);
+}
+.admin-app .sidebar .nav-group-second {
+  padding-top: 24px;
+}
+.admin-app .sidebar nav .nav-item {
+  width: 100%;
+  min-height: 44px;
+  margin: 2px 0;
+  padding: 5px 11px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  color: var(--admin-muted);
+  background: transparent;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13.5px;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  text-align: left;
+  box-shadow: none;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.admin-app .sidebar nav .nav-icon {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: inherit;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.admin-app .sidebar nav .nav-item:hover {
+  color: var(--admin-text);
+  background: var(--admin-surface-soft);
+}
+.admin-app .sidebar nav .nav-item.active {
+  color: var(--admin-accent);
+  background: var(--admin-selected);
+  border-color: var(--admin-border);
+  box-shadow: 0 2px 9px rgb(27 64 39 / 5%);
+  font-weight: 730;
+}
+.admin-app .sidebar nav .nav-item.active .nav-icon {
+  background: var(--admin-surface);
+  color: var(--admin-accent);
+  box-shadow: 0 1px 5px rgb(25 49 28 / 5%);
+}
+.admin-app .sidebar nav .nav-item.active {
+  /* The old inset green stripe made the pill appear bulky. */
+  box-shadow: 0 2px 9px rgb(27 64 39 / 5%);
+}
+.admin-app .sidebar nav .nav-count {
+  margin-left: auto;
+  min-width: 24px;
+  padding: 3px 7px;
+  border: 1px solid var(--admin-border);
+  border-radius: 7px;
+  background: var(--admin-surface-soft);
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .sidebar nav .nav-item.active .nav-count {
+  background: var(--admin-surface);
+  color: var(--admin-accent);
+}
+.admin-app .sidebar nav .nav-trailing {
+  flex: none;
+  margin-left: auto;
+  color: var(--admin-muted);
+}
+.admin-app .sidebar-bottom {
+  padding: 15px 0 17px;
+  border-top: 1px solid var(--admin-border);
+}
+.admin-app .sidebar-last-change {
+  padding: 15px 15px 13px;
+  background: var(--admin-surface-soft);
+  border: 1px solid var(--admin-border);
+  border-radius: 13px;
+  box-shadow: none;
+}
+.admin-app .sidebar-last-change:hover {
+  border-color: var(--admin-focus);
+  box-shadow: var(--admin-shadow);
+}
+.admin-app .last-change-heading {
+  gap: 9px;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  color: var(--admin-text);
+}
+.admin-app .last-change-icon {
+  width: 29px;
+  height: 29px;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-surface);
+}
+.admin-app .last-change-placeholder {
+  margin: 11px 0 3px;
+  color: var(--admin-muted);
+  line-height: 1.55;
+}
+.admin-app .last-change-link {
+  color: var(--admin-accent);
+  padding: 8px 0 2px;
+  margin-top: 3px;
+  min-height: 32px;
+  font-weight: 700;
+}
+.admin-app .sidebar nav .nav-item:focus-visible,
+.admin-app .sidebar a:focus-visible,
+.admin-app .sidebar .last-change-link:focus-visible {
+  outline: 2px solid var(--admin-focus);
+  outline-offset: 2px;
+}
+@media (min-width: 801px) {
+  .admin-app .sidebar {
+    padding: 10px 17px 0;
+  }
+  .admin-app .sidebar .brutti-official-logo {
+    width: 119px;
+  }
+}
+@media (max-width: 800px) {
+  .admin-app .sidebar {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+@media (max-height: 690px) {
+  .admin-app .sidebar > .brand {
+    min-height: 65px;
+    padding-bottom: 9px;
+  }
+  .admin-app .workspace-label {
+    margin-bottom: 8px;
+    min-height: 60px;
+  }
+  .admin-app .sidebar .nav-group-second {
+    padding-top: 12px;
+  }
+  .admin-app .sidebar-bottom {
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+}
+
+/* Premium Brutti SaaS overview — scoped to admin, preserving public catalog. */
+.admin-app .topbar {
+  border-bottom: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+}
+.admin-app .topbar .breadcrumbs {
+  font-size: 13px;
+  gap: 13px;
+}
+.admin-app .topbar .breadcrumbs > strong {
+  font-weight: 720;
+}
+.admin-app .topbar .connection-pill {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 33px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 590;
+}
+.admin-app .topbar .connection-pill > span {
+  width: 7px;
+  height: 7px;
+  box-shadow: 0 0 0 3px var(--admin-success-border);
+}
+.admin-app .topbar .catalog-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 640;
+  min-height: 38px;
+  padding: 8px 11px;
+  border-radius: 9px;
+}
+.admin-app .topbar .catalog-link:hover {
+  background: var(--admin-surface-soft);
+  color: var(--admin-accent);
+}
+.admin-app .topbar .theme-toggle,
+.admin-app .topbar .header-signout {
+  border-radius: 11px;
+}
+.admin-app .topbar .header-profile {
+  min-height: 45px;
+  border-radius: 12px;
+  padding: 5px 10px 5px 5px;
+}
+.admin-app .topbar .header-profile .profile-avatar {
+  width: 37px;
+  height: 37px;
+  border-radius: 12px;
+}
+.admin-app .topbar .header-profile .profile-copy strong {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.admin-app .overview-heading {
+  margin: 24px 0 26px;
+  gap: 20px;
+  align-items: center;
+}
+.admin-app .overview-heading > div:first-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.admin-app .overview-heading .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.25px;
+  line-height: 1.3;
+  color: var(--admin-muted);
+}
+.admin-app .overview-heading .eyebrow::before {
+  content: "";
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--admin-accent);
+}
+.admin-app .overview-heading h1 {
+  font-family: "Manrope", "DM Sans", sans-serif;
+  color: var(--admin-text);
+  font-size: clamp(27px, 2.2vw, 34px);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -1.15px;
+}
+.admin-app .overview-heading p {
+  color: var(--admin-muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin-top: 9px;
+}
+.admin-app .overview-heading > .button.primary {
+  min-height: 44px;
+  padding: 11px 18px;
+  border-radius: 11px;
+  gap: 9px;
+  font-size: 12.5px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgb(20 48 30 / 12%);
+  transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+.admin-app .overview-heading > .button.primary:hover:not(:disabled) {
+  box-shadow: 0 7px 17px rgb(20 48 30 / 17%);
+  transform: translateY(-1px);
+}
+.admin-app .overview-stats {
+  gap: 16px;
+  margin: 0 0 22px;
+}
+.admin-app .overview-stats .overview-stat {
+  position: relative;
+  min-width: 0;
+  min-height: 170px;
+  border: 1px solid var(--admin-border);
+  border-radius: 15px;
+  background: var(--admin-surface);
+  box-shadow: 0 2px 9px rgb(17 43 26 / 2.5%);
+  padding: 21px 22px 19px;
+  transition: border-color 170ms ease, box-shadow 170ms ease, transform 170ms ease;
+}
+.admin-app .overview-stats .overview-stat:hover {
+  border-color: var(--admin-focus);
+  box-shadow: var(--admin-shadow-raised);
+  transform: translateY(-2px);
+}
+.admin-app .overview-stat > div:first-child {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--admin-muted);
+}
+.admin-app .overview-stat > div:first-child > span:first-child {
+  padding-top: 5px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--admin-muted);
+}
+.admin-app .overview-stat .overview-stat-icon {
+  width: 36px;
+  height: 36px;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 10px;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-accent);
+  background: var(--admin-surface-soft);
+}
+.admin-app .overview-stat > strong {
+  display: block;
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: 35px;
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -1.5px;
+  color: var(--admin-text);
+  margin: 15px 0 7px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .overview-stat > p {
+  font-size: 11.5px;
+  color: var(--admin-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+.admin-app .overview-feature {
+  height: auto;
+  min-height: 300px;
+  border-radius: 17px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-banner);
+  box-shadow: var(--admin-shadow);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.admin-app .overview-feature > div:first-child {
+  width: 60%;
+  padding: 38px 40px;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(90deg, var(--admin-banner) 75%, transparent 100%);
+}
+.admin-app .overview-feature .eyebrow {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.45px;
+  color: var(--admin-muted);
+}
+.admin-app .overview-feature h2 {
+  max-width: 460px;
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: clamp(24px, 2vw, 31px);
+  font-weight: 720;
+  letter-spacing: -1.05px;
+  line-height: 1.28;
+  color: var(--admin-text);
+}
+.admin-app .overview-feature p {
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  line-height: 1.8;
+  margin: 15px 0;
+}
+.admin-app .overview-feature button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 750;
+  color: var(--admin-accent);
+  margin-top: 4px;
+  padding: 9px 0;
+}
+.admin-app .overview-feature button:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.admin-app .overview-feature img {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 52%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 61%;
+}
+.admin-app .overview-feature .banner-caption {
+  right: 20px;
+  bottom: 18px;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.75px;
+  text-shadow: 0 1px 7px rgb(5 17 7 / 70%);
+}
+.admin-app .overview-collection {
+  border-radius: 15px;
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  overflow: hidden;
+}
+.admin-app .overview-collection .panel-heading {
+  padding: 23px 25px 20px;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .overview-collection .panel-heading h2 {
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.4px;
+}
+.admin-app .overview-collection .panel-heading p {
+  margin-top: 7px;
+  font-size: 12px;
+}
+.admin-app .overview-collection .panel-heading .text-button {
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 690;
+}
+@media (min-width: 801px) and (max-width: 1180px) {
+  .admin-app .overview-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-app .overview-feature > div:first-child {
+    width: 66%;
+    padding: 30px;
+  }
+}
+@media (max-width: 800px) {
+  .admin-app .overview-heading {
+    margin: 18px 0 20px;
+  }
+  .admin-app .overview-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .admin-app .overview-stats .overview-stat {
+    min-height: 150px;
+    padding: 16px;
+  }
+  .admin-app .overview-feature {
+    min-height: 260px;
+  }
+  .admin-app .overview-feature > div:first-child {
+    width: 67%;
+    padding: 25px;
+  }
+}
+@media (max-width: 600px) {
+  .admin-app .overview-heading {
+    align-items: flex-start;
+    gap: 16px;
+    margin: 8px 0 21px;
+  }
+  .admin-app .overview-heading h1 {
+    font-size: 26px;
+  }
+  .admin-app .overview-heading p {
+    font-size: 12.5px;
+  }
+  .admin-app .overview-heading > .button.primary {
+    min-height: 42px;
+    width: auto;
+    margin: 0;
+  }
+  .admin-app .overview-stats {
+    gap: 10px;
+  }
+  .admin-app .overview-stats .overview-stat {
+    min-height: 138px;
+    padding: 14px;
+    border-radius: 12px;
+  }
+  .admin-app .overview-stat .overview-stat-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+  .admin-app .overview-stat > div:first-child > span:first-child {
+    font-size: 11px;
+  }
+  .admin-app .overview-stat > strong {
+    font-size: 29px;
+    margin: 12px 0 6px;
+  }
+  .admin-app .overview-stat > p {
+    font-size: 10.5px;
+  }
+  .admin-app .overview-feature {
+    min-height: 260px;
+    border-radius: 13px;
+  }
+  .admin-app .overview-feature > div:first-child {
+    width: 74%;
+    padding: 22px 17px;
+    background: linear-gradient(90deg, var(--admin-banner) 75%, transparent 100%);
+  }
+  .admin-app .overview-feature .eyebrow {
+    font-size: 8px;
+    letter-spacing: 0.9px;
+  }
+  .admin-app .overview-feature h2 {
+    font-size: 21px;
+  }
+  .admin-app .overview-feature p {
+    font-size: 11px;
+    line-height: 1.65;
+  }
+  .admin-app .overview-feature button {
+    font-size: 11px;
+  }
+  .admin-app .overview-feature img {
+    width: 45%;
+  }
+  .admin-app .overview-collection .panel-heading {
+    padding: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app .overview-stat,
+  .admin-app .overview-heading > .button.primary {
+    transform: none !important;
+  }
+}

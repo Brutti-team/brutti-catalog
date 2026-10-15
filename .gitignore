@@ -1,0 +1,15 @@
+node_modules/
+dist/
+dist-site/
+.env
+.env.*
+!.env.example
+*.local
+*.log
+*.tsbuildinfo
+playwright-report/
+test-results/
+
+.npm-cache/
+__pycache__/
+*.pyc

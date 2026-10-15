@@ -1,0 +1,44 @@
+{
+  "name": "brutti-catalog",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "build:pages": "GITHUB_PAGES=true npm run build",
+    "build:site": "tsc -b && vite build --mode site",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:db": "bash supabase/tests/check-schema.sh",
+    "lint": "eslint src scripts tests *.ts *.mjs",
+    "verify:live": "node scripts/verify-live.mjs",
+    "inspect:backend": "node scripts/inspect-backend.mjs",
+    "build:configured": "node scripts/check-production-config.mjs && npm run build:pages"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^22.16.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^16.5.0",
+    "prettier": "^3.7.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.71.2",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.0"
+  }
+}

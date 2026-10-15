@@ -1,0 +1,465 @@
+/* Brutti Studio 2.0: a deliberate visual redesign, not another cosmetic layer.
+   Admin-scoped only. Original public catalog, API and permissions remain untouched. */
+.admin-app {
+  --studio-ink: #16392c;
+  --studio-elevation: 0 2px 5px rgb(19 41 30 / 2%), 0 12px 25px rgb(19 41 30 / 4%);
+  --studio-neutral: #f5f6f4;
+  --studio-tint: #e9eeea;
+  --studio-amber: #ab763d;
+  --studio-blue: #527a83;
+  --studio-sidebar: #122b22;
+  --studio-sidebar-elevated: #1c392e;
+  --studio-sidebar-foreground: #eaf4ed;
+  --studio-sidebar-muted: #aec5b7;
+  --studio-sidebar-border: rgb(235 249 238 / 13%);
+  background: #f5f6f4;
+}
+.admin-app[data-theme="dark"] {
+  --studio-ink: #eaf2e9;
+  --studio-neutral: #17241d;
+  --studio-tint: #2a3b30;
+  --studio-amber: #e0b779;
+  --studio-blue: #9bbfc8;
+  --studio-elevation: 0 7px 22px rgb(3 12 7 / 20%);
+  background: var(--admin-bg);
+}
+/* Distinct dark workspace rail rather than a second pale content column. */
+.admin-app .sidebar {
+  background: var(--studio-sidebar);
+  border-right: 1px solid #224337;
+  color: var(--studio-sidebar-foreground);
+  box-shadow: 3px 0 17px rgb(0 17 9 / 8%);
+  scrollbar-width: none;
+}
+.admin-app .sidebar::-webkit-scrollbar { display: none; }
+.admin-app .sidebar .brutti-official-logo,
+.admin-app[data-theme="dark"] .sidebar .brutti-official-logo {
+  filter: grayscale(1) brightness(0) invert(1);
+  opacity: .95;
+}
+.admin-app .sidebar > .brand { border-color: var(--studio-sidebar-border); }
+.admin-app .sidebar .workspace-label {
+  background: var(--studio-sidebar-elevated);
+  border: 1px solid var(--studio-sidebar-border);
+  border-radius: 13px;
+}
+.admin-app .sidebar .workspace-symbol {
+  background: #254839;
+  border-color: var(--studio-sidebar-border);
+  box-shadow: none;
+  color: #d6ecdb;
+}
+.admin-app .sidebar .workspace-label .workspace-meta strong { color: #f6faf6; }
+.admin-app .sidebar .workspace-label .workspace-meta small { color: #b1c8ba; }
+.admin-app .sidebar .workspace-label .workspace-indicator {
+  background: #2f5946; border-color: #49755b;
+}
+.admin-app .sidebar .workspace-label .workspace-indicator > span { background: #b1dab9; }
+.admin-app .sidebar .nav-group-label {
+  color: #95b4a2;
+  font-size: 10px;
+  letter-spacing: 1.3px;
+}
+.admin-app .sidebar nav .nav-item {
+  color: #c2d4c8;
+  font-weight: 550;
+  background: transparent;
+  border: 1px solid transparent;
+  min-height: 44px;
+}
+.admin-app .sidebar nav .nav-item:hover {
+  color: #ffffff;
+  background: #254639;
+}
+.admin-app .sidebar nav .nav-item.active {
+  background: #e7f0e7;
+  border-color: #edf5ea;
+  color: #183e2b;
+  box-shadow: 0 2px 7px rgb(4 20 9 / 12%);
+  font-weight: 750;
+}
+.admin-app .sidebar nav .nav-item.active .nav-icon {
+  background: #ffffff;
+  color: #20533b;
+  box-shadow: none;
+}
+.admin-app .sidebar nav .nav-icon { color: inherit; }
+.admin-app .sidebar nav .nav-count {
+  background: rgb(255 255 255 / 8%);
+  border-color: rgb(255 255 255 / 13%);
+  color: #e6f1e7;
+}
+.admin-app .sidebar nav .nav-item.active .nav-count {
+  color: #254f37; background: #d2e2d2;
+}
+.admin-app .sidebar nav .nav-trailing { color: #9ebba8; }
+.admin-app .sidebar-bottom { border-top: 1px solid var(--studio-sidebar-border); }
+.admin-app .sidebar-last-change {
+  background: #1d3a2e;
+  border: 1px solid var(--studio-sidebar-border);
+  border-radius: 13px;
+  padding: 14px;
+  color: var(--studio-sidebar-foreground);
+  box-shadow: none;
+}
+.admin-app .sidebar-last-change:hover { background: #214335; border-color: #4a7560; }
+.admin-app .sidebar-last-change .last-change-heading { color: #d3e7d8; }
+.admin-app .sidebar-last-change .last-change-icon {
+  background: #315442; color: #cde8d0; border-color: #53735e;
+}
+.admin-app .sidebar-last-change .last-change-details strong {
+  color: #f6fff7; font-size: 12px; font-weight: 740;
+}
+.admin-app .sidebar-last-change .last-change-details p {
+  color: #c3d7c8; font-size: 11px; line-height: 1.55;
+}
+.admin-app .sidebar-last-change .last-change-by,
+.admin-app .sidebar-last-change time,
+.admin-app .sidebar-last-change .last-change-placeholder {
+  color: #aec6b6;
+  font-size: 10px;
+}
+.admin-app .sidebar-last-change .last-change-link {
+  color: #d9f4db; font-weight: 750; font-size: 11px;
+}
+/* Active navigation remains a dark, legible surface in dark mode. */
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active {
+  background: #315742; color: #f3fcf4; border-color: #577962;
+}
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
+  background: #436a53; color: #f3fcf4;
+}
+.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-count {
+  background: #436a53; color: #effbf1; border-color: #64836c;
+}
+/* Productive content shell */
+.admin-app .topbar { min-height: 70px; background: var(--admin-surface); box-shadow: none; }
+.admin-app .admin-content { padding-top: 24px; }
+.admin-app .topbar-actions { gap: 10px; }
+.admin-app .theme-toggle, .admin-app .header-signout {
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+}
+.admin-app .header-profile .profile-avatar { border-radius: 10px; background: var(--admin-surface-soft); }
+/* Hero: high-contrast visual anchor, unmistakably different from the old pale overview. */
+.admin-app .catalog-command {
+  min-height: 222px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  border-radius: 18px;
+  margin: 0 0 19px;
+  padding: 30px 40px;
+  isolation: isolate;
+  color: #ffffff;
+  border: 1px solid #305441;
+  background:
+    radial-gradient(circle at 95% 5%, rgb(127 169 126 / 28%), transparent 31%),
+    radial-gradient(circle at 57% 125%, rgb(79 143 101 / 18%), transparent 42%),
+    linear-gradient(112deg, #102b22 0%, #153a2d 59%, #28513e 100%);
+  box-shadow: 0 9px 28px rgb(17 42 27 / 10%);
+}
+.admin-app .catalog-command::before {
+  content: "";
+  position: absolute;
+  width: 350px; height: 350px;
+  border: 1px solid rgb(217 248 213 / 12%);
+  border-radius: 50%;
+  right: -75px; top: -200px; z-index: -1;
+  box-shadow: 0 0 0 50px rgb(217 248 213 / 3%), 0 0 0 103px rgb(217 248 213 / 3%);
+  pointer-events: none;
+}
+.admin-app .catalog-command-content { position: relative; z-index: 1; flex: 1; min-width: 0; }
+.admin-app .catalog-command-eyebrow {
+  display: flex; align-items: center; gap: 9px;
+  color: #b9d9c5; font-size: 9.5px;
+  font-weight: 800; letter-spacing: 1.3px;
+  margin-bottom: 14px;
+}
+.admin-app .catalog-command-eyebrow > span[aria-hidden] { opacity: .45; }
+.admin-app .catalog-command-live-dot {
+  width: 7px; height: 7px; flex: none;
+  background: #95d9ad; border-radius: 50%;
+  box-shadow: 0 0 0 4px rgb(124 210 143 / 12%);
+}
+.admin-app .catalog-command h1 {
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-size: clamp(28px, 2.5vw, 38px);
+  line-height: 1.17;
+  letter-spacing: -1.4px;
+  font-weight: 790;
+  color: #ffffff;
+  margin: 0;
+}
+.admin-app .catalog-command h1 span { color: #b9dac1; }
+.admin-app .catalog-command p {
+  margin: 12px 0 19px;
+  max-width: 545px;
+  color: #d0e2d5;
+  font-size: 12.5px; line-height: 1.65;
+}
+.admin-app .catalog-command-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.admin-app .catalog-command-actions button {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; min-height: 42px; padding: 9px 15px;
+  border-radius: 10px; font-size: 12px; font-weight: 780;
+  transition: transform 140ms, background-color 140ms;
+}
+.admin-app .catalog-hero-primary {
+  background: #f4f7ee; color: #173927;
+  border: 1px solid rgb(255 255 255 / 75%);
+  box-shadow: 0 3px 10px rgb(3 20 8 / 12%);
+}
+.admin-app .catalog-hero-primary:hover { background: #ffffff; transform: translateY(-1px); }
+.admin-app .catalog-hero-secondary {
+  border: 1px solid rgb(226 250 231 / 27%);
+  background: rgb(255 255 255 / 9%); color: #f4fcf3;
+}
+.admin-app .catalog-hero-secondary:hover { background: rgb(255 255 255 / 17%); }
+.admin-app .catalog-command-insight {
+  width: 210px; min-height: 164px; flex: 0 0 210px;
+  border: 1px solid rgb(223 248 228 / 22%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(8px);
+  padding: 18px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 1;
+}
+.admin-app .catalog-command-insight > span {
+  font-size: 9px; font-weight: 790; letter-spacing: 1.2px; color: #c5daca;
+}
+.admin-app .catalog-command-insight > strong {
+  font-family: "Manrope",sans-serif; color: #ffffff;
+  font-size: 44px; font-weight: 820;
+  line-height: 1.15; margin: 6px 0 4px;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-command-insight > small {
+  font-size: 11px; line-height: 1.4; color: #d3e8d7;
+}
+.admin-app .catalog-command-insight-foot {
+  display: flex; align-items: center; gap: 7px;
+  border-top: 1px solid rgb(236 253 239 / 16%);
+  margin-top: 15px; padding-top: 11px;
+  font-size: 10px; color: #c4dbc9;
+}
+.admin-app .catalog-command-insight-dot { width: 6px; height: 6px; border-radius: 50%; background: #a8d5b2; }
+/* Smaller, more informative KPI tiles */
+.admin-app .overview-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 19px; gap: 14px;
+}
+.admin-app .overview-stats .overview-stat {
+  min-height: 132px; padding: 17px 19px 15px;
+  border-radius: 13px; box-shadow: var(--studio-elevation);
+  border: 1px solid var(--admin-border);
+  border-top: 3px solid var(--admin-border);
+  background: var(--admin-surface);
+}
+.admin-app .overview-stats .overview-stat:first-child { border-top-color: #305e49; }
+.admin-app .overview-stats .overview-stat:nth-child(2) { border-top-color: #609474; }
+.admin-app .overview-stats .overview-stat:nth-child(3) { border-top-color: #c59b68; }
+.admin-app .overview-stats .overview-stat:nth-child(4) { border-top-color: #72929a; }
+.admin-app .overview-stat > div:first-child > span:first-child { font-size: 11.5px; }
+.admin-app .overview-stat .overview-stat-icon {
+  width: 30px; height: 30px; border: 0; border-radius: 9px;
+  background: var(--admin-surface-soft);
+}
+.admin-app .overview-stats .overview-stat:nth-child(3) .overview-stat-icon { color: var(--studio-amber); }
+.admin-app .overview-stats .overview-stat:nth-child(4) .overview-stat-icon { color: var(--studio-blue); }
+.admin-app .overview-stat > strong {
+  font-size: 31px; margin: 9px 0 3px; line-height: 1.15;
+  letter-spacing: -1.3px;
+}
+.admin-app .overview-stat > p { color: var(--admin-muted); font-size: 10.5px; }
+/* Data panels and useful category distribution */
+.admin-app .catalog-operations {
+  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 1fr);
+  gap: 16px; margin-bottom: 21px;
+}
+.admin-app .catalog-health-card, .admin-app .catalog-insights-card {
+  min-width: 0;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 14px; padding: 21px 23px;
+  box-shadow: var(--studio-elevation);
+}
+.admin-app .catalog-studio-panel-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 15px; margin-bottom: 19px;
+}
+.admin-app .catalog-studio-kicker {
+  display: block; color: var(--admin-accent);
+  font-size: 9.5px; font-weight: 780;
+  letter-spacing: 1.15px; margin-bottom: 8px;
+}
+.admin-app .catalog-studio-panel-head h2 {
+  color: var(--admin-text); font-size: 16px;
+  font-weight: 790; letter-spacing: -.45px; line-height: 1.35;
+}
+.admin-app .catalog-studio-panel-head p { font-size: 11px; color: var(--admin-muted); margin-top: 7px; }
+.admin-app .catalog-readiness-chip {
+  display: flex; align-items: center; gap: 7px;
+  flex: none; background: var(--admin-success-bg);
+  color: var(--admin-success-text); border: 1px solid var(--admin-success-border);
+  padding: 8px 10px; border-radius: 9px;
+  font-size: 10px; font-weight: 740; white-space: nowrap;
+}
+.admin-app .catalog-status-summary {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px; padding: 12px; background: var(--admin-surface-soft);
+  border: 1px solid var(--admin-border); border-radius: 11px;
+  margin: 0 0 20px;
+}
+.admin-app .catalog-status-summary > div {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 6px; min-width: 0;
+}
+.admin-app .catalog-status-summary strong {
+  color: var(--admin-text); font-size: 15px; font-weight: 780;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-status-summary small { color: var(--admin-muted); font-size: 10px; }
+.admin-app .catalog-summary-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.admin-app .catalog-summary-dot.is-draft { background: #cb995a; }
+.admin-app .catalog-summary-dot.is-published { background: #5d9872; }
+.admin-app .catalog-summary-dot.is-archived { background: #929c9c; }
+.admin-app .catalog-progress-row + .catalog-progress-row { margin-top: 15px; }
+.admin-app .catalog-progress-row > div { margin-bottom: 7px; }
+.admin-app .catalog-progress-row > div span,
+.admin-app .catalog-progress-row > div strong { font-size: 11px; }
+.admin-app .catalog-progress-row progress { height: 7px; }
+.admin-app .catalog-progress-row small { font-size: 10px; margin-top: 5px; }
+.admin-app .catalog-chart-action {
+  display: grid; place-items: center; width: 35px; height: 35px; flex: none;
+  border: 1px solid var(--admin-border); background: var(--admin-surface-soft);
+  color: var(--admin-accent); border-radius: 9px;
+}
+.admin-app .catalog-chart-action:hover { background: var(--admin-selected); }
+.admin-app .catalog-category-bars { display: flex; flex-direction: column; gap: 2px; }
+.admin-app .catalog-category-bar {
+  display: grid; align-items: center;
+  grid-template-columns: minmax(112px, 1.1fr) minmax(45px, 1.6fr) 24px;
+  gap: 12px; min-height: 38px;
+  width: 100%; padding: 3px 6px; border-radius: 8px;
+  background: transparent; text-align: left;
+}
+.admin-app .catalog-category-bar:hover { background: var(--admin-surface-soft); }
+.admin-app .catalog-category-name {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--admin-text); font-weight: 650; font-size: 10.5px;
+}
+.admin-app .catalog-category-track {
+  height: 7px; overflow: hidden;
+  border-radius: 10px; background: var(--admin-surface-soft);
+}
+.admin-app .catalog-category-track > span {
+  display: block; height: 100%;
+  border-radius: 10px;
+  background: #9dbbb0;
+}
+.admin-app .catalog-category-track > span.leading { background: #356e55; }
+.admin-app .catalog-category-bar:nth-child(2) .catalog-category-track > span { background: #779e87; }
+.admin-app .catalog-category-bar:nth-child(3) .catalog-category-track > span { background: #97ada1; }
+.admin-app .catalog-category-bar:nth-child(4) .catalog-category-track > span { background: #b49c7a; }
+.admin-app .catalog-category-bar:nth-child(5) .catalog-category-track > span { background: #8ea7af; }
+.admin-app .catalog-category-bar strong {
+  font-size: 11px; text-align: right; color: var(--admin-text);
+  font-weight: 760; font-variant-numeric: tabular-nums;
+}
+.admin-app .catalog-empty-hint { color: var(--admin-muted); font-size: 12px; }
+/* Other pages also get a contemporary application heading, not marketing prose. */
+.admin-app .catalog-management-heading {
+  margin: 4px 0 24px;
+  border: 1px solid var(--admin-border);
+  border-radius: 14px; padding: 25px 27px;
+  background: var(--admin-surface);
+  box-shadow: var(--studio-elevation);
+}
+.admin-app .catalog-management-heading .eyebrow { margin-bottom: 7px; }
+.admin-app .catalog-management-heading h1 { font-size: 27px; }
+.admin-app .catalog-management-heading p { margin-top: 7px; }
+/* Tables, editor and gallery visually coherent with the command center */
+.admin-app .table-panel {
+  border-radius: 14px;
+  box-shadow: var(--studio-elevation);
+}
+.admin-app .table-panel .panel-heading { padding-top: 20px; padding-bottom: 16px; }
+.admin-app .table-scroll tbody tr:hover td { background: var(--admin-surface-soft); }
+.admin-app .catalog-gallery-card { border-radius: 12px; }
+.admin-app .category-card { border-radius: 13px; box-shadow: var(--studio-elevation); }
+.admin-app .modal { border-radius: 16px; }
+/* Graceful small displays: retain the visual character, no cramped second scroll. */
+@media (max-width: 1200px) {
+  .admin-app .catalog-operations { grid-template-columns: 1fr 1fr; }
+  .admin-app .catalog-readiness-chip { display: none; }
+}
+@media (max-width: 980px) {
+  .admin-app .catalog-command { padding: 27px; min-height: 214px; }
+  .admin-app .catalog-command-insight { width: 165px; flex-basis: 165px; }
+  .admin-app .catalog-operations { grid-template-columns: 1fr; }
+  .admin-app .catalog-category-bar { grid-template-columns: minmax(115px, 1fr) minmax(50px, 2fr) 28px; }
+}
+@media (max-width: 600px) {
+  .admin-app .admin-content { padding-top: 15px; }
+  .admin-app .catalog-command {
+    min-height: 0; padding: 23px 20px; gap: 15px;
+    border-radius: 14px; flex-direction: column;
+    align-items: stretch; margin-bottom: 13px;
+  }
+  .admin-app .catalog-command-eyebrow { font-size: 8px; gap: 6px; margin-bottom: 11px; }
+  .admin-app .catalog-command h1 { font-size: 28px; letter-spacing: -.9px; }
+  .admin-app .catalog-command p { font-size: 11.5px; margin-bottom: 15px; }
+  .admin-app .catalog-command-insight {
+    width: 100%; flex: initial; min-height: 0;
+    display: grid; align-items: center;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px; padding: 11px 13px;
+  }
+  .admin-app .catalog-command-insight > span { grid-column: 1 / -1; }
+  .admin-app .catalog-command-insight > strong { font-size: 27px; margin: 0; }
+  .admin-app .catalog-command-insight > small { font-size: 10px; }
+  .admin-app .catalog-command-insight-foot {
+    margin: 0; padding: 0; border: 0;
+  }
+  .admin-app .overview-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px; margin-bottom: 12px; min-width: 0;
+  }
+  .admin-app .overview-stats .overview-stat {
+    min-width: 0; padding: 12px 13px; min-height: 120px; border-radius: 11px;
+  }
+  .admin-app .overview-stat > div:first-child {
+    display: flex; min-width: 0; gap: 5px; align-items: flex-start;
+  }
+  .admin-app .overview-stat > div:first-child > span:first-child {
+    min-width: 0; flex: 1; font-size: 10px; white-space: normal;
+    overflow-wrap: break-word; line-height: 1.4;
+  }
+  .admin-app .overview-stat .overview-stat-icon {
+    flex: 0 0 26px; width: 26px; height: 26px; border-radius: 8px;
+  }
+  .admin-app .overview-stat > strong { font-size: 28px; }
+  .admin-app .overview-stat > p { font-size: 10px; }
+  .admin-app .catalog-operations { gap: 12px; }
+  .admin-app .catalog-health-card, .admin-app .catalog-insights-card { padding: 17px; }
+  .admin-app .catalog-studio-panel-head { gap: 9px; }
+  .admin-app .catalog-studio-panel-head h2 { font-size: 15px; }
+  .admin-app .catalog-status-summary { gap: 4px; padding: 9px 6px; }
+  .admin-app .catalog-status-summary > div { gap: 4px; }
+  .admin-app .catalog-category-bar { grid-template-columns: minmax(95px,1fr) minmax(40px,1.3fr) 22px; gap: 7px; }
+  .admin-app .catalog-category-name { font-size: 10px; }
+  .admin-app .catalog-management-heading { padding: 17px; flex-wrap: wrap; }
+}
+@media (max-width: 370px) {
+  .admin-app .catalog-command-insight-foot { font-size: 9px; }
+  .admin-app .catalog-command-actions button { flex: 1; }
+  .admin-app .catalog-status-summary small { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app .catalog-command-actions button { transition: none; transform: none !important; }
+}
