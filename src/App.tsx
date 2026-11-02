@@ -30,6 +30,10 @@ import {
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
+  Mail,
+  LockKeyhole,
+  Eye,
+  EyeOff,
   Moon,
   Sun,
   UsersRound,
@@ -1389,8 +1393,10 @@ function Login({
   const [resetSent, setResetSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -1404,89 +1410,150 @@ function Login({
       setBusy(false);
     }
   }
+
+  async function sendPasswordReset() {
+    setError("");
+    setResetSent(false);
+    if (!email.trim()) {
+      setError("Enter your email address first.");
+      return;
+    }
+    setBusy(true);
+    try {
+      await requestPasswordReset(email);
+      setResetSent(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to send reset email.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
-    <div className="access-page">
-      <a href="#/catalog" className="brand">
-        <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="brutti-official-logo" />
-      </a>
-      <div className="access-card">
-        <ShieldCheck size={25} />
-        <span className="eyebrow">THE CATALOG WORKSPACE</span>
-        <h1>{authenticated ? "Admin access required" : "Welcome back."}</h1>
-        <p className="muted">
-          {authenticated
-            ? "Your account does not have catalog administrator access. Ask the workspace owner to grant your user access."
-            : "Sign in with your Supabase administrator account to manage the collection."}
-        </p>
-        {setupError && (
-          <div className="notice error" role="alert">
-            {setupError}
+    <div className="access-page catalog-login-page">
+      <div className="catalog-login-shell">
+        <section className="catalog-login-story" aria-label="Brutti Catalog collection studio">
+          <div className="catalog-login-story-top">
+            <a href="#/catalog" className="catalog-login-wordmark" aria-label="Open Brutti public catalog">
+              <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" />
+            </a>
+            <span className="catalog-login-story-serial">EST. WITH PURPOSE</span>
           </div>
-        )}
-        {authenticated ? (
-          <button
-            className="button secondary"
-            onClick={() => {
-              void signOut().catch((e) =>
-                setError(e instanceof Error ? e.message : "Sign out failed."),
-              );
-            }}
-          >
-            Sign out
-          </button>
-        ) : (
-          <form onSubmit={submit}>
-            <label>
-              Email
-              <input
-                autoComplete="username"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </label>
-            <label>
-              Password
-              <input
-                autoComplete="current-password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </label>
-            <button className="button primary full" disabled={busy}>
-              {busy ? "Signing in…" : "Sign in"}
+          <div className="catalog-login-story-art" aria-hidden="true">
+            <span className="catalog-login-wood-disc" />
+            <span className="catalog-login-wood-line" />
+            <span className="catalog-login-grain" />
+          </div>
+          <div className="catalog-login-story-copy">
+            <span className="catalog-login-story-kicker">THE COLLECTION STUDIO</span>
+            <h2>Every piece has<br /><em>a story.</em></h2>
+            <p>A considered space for the furniture we make and the details that define it.</p>
+          </div>
+          <div className="catalog-login-story-foot">
+            <span>BENUA BRUTTI</span>
+            <span>CRAFT • CURATE • CREATE</span>
+          </div>
+        </section>
+
+        <main className="catalog-login-form-side">
+          <a href="#/catalog" className="catalog-login-mobile-logo" aria-label="Open Brutti public catalog">
+            <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" />
+          </a>
+          <div className="catalog-login-auth-surface">
+            <div className="catalog-login-kicker">
+              <span className="catalog-login-kicker-dot" aria-hidden="true" />
+              PRIVATE WORKSPACE
+            </div>
+            <div className="catalog-login-heading">
+              <h1>{authenticated ? "Access restricted." : "Welcome back."}</h1>
+              <p className="catalog-login-description">
+                {authenticated
+                  ? "Your account does not have catalog administrator access. Please contact your workspace owner."
+                  : "Sign in to curate your products and manage the Brutti collection."}
+              </p>
+            </div>
+
+            {setupError && <div className="notice error catalog-login-alert" role="alert">{setupError}</div>}
+
+            {authenticated ? (
+              <button type="button" className="catalog-login-submit" disabled={busy}
+                onClick={() => {
+                  void signOut().catch((e) =>
+                    setError(e instanceof Error ? e.message : "Sign out failed."),
+                  );
+                }}>
+                Sign out <ArrowRight size={17} aria-hidden="true" />
+              </button>
+            ) : (
+              <form className="catalog-login-form" onSubmit={submit}>
+                <div className="catalog-login-field">
+                  <label htmlFor="catalog-login-email">Work email</label>
+                  <div className="catalog-login-input">
+                    <Mail size={18} aria-hidden="true" />
+                    <input
+                      id="catalog-login-email"
+                      autoComplete="username"
+                      inputMode="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="catalog-login-field">
+                  <div className="catalog-login-field-head">
+                    <label htmlFor="catalog-login-password">Password</label>
+                    <button type="button" className="catalog-login-forgot" disabled={busy}
+                      onClick={() => void sendPasswordReset()}>Forgot password?</button>
+                  </div>
+                  <div className="catalog-login-input">
+                    <LockKeyhole size={18} aria-hidden="true" />
+                    <input
+                      id="catalog-login-password"
+                      autoComplete="current-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button type="button" className="catalog-login-reveal" disabled={busy}
+                      onClick={() => setShowPassword(v => !v)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-pressed={showPassword}>
+                      {showPassword ? <EyeOff size={19} aria-hidden="true" /> : <Eye size={19} aria-hidden="true" />}
+                    </button>
+                  </div>
+                </div>
+                <button type="submit" className="catalog-login-submit" disabled={busy}>
+                  <span>{busy ? "Signing in…" : "Sign in to workspace"}</span>
+                  {busy ? <LoaderCircle className="spin" size={18} aria-hidden="true" />
+                    : <ArrowRight size={18} aria-hidden="true" />}
+                </button>
+                {resetSent && <p role="status" className="catalog-login-reset-status">
+                  If this account exists, a password reset link has been sent.
+                </p>}
+              </form>
+            )}
+            {error && <div className="notice error catalog-login-alert" role="alert">{error}</div>}
+            <div className="catalog-login-divider"><span>OR</span></div>
+            <button type="button" className="catalog-login-public" onClick={onCatalog}>
+              Explore public catalog <ArrowUpRight size={17} aria-hidden="true" />
             </button>
-            <button type="button" className="text-button" disabled={busy} onClick={async () => {
-              setError(""); setResetSent(false);
-              if (!email.trim()) { setError("Enter your email address first."); return; }
-              setBusy(true);
-              try { await requestPasswordReset(email); setResetSent(true); }
-              catch (e) { setError(e instanceof Error ? e.message : "Unable to send reset email."); }
-              finally { setBusy(false); }
-            }}>Forgot password?</button>
-            {resetSent && <p role="status" className="muted">If this account exists, a password reset link has been sent.</p>}
-          </form>
-        )}
-        {error && (
-          <div className="notice error" role="alert">
-            {error}
+            <p className="catalog-login-security"><ShieldCheck size={15} aria-hidden="true" />
+              Secure access for authorised Brutti Catalog staff only.
+            </p>
           </div>
-        )}
-        <button className="text-button" onClick={onCatalog}>
-          Explore the public catalog <ArrowUpRight size={16} />
-        </button>
-        <p className="tiny muted">
-          Access is enforced by Supabase Auth and database policies. Accounts
-          cannot grant themselves admin access.
-        </p>
+          <div className="catalog-login-form-foot"><span>BRUTTI CATALOG</span><span>COLLECTION MANAGEMENT</span></div>
+        </main>
       </div>
     </div>
   );
 }
-
 
 function PasswordAccess({ intent, verified, onDone }: { intent: "invite" | "recovery"; verified: boolean; onDone: () => Promise<void> }) {
   const [password, setPassword] = useState("");
