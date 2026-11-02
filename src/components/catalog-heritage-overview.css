@@ -435,7 +435,7 @@
 .admin-app[data-active-tab="overview"] :is(.catalog-command button,.catalog-operations button,.overview-stat,.catalog-recent-item):focus-visible {
   outline:2px solid #b78d58;outline-offset:3px;
 }
-@media (max-width:1580px) {
+@media (max-width:1380px) {
   .admin-app[data-active-tab="overview"] .overview-stats {grid-template-columns:repeat(3,minmax(0,1fr));}
   .admin-app[data-active-tab="overview"] .catalog-operations {grid-template-columns:repeat(2,minmax(0,1fr));}
   .admin-app[data-active-tab="overview"] .catalog-insights-card {grid-column:1/-1;}
