@@ -377,11 +377,26 @@ export default function App() {
       detail: "Collection groups",
       icon: Layers,
     },
+    {
+      title: "Archived",
+      value: archivedCount,
+      detail: "Stored away from public view",
+      icon: Archive,
+    },
+    {
+      title: "With photos",
+      value: withPhotos,
+      detail: "Products with images",
+      icon: Images,
+    },
   ];
   const categoryInsights = data.categories.map(item => ({
     ...item, count: data.products.filter(product => product.categoryId === item.id).length,
   })).sort((a, b) => b.count - a.count);
   const maxCategoryCount = Math.max(1, ...categoryInsights.map(item => item.count));
+  const heroProduct = data.products.find(product => product.images.length && /chair|sofa|bench|armchair/i.test(product.name))
+    ?? data.products.find(product => product.images.length);
+  const recentProducts = [...data.products].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 4);
   const filtered = data.products
     .filter((p) => {
       const needle = search.toLowerCase();
@@ -490,6 +505,17 @@ export default function App() {
             <strong>{label(tab)}</strong>
           </div>
           <div className="topbar-actions">
+            <form className="catalog-header-search" role="search" onSubmit={(event) => {
+              event.preventDefault();
+              const term = search;
+              switchTab("products");
+              setSearch(term);
+            }}>
+              <Search size={16} aria-hidden="true" />
+              <input aria-label="Search catalog products" placeholder="Search catalog products..." value={search}
+                onChange={(event) => setSearch(event.target.value)} />
+              <button type="submit" aria-label="Submit product search"><ArrowRight size={15} /></button>
+            </form>
             <span className="connection-pill">
               <span />
               Supabase connected
@@ -545,8 +571,8 @@ export default function App() {
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
                 <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BRUTTI CATALOG <span aria-hidden="true">/</span> COLLECTION STUDIO</div>
-                <h1 id="catalog-overview-title">Every piece.<br /><span>In its place.</span></h1>
-                <p>A thoughtful space to curate your furniture, review the details and decide what goes live.</p>
+                <h1 id="catalog-overview-title">Manage your furniture<br /><span>catalog &amp; collections.</span></h1>
+                <p>Everything your workshop creates, beautifully organised. Curate products, check the details and choose what customers see.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -556,7 +582,18 @@ export default function App() {
                     onClick={() => { switchTab("products"); setStatus(draftCount > 0 ? "draft" : "all"); }}>
                     {draftCount > 0 ? "Review drafts" : "View products"} <ArrowUpRight size={16} aria-hidden="true" />
                   </button>
+                  <button type="button" className="catalog-hero-tertiary" onClick={() => navigate("/catalog")}>
+                    View public catalog <ArrowUpRight size={16} aria-hidden="true" />
+                  </button>
                 </div>
+              </div>
+              <div className="catalog-command-art" aria-label={heroProduct ? `Catalog photo: ${heroProduct.name}` : "Furniture collection"}>
+                {heroProduct ? (
+                  <SafeImage src={heroProduct.images[0]?.url} alt={heroProduct.images[0]?.alt || heroProduct.name} loading="lazy" />
+                ) : (
+                  <div className="catalog-command-art-fallback" aria-hidden="true"><Layers size={66} strokeWidth={1} /></div>
+                )}
+                {heroProduct && <span className="catalog-command-art-label">{heroProduct.name}</span>}
               </div>
               <button type="button" className="catalog-command-insight" disabled={loading} aria-label="View drafts awaiting review"
                 onClick={() => { switchTab("products"); setStatus("draft"); }}>
@@ -638,6 +675,7 @@ export default function App() {
                       switchTab(s.title === "Categories" ? "categories" : "products");
                       if (s.title === "Drafts") setStatus("draft");
                       if (s.title === "Published") setStatus("published");
+                      if (s.title === "Archived") setStatus("archived");
                     }}>
                     <div>
                       <span>{s.title}</span>
