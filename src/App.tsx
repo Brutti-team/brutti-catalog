@@ -401,7 +401,7 @@ export default function App() {
           : b.updatedAt.localeCompare(a.updatedAt),
     );
   return (
-    <div className="admin-app" data-theme={theme}>
+    <div className="admin-app" data-theme={theme} data-active-tab={tab}>
       <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
         <a
           href="#/admin"
@@ -544,9 +544,9 @@ export default function App() {
           {tab === "overview" ? (
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
-                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BRUTTI CATALOG <span aria-hidden="true">/</span> ADMIN WORKSPACE</div>
-                <h1 id="catalog-overview-title">Your collection.<br /><span>Under control.</span></h1>
-                <p>Organise your work, review products and manage what your customers see.</p>
+                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BRUTTI CATALOG <span aria-hidden="true">/</span> COLLECTION STUDIO</div>
+                <h1 id="catalog-overview-title">Every piece.<br /><span>In its place.</span></h1>
+                <p>A thoughtful space to curate your furniture, review the details and decide what goes live.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -558,12 +558,13 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="catalog-command-insight" aria-label="Drafts awaiting review">
-                <span>WORK QUEUE</span>
+              <button type="button" className="catalog-command-insight" disabled={loading} aria-label="View drafts awaiting review"
+                onClick={() => { switchTab("products"); setStatus("draft"); }}>
+                <span>DRAFTS TO REVIEW</span>
                 <strong>{loading ? "—" : draftCount.toLocaleString("en-MY")}</strong>
-                <small>products awaiting review</small>
-                <div className="catalog-command-insight-foot"><span className="catalog-command-insight-dot" /> {publishedCount} published</div>
-              </div>
+                <small>products waiting for your review</small>
+                <div className="catalog-command-insight-foot"><span className="catalog-command-insight-dot" /> {publishedCount} published <ArrowUpRight size={15} aria-hidden="true" /></div>
+              </button>
             </section>
           ) : tab === "products" ? (
             <section className="catalog-product-hero" aria-labelledby="catalog-products-title">
@@ -631,14 +632,20 @@ export default function App() {
               </div>
               <div className="stats-grid overview-stats">
                 {stats.map((s) => (
-                  <article className="stat-card overview-stat" key={s.title}>
+                  <button type="button" className="stat-card overview-stat" key={s.title} disabled={loading}
+                    aria-label={`View ${s.title.toLowerCase()}`}
+                    onClick={() => {
+                      switchTab(s.title === "Categories" ? "categories" : "products");
+                      if (s.title === "Drafts") setStatus("draft");
+                      if (s.title === "Published") setStatus("published");
+                    }}>
                     <div>
                       <span>{s.title}</span>
                       <span className="overview-stat-icon"><s.icon size={19} aria-hidden="true" /></span>
                     </div>
                     <strong>{loading ? "—" : s.value}</strong>
-                    <p>{s.detail}</p>
-                  </article>
+                    <span className="overview-stat-bottom"><span>{s.detail}</span><ArrowUpRight size={16} aria-hidden="true" /></span>
+                  </button>
                 ))}
               </div>
               <div className="catalog-operations" aria-label="Catalog readiness">
