@@ -465,19 +465,7 @@
   -webkit-backdrop-filter: blur(18px) saturate(125%);
   backdrop-filter: blur(18px) saturate(125%);
 }
-.admin-app .catalog-command::before {
-  content: "";
-  position: absolute;
-  top: -135px;
-  right: -120px;
-  width: 400px;
-  height: 400px;
-  border: 1px solid rgba(103, 151, 113, .12);
-  box-shadow: 0 0 0 60px rgba(106, 162, 123, .025), 0 0 0 121px rgba(106, 162, 123, .02);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: -1;
-}
+.admin-app .catalog-command::before { display: none; }
 .admin-app .catalog-command::after { display: none; }
 .admin-app .catalog-command-content { max-width: 730px; }
 .admin-app .catalog-command-eyebrow {
