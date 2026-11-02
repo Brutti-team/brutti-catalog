@@ -1,0 +1,639 @@
+/* BRUTTI CATALOG / Studio Access
+   Premium login experience inspired by the OS: quiet confidence, warm timber,
+   deep forest tones and precise glass. Authentication code remains unchanged.
+   Styles scoped to access shell to avoid changing the admin and public catalog. */
+
+.admin-app.admin-access-shell {
+  color-scheme: light;
+  --login-forest: #102c21;
+  --login-forest-deep: #091e17;
+  --login-brass: #c4a16c;
+  --login-ivory: #f9f8f3;
+  background: #12291f;
+}
+
+.admin-app.admin-access-shell .catalog-login-page {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  min-height: 100dvh;
+  padding: clamp(16px, 3vh, 38px) clamp(16px, 3vw, 54px);
+  margin: 0;
+  overflow-x: clip;
+  background:
+    radial-gradient(ellipse at 9% 86%, rgba(121, 145, 106, .17), transparent 46%),
+    radial-gradient(ellipse at 94% 12%, rgba(171, 135, 78, .12), transparent 40%),
+    linear-gradient(145deg, #0d281d, #19382a 60%, #10271e);
+}
+
+.admin-app.admin-access-shell .catalog-login-page::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-radial-gradient(ellipse at -6% 102%, transparent 0 46px, rgba(213, 186, 136, .055) 47px 48px, transparent 49px 71px);
+  opacity: .8;
+}
+
+.admin-app.admin-access-shell .catalog-login-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
+  width: min(1110px, 100%);
+  min-height: min(680px, calc(100dvh - 42px));
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid rgba(241, 255, 235, .28);
+  border-radius: 26px;
+  background: var(--login-ivory);
+  box-shadow: 0 28px 85px rgba(2, 18, 11, .33), inset 0 1px rgba(255, 255, 255, .3);
+  animation: brutti-login-enter .5s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+/* Editorial / craft story panel */
+.admin-app.admin-access-shell .catalog-login-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 100%;
+  padding: 34px clamp(30px, 4vw, 53px) 30px;
+  overflow: hidden;
+  isolation: isolate;
+  color: #f6f3e8;
+  background:
+    radial-gradient(ellipse at 85% 48%, rgba(173, 144, 94, .15), transparent 50%),
+    linear-gradient(143deg, #1a4633 0%, #133428 53%, #0a251b 100%);
+}
+
+.admin-app.admin-access-shell .catalog-login-story::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(0deg, rgba(6, 22, 15, .44), transparent 55%),
+              radial-gradient(ellipse at 0% 0%, rgba(235, 231, 205, .055), transparent 60%);
+}
+
+.admin-app.admin-access-shell .catalog-login-story-top,
+.admin-app.admin-access-shell .catalog-login-story-foot {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-app.admin-access-shell .catalog-login-wordmark {
+  display: inline-flex;
+  align-items: center;
+  width: 147px;
+  height: 58px;
+  flex: 0 0 auto;
+}
+
+.admin-app.admin-access-shell .catalog-login-wordmark img,
+.admin-app.admin-access-shell .catalog-login-mobile-logo img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  max-height: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+.admin-app.admin-access-shell .catalog-login-story-serial,
+.admin-app.admin-access-shell .catalog-login-story-foot {
+  color: #b8c7b9;
+  font-size: 9px;
+  font-weight: 670;
+  letter-spacing: 1.45px;
+}
+
+.admin-app.admin-access-shell .catalog-login-story-art {
+  position: absolute;
+  z-index: 0;
+  inset: 10% -20% 23% 10%;
+  pointer-events: none;
+  opacity: .8;
+}
+
+.admin-app.admin-access-shell .catalog-login-wood-disc {
+  position: absolute;
+  width: clamp(280px, 33vw, 490px);
+  height: clamp(280px, 33vw, 490px);
+  right: 6%;
+  top: 8%;
+  border-radius: 50%;
+  transform: rotate(-22deg);
+  border: 1px solid rgba(223, 190, 139, .22);
+  background:
+    repeating-radial-gradient(ellipse at 49% 49%,
+      rgba(234, 199, 144, .01) 0 7px,
+      rgba(237, 194, 131, .17) 8px 8.9px,
+      rgba(96, 70, 44, .015) 9px 17px),
+    radial-gradient(ellipse at 29% 32%, rgba(199, 147, 85, .19), transparent 52%);
+  box-shadow:
+    0 0 0 35px rgba(192, 164, 118, .025),
+    0 0 0 70px rgba(192, 164, 118, .017),
+    0 0 0 110px rgba(192, 164, 118, .012);
+}
+
+.admin-app.admin-access-shell .catalog-login-wood-line {
+  position: absolute;
+  right: 1%;
+  bottom: 3%;
+  width: 75%;
+  height: 1px;
+  transform: rotate(-21deg);
+  transform-origin: right;
+  background: linear-gradient(90deg, transparent, rgba(227, 196, 139, .45), transparent);
+}
+
+.admin-app.admin-access-shell .catalog-login-grain {
+  position: absolute;
+  right: 12%;
+  bottom: 13%;
+  width: 45%;
+  height: 42%;
+  border-right: 1px solid rgba(222, 186, 131, .23);
+  border-bottom: 1px solid rgba(222, 186, 131, .16);
+  border-radius: 0 0 100% 0;
+  transform: rotate(9deg);
+}
+
+.admin-app.admin-access-shell .catalog-login-story-copy {
+  position: relative;
+  z-index: 2;
+  padding-bottom: clamp(35px, 7vh, 90px);
+  max-width: 400px;
+}
+
+.admin-app.admin-access-shell .catalog-login-story-kicker {
+  display: block;
+  margin-bottom: 17px;
+  color: #d4b789;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  font-weight: 750;
+}
+
+.admin-app.admin-access-shell .catalog-login-story-copy h2 {
+  margin: 0;
+  color: #fff8e8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 3.65vw, 56px);
+  font-weight: 400;
+  letter-spacing: -.045em;
+  line-height: 1.1;
+}
+.admin-app.admin-access-shell .catalog-login-story-copy h2 em {
+  font-weight: 400;
+  color: #d4b58a;
+}
+.admin-app.admin-access-shell .catalog-login-story-copy p {
+  max-width: 320px;
+  margin: 19px 0 0;
+  color: #d5ded4;
+  font-size: 12.5px;
+  line-height: 1.8;
+}
+.admin-app.admin-access-shell .catalog-login-story-foot {
+  padding-top: 17px;
+  border-top: 1px solid rgba(234, 241, 227, .16);
+  gap: 9px;
+  font-size: 9px;
+}
+
+/* Form panel */
+.admin-app.admin-access-shell .catalog-login-form-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  padding: 47px clamp(29px, 4.7vw, 72px) 26px;
+  color: #263b2f;
+  background:
+    radial-gradient(ellipse at 96% 2%, rgba(229, 233, 214, .66), transparent 40%),
+    #f9f8f3;
+}
+
+.admin-app.admin-access-shell .catalog-login-auth-surface {
+  width: min(390px, 100%);
+  min-width: 0;
+  margin: auto 0;
+}
+
+.admin-app.admin-access-shell .catalog-login-mobile-logo {
+  display: none;
+}
+
+.admin-app.admin-access-shell .catalog-login-kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #65806a;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 2px;
+}
+
+.admin-app.admin-access-shell .catalog-login-kicker-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #3c8760;
+  box-shadow: 0 0 0 4px rgba(72, 137, 91, .1);
+}
+
+.admin-app.admin-access-shell .catalog-login-heading { margin: 17px 0 30px; }
+.admin-app.admin-access-shell .catalog-login-heading h1 {
+  color: #20382a;
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-weight: 780;
+  font-size: clamp(30px, 3vw, 41px);
+  letter-spacing: -.057em;
+  line-height: 1.16;
+}
+.admin-app.admin-access-shell .catalog-login-description {
+  max-width: 365px;
+  color: #77867a;
+  font-size: 12.5px;
+  line-height: 1.75;
+  margin: 12px 0 0;
+}
+
+.admin-app.admin-access-shell .catalog-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  width: 100%;
+}
+
+.admin-app.admin-access-shell .catalog-login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-app.admin-access-shell .catalog-login-field > label,
+.admin-app.admin-access-shell .catalog-login-field-head label {
+  color: #3f5846;
+  font-size: 12px;
+  font-weight: 730;
+  margin: 0;
+}
+
+.admin-app.admin-access-shell .catalog-login-field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-app.admin-access-shell .catalog-login-forgot {
+  padding: 4px 0;
+  margin: 0;
+  color: #376b4c;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.admin-app.admin-access-shell .catalog-login-forgot:hover:not(:disabled) {
+  color: #193e2c;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.admin-app.admin-access-shell .catalog-login-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 51px;
+  width: 100%;
+  padding: 0 11px 0 15px;
+  border: 1px solid #dce3d8;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .87);
+  box-shadow: 0 2px 7px rgba(24, 48, 27, .025);
+  transition: box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+.admin-app.admin-access-shell .catalog-login-input:focus-within {
+  background: #fff;
+  border-color: #7fa98a;
+  box-shadow: 0 0 0 4px rgba(107, 158, 117, .13);
+}
+.admin-app.admin-access-shell .catalog-login-input > svg {
+  flex: 0 0 18px;
+  color: #7d9a83;
+}
+.admin-app.admin-access-shell .catalog-login-input input,
+.admin-app.admin-access-shell .catalog-login-input input:focus {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 47px;
+  height: 47px;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  outline-offset: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #243d30;
+  font-size: 16px; /* Prevent iOS Safari zoom */
+  font-weight: 530;
+  line-height: 1.25;
+  appearance: none;
+}
+.admin-app.admin-access-shell .catalog-login-input input::placeholder {
+  color: #9da99f;
+  font-size: 13px;
+  font-weight: 450;
+}
+.admin-app.admin-access-shell .catalog-login-reveal {
+  display: grid;
+  flex: 0 0 35px;
+  place-items: center;
+  width: 35px;
+  min-height: 35px;
+  border-radius: 8px;
+  color: #758c79;
+}
+.admin-app.admin-access-shell .catalog-login-reveal:hover:not(:disabled) {
+  color: #285940;
+  background: #ecf3ec;
+}
+.admin-app.admin-access-shell .catalog-login-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 49px;
+  padding: 11px 18px;
+  margin-top: 7px;
+  border: 1px solid #23583c;
+  border-radius: 11px;
+  background: linear-gradient(120deg, #25563f, #163e2c);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 750;
+  box-shadow: 0 9px 20px rgba(22, 69, 39, .16);
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.admin-app.admin-access-shell .catalog-login-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: linear-gradient(120deg, #2a6249, #174631);
+  box-shadow: 0 12px 25px rgba(22, 69, 39, .2);
+}
+.admin-app.admin-access-shell .catalog-login-submit:disabled {cursor: wait;opacity: .72;}
+.admin-app.admin-access-shell .catalog-login-reset-status {
+  margin: 2px 0 0;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: #2e6949;
+  background: #e8f3e8;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.admin-app.admin-access-shell .catalog-login-alert {
+  padding: 11px 13px;
+  margin: 0 0 16px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.admin-app.admin-access-shell .catalog-login-form + .catalog-login-alert {
+  margin: 14px 0 0;
+}
+
+.admin-app.admin-access-shell .catalog-login-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 23px 0 14px;
+  color: #9ba89d;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 1.4px;
+}
+.admin-app.admin-access-shell .catalog-login-divider::before,
+.admin-app.admin-access-shell .catalog-login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e1e7dd;
+}
+.admin-app.admin-access-shell .catalog-login-public {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 40px;
+  width: 100%;
+  padding: 9px 12px;
+  color: #326348;
+  font-size: 12px;
+  font-weight: 730;
+  border: 1px solid #dce5d9;
+  border-radius: 10px;
+  background: rgba(240, 246, 239, .8);
+}
+.admin-app.admin-access-shell .catalog-login-public:hover {
+  background: #e7f0e7;
+  border-color: #bcd0be;
+}
+.admin-app.admin-access-shell .catalog-login-security {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 20px 0 0;
+  color: #869388;
+  font-size: 10px;
+  line-height: 1.55;
+}
+.admin-app.admin-access-shell .catalog-login-security > svg {
+  margin-top: 1px;
+  flex: 0 0 15px;
+  color: #679074;
+}
+.admin-app.admin-access-shell .catalog-login-form-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 32px;
+  color: #a0a99e;
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 1.5px;
+}
+
+/* The recovery/invite page also receives the same calm palette, without modifying auth flows. */
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) {
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(177, 140, 88, .12), transparent 58%),
+    linear-gradient(140deg, #102d21, #1a4130);
+}
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) > .brand {
+  width: 154px;
+  height: 65px;
+}
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) > .brand .brutti-official-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0) invert(1);
+}
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) .access-card {
+  width: min(100%, 440px);
+  max-width: 440px;
+  padding: clamp(24px, 5vw, 38px);
+  background: #fbfaf6;
+  border: 1px solid rgba(239, 243, 230, .72);
+  border-radius: 19px;
+  box-shadow: 0 22px 50px rgba(4, 21, 11, .22);
+}
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) .access-card h1 {color:#253d30;}
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) .access-card input {font-size:16px;min-height:46px;border-radius:9px;}
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) .access-card .primary {min-height:44px;border-radius:10px;}
+.admin-app.admin-access-shell .access-page:not(.catalog-login-page) .access-card .text-button {font-size:12px;}
+
+@media (max-width: 900px) {
+  .admin-app.admin-access-shell .catalog-login-page {padding: 18px;}
+  .admin-app.admin-access-shell .catalog-login-shell {grid-template-columns: minmax(0, 1fr);max-width: 490px;min-height:0;}
+  .admin-app.admin-access-shell .catalog-login-story {display:none;}
+  .admin-app.admin-access-shell .catalog-login-form-side {padding:30px 28px 24px;}
+  .admin-app.admin-access-shell .catalog-login-mobile-logo {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:140px;
+    height:60px;
+    margin:0 auto 16px;
+  }
+  .admin-app.admin-access-shell .catalog-login-mobile-logo img {
+    filter:none;
+    object-position:center;
+  }
+  .admin-app.admin-access-shell .catalog-login-heading {margin:15px 0 23px;}
+  .admin-app.admin-access-shell .catalog-login-form-foot {margin-top:24px;}
+}
+
+@media (max-width: 600px) {
+  .admin-app.admin-access-shell .catalog-login-page {
+    min-height:100svh;
+    min-height:100dvh;
+    display:flex;
+    justify-content:center;
+    padding:max(12px,env(safe-area-inset-top)) 14px max(15px,env(safe-area-inset-bottom));
+    overflow-y:auto;
+    background:
+      radial-gradient(ellipse at 95% 12%, rgba(171, 142, 82, .15), transparent 49%),
+      linear-gradient(156deg, #112e22, #092219 100%);
+  }
+  .admin-app.admin-access-shell .catalog-login-shell {
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    max-width:430px;
+    min-height:0;
+    margin:auto;
+    overflow:visible;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+  }
+  .admin-app.admin-access-shell .catalog-login-form-side {
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    padding:0;
+    background:transparent;
+  }
+  .admin-app.admin-access-shell .catalog-login-mobile-logo {
+    width:136px;
+    height:57px;
+    flex:0 0 auto;
+    margin:0 auto 14px;
+    filter:drop-shadow(0 4px 14px rgba(0,0,0,.12));
+  }
+  .admin-app.admin-access-shell .catalog-login-mobile-logo img {
+    filter:grayscale(1) brightness(0) invert(1);
+  }
+  .admin-app.admin-access-shell .catalog-login-auth-surface {
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:24px 22px 21px;
+    border:1px solid rgba(255,255,255,.62);
+    border-radius:20px;
+    background:linear-gradient(152deg, rgba(255,255,251,.98), rgba(246,248,241,.96));
+    box-shadow:0 17px 35px rgba(0,15,8,.17),inset 0 1px #fff;
+  }
+  .admin-app.admin-access-shell .catalog-login-heading {margin:13px 0 23px;}
+  .admin-app.admin-access-shell .catalog-login-heading h1 {
+    font-size:clamp(29px,7.8vw,37px);
+    letter-spacing:-.055em;
+  }
+  .admin-app.admin-access-shell .catalog-login-description {
+    margin-top:9px;
+    font-size:12px;
+    line-height:1.65;
+  }
+  .admin-app.admin-access-shell .catalog-login-form {gap:14px;}
+  .admin-app.admin-access-shell .catalog-login-input {min-height:49px;}
+  .admin-app.admin-access-shell .catalog-login-input input {min-height:47px;}
+  .admin-app.admin-access-shell .catalog-login-submit {min-height:49px;margin-top:5px;}
+  .admin-app.admin-access-shell .catalog-login-divider {margin:19px 0 12px;}
+  .admin-app.admin-access-shell .catalog-login-security {margin-top:16px;font-size:9.5px;}
+  .admin-app.admin-access-shell .catalog-login-form-foot {
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:15px auto 0;
+    color:#afc5b2;
+    font-size:8px;
+    text-align:center;
+  }
+}
+@media (max-width: 380px) {
+  .admin-app.admin-access-shell .catalog-login-page {padding:9px 11px 13px;}
+  .admin-app.admin-access-shell .catalog-login-mobile-logo {height:49px;width:121px;margin-bottom:10px;}
+  .admin-app.admin-access-shell .catalog-login-auth-surface {padding:18px 17px 15px;border-radius:17px;}
+  .admin-app.admin-access-shell .catalog-login-heading {margin:11px 0 17px;}
+  .admin-app.admin-access-shell .catalog-login-form {gap:12px;}
+  .admin-app.admin-access-shell .catalog-login-kicker {font-size:9px;}
+  .admin-app.admin-access-shell .catalog-login-security {margin-top:13px;}
+}
+/* Short landscape phones: allow deliberate scrolling rather than hiding fields under Safari chrome. */
+@media (max-height: 690px) and (max-width: 900px) {
+  .admin-app.admin-access-shell .catalog-login-page {align-items:flex-start;overflow-y:auto;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .admin-app.admin-access-shell .catalog-login-shell {animation:none;}
+  .admin-app.admin-access-shell :is(.catalog-login-submit,.catalog-login-input,.catalog-login-reveal) {transition:none;}
+  .admin-app.admin-access-shell .catalog-login-submit:hover {transform:none;}
+}
+@keyframes brutti-login-enter {
+  from {opacity:.01;transform:translateY(10px);}
+  to {opacity:1;transform:translateY(0);}
+}
