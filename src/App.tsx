@@ -730,6 +730,43 @@ export default function App() {
                     </button>
                   </div>
                 </section>
+                <section className="catalog-status-overview-card">
+                  <header className="catalog-studio-panel-head">
+                    <div>
+                      <span className="catalog-studio-kicker">AT A GLANCE</span>
+                      <h2>Products by status</h2>
+                      <p>A clear view of what is live and what needs your attention.</p>
+                    </div>
+                    <Package size={19} aria-hidden="true" />
+                  </header>
+                  <div className="catalog-status-visual">
+                    <div className="catalog-status-donut" role="img"
+                      aria-label={`${publishedCount} published, ${draftCount} draft, ${archivedCount} archived`}
+                      style={{ background: data.products.length
+                        ? `conic-gradient(#285f46 0 ${publishedCount / data.products.length * 100}%, #c49b61 ${publishedCount / data.products.length * 100}% ${(publishedCount + draftCount) / data.products.length * 100}%, #dbe3d8 ${(publishedCount + draftCount) / data.products.length * 100}% 100%)`
+                        : "#e1e7de" }}>
+                      <span className="catalog-status-donut-core">
+                        <strong>{loading ? "—" : data.products.length}</strong>
+                        <small>products</small>
+                      </span>
+                    </div>
+                    <div className="catalog-status-legend">
+                      {([
+                        { label: "Published", count: publishedCount, state: "published" },
+                        { label: "Drafts", count: draftCount, state: "draft" },
+                        { label: "Archived", count: archivedCount, state: "archived" },
+                      ] as const).map(item => (
+                        <button key={item.state} type="button" className="catalog-status-legend-item"
+                          onClick={() => { switchTab("products"); setStatus(item.state); }}>
+                          <span className={`catalog-status-dot is-${item.state}`} />
+                          <span>{item.label}</span>
+                          <strong>{item.count}</strong>
+                          <ArrowUpRight size={14} aria-hidden="true" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </section>
                 <section className="catalog-insights-card">
                   <header className="catalog-studio-panel-head">
                     <div>
@@ -741,24 +778,60 @@ export default function App() {
                       aria-label="Manage categories"><ArrowUpRight size={18} aria-hidden="true" /></button>
                   </header>
                   <div className="catalog-category-bars">
-                    {categoryInsights.slice(0, 5).map((item, index) => (
-                      <button type="button" className="catalog-category-bar" key={item.id}
-                        onClick={() => { switchTab("products"); setCategory(item.id); }}
-                        aria-label={`View ${item.name} products`}>
-                        <span className="catalog-category-name">{item.name}</span>
-                        <span className="catalog-category-track"><span style={{ width: `${(item.count / maxCategoryCount) * 100}%` }} className={index === 0 ? "leading" : ""} /></span>
-                        <strong>{item.count}</strong>
-                      </button>
-                    ))}
+                    {categoryInsights.slice(0, 6).map((item) => {
+                      const sample = data.products.find(product => product.categoryId === item.id && product.images.length > 0);
+                      return (
+                        <button type="button" className="catalog-category-bar" key={item.id}
+                          onClick={() => { switchTab("products"); setCategory(item.id); }}
+                          aria-label={`View ${item.name} products`}>
+                          <span className="catalog-category-visual">
+                            {sample ? <SafeImage src={sample.images[0]?.url} alt="" loading="lazy" /> : <Layers size={26} aria-hidden="true" />}
+                          </span>
+                          <span className="catalog-category-name">{item.name}</span>
+                          <span className="catalog-category-track"><span style={{ width: `${(item.count / maxCategoryCount) * 100}%` }} /></span>
+                          <strong>{item.count} products</strong>
+                        </button>
+                      );
+                    })}
                     {!categoryInsights.length && <span className="catalog-empty-hint">No categories yet.</span>}
                   </div>
                 </section>
               </div>
-              <LastChange
-                authenticated={auth.isAdmin}
-                refreshKey={data}
-                onHistory={() => switchTab("activity")}
-              />
+              <div className="catalog-studio-bottom">
+                <section className="catalog-recent-card">
+                  <header className="catalog-studio-panel-head">
+                    <div>
+                      <span className="catalog-studio-kicker">LATEST ADDITIONS</span>
+                      <h2>Recent products</h2>
+                      <p>What has been updated in your collection.</p>
+                    </div>
+                    <button type="button" className="catalog-chart-action" onClick={() => switchTab("products")}
+                      aria-label="View all products"><ArrowUpRight size={18} aria-hidden="true" /></button>
+                  </header>
+                  <div className="catalog-recent-list">
+                    {recentProducts.map(product => (
+                      <button type="button" className="catalog-recent-item" key={product.id}
+                        onClick={() => setEditor(product)} aria-label={`Open ${product.name}`}>
+                        <span className="catalog-recent-thumb">
+                          <SafeImage src={product.images[0]?.url} alt="" loading="lazy" />
+                        </span>
+                        <span className="catalog-recent-title">
+                          <strong>{product.name || "Untitled product"}</strong>
+                          <small>{data.categories.find(item => item.id === product.categoryId)?.name || product.sku || "Uncategorised"}</small>
+                        </span>
+                        <span className={`catalog-recent-status is-${product.status}`}>{product.status}</span>
+                        <ChevronRight size={16} aria-hidden="true" />
+                      </button>
+                    ))}
+                    {!recentProducts.length && <p className="catalog-empty-hint">No products added yet.</p>}
+                  </div>
+                </section>
+                <LastChange
+                  authenticated={auth.isAdmin}
+                  refreshKey={data}
+                  onHistory={() => switchTab("activity")}
+                />
+              </div>
             </>
           )}
           {tab !== "categories" ? (
