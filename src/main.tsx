@@ -15,7 +15,6 @@ import "./components/category-actions-premium.css";
 import "./components/catalog-heritage-overview.css";
 import "./components/catalog-login-premium.css";
 import "./components/catalog-sidebar-premium.css";
-import "./components/catalog-saas-refinement.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
