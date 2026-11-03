@@ -1,0 +1,258 @@
+/* Brutti Catalog | premium wood-inspired admin navigation.
+   Purely presentational. Keep the existing nav items, permissions and routes intact. */
+.admin-app[data-active-tab] {
+  --catalog-nav-width: 286px;
+  --catalog-rail-cream: #f5f0e4;
+  --catalog-rail-sage: #b9cfbf;
+  --catalog-rail-gold: #d9ad72;
+}
+
+.admin-app[data-active-tab] .sidebar,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar {
+  position: fixed;
+  isolation: isolate;
+  width: var(--catalog-nav-width);
+  padding: 16px 16px 16px;
+  background:
+    radial-gradient(ellipse 120% 46% at 4% 100%, rgba(141, 102, 55, .16), transparent 75%),
+    radial-gradient(ellipse 90% 52% at 115% 0%, rgba(70, 116, 86, .14), transparent 78%),
+    linear-gradient(160deg, #112d23 0%, #0c281e 56%, #0a2119 100%);
+  border-right: 1px solid rgba(228, 239, 222, .13);
+  box-shadow: 5px 0 22px rgba(11, 29, 20, .10);
+  color: var(--catalog-rail-cream);
+}
+
+/* Quiet timber-grain ornament at the foot of the rail, never intercepting clicks. */
+.admin-app[data-active-tab] .sidebar::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: auto 0 0;
+  height: 33%;
+  pointer-events: none;
+  opacity: .36;
+  background: repeating-radial-gradient(
+    ellipse 146% 105% at -35% 120%,
+    transparent 0 22px,
+    rgba(217, 173, 114, .18) 23px,
+    transparent 24px 43px
+  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 75%);
+  mask-image: linear-gradient(to bottom, transparent, #000 75%);
+}
+.admin-app[data-active-tab] .sidebar > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Brand: better rhythm, original Brutti logo retained. */
+.admin-app[data-active-tab] .sidebar > .brand {
+  min-height: 78px;
+  margin: 0 0 13px;
+  padding: 0 12px 13px;
+  border-bottom: 1px solid rgba(224, 240, 222, .12);
+}
+.admin-app[data-active-tab] .sidebar > .brand .brutti-official-logo {
+  width: 125px;
+  height: 56px;
+  max-width: 125px;
+  max-height: 56px;
+  opacity: 1;
+}
+
+/* Catalog identity: clear hierarchy, soft glass touch. */
+.admin-app[data-active-tab] .sidebar .workspace-label {
+  min-height: 67px;
+  margin: 0 0 18px;
+  padding: 10px 10px;
+  gap: 12px;
+  border: 1px solid rgba(222, 246, 227, .08);
+  border-radius: 13px;
+  background: rgba(224, 248, 229, .035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .035);
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-symbol {
+  flex-basis: 39px;
+  width: 39px;
+  height: 39px;
+  border-radius: 11px;
+  color: #dfefdf;
+  background: rgba(189, 220, 199, .10);
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-meta {
+  gap: 5px;
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-meta strong {
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: -.035em;
+  color: #fffef8;
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-meta small {
+  font-size: 11px;
+  color: #b9cebe;
+}
+
+/* Compact, scannable navigation without modifying existing menu structure. */
+.admin-app[data-active-tab] .sidebar nav {
+  padding: 0 0 15px;
+}
+.admin-app[data-active-tab] .sidebar .nav-group-label {
+  padding: 0 12px 9px;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 1.5px;
+  color: #a9bcab;
+}
+.admin-app[data-active-tab] .sidebar .nav-group-second {
+  padding-top: 25px;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item {
+  min-height: 50px;
+  margin: 2px 0;
+  padding: 7px 10px;
+  gap: 11px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 580;
+  color: #cbdacf;
+  letter-spacing: -.015em;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #c1d8c5;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-icon > svg {
+  width: 19px;
+  height: 19px;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item:hover:not(.active) {
+  color: #ffffff;
+  border-color: rgba(228, 247, 226, .055);
+  background: rgba(232, 246, 230, .07);
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item:hover:not(.active) .nav-icon {
+  color: #f3fbef;
+  background: rgba(234, 250, 232, .07);
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active {
+  color: #fffdf6;
+  font-weight: 730;
+  border-color: rgba(221, 184, 127, .28);
+  background: linear-gradient(108deg, rgba(219, 187, 140, .19), rgba(230, 241, 218, .09));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .09), 0 5px 14px rgba(0, 0, 0, .06);
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active::before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: #d9ad72;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active .nav-icon,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
+  color: #f4e2c5;
+  background: rgba(255, 241, 218, .10);
+  border: 0;
+  border-radius: 10px;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-count,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-count {
+  min-width: 31px;
+  height: 25px;
+  padding: 3px 7px;
+  border: 1px solid rgba(233, 242, 226, .10);
+  border-radius: 8px;
+  background: rgba(235, 247, 230, .11);
+  color: #eef5e9;
+  font-size: 11.5px;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active .nav-count {
+  color: #fff4e3;
+  background: rgba(220, 171, 107, .18);
+  border-color: rgba(220, 171, 107, .19);
+}
+
+/* Public catalog stays anchored at the bottom, with a restrained gold accent. */
+.admin-app[data-active-tab] .sidebar .sidebar-utility {
+  padding: 13px 0 0;
+  border-top: 1px solid rgba(228, 240, 222, .14);
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-link {
+  min-height: 67px;
+  padding: 10px 11px;
+  gap: 10px;
+  border: 1px solid rgba(218, 176, 116, .28);
+  border-radius: 13px;
+  color: #fff9ee;
+  background: linear-gradient(115deg, rgba(210, 170, 111, .12), rgba(118, 160, 122, .07));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .065);
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-link:hover {
+  background: linear-gradient(115deg, rgba(217, 173, 114, .20), rgba(118, 160, 122, .12));
+  border-color: rgba(226, 184, 122, .52);
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-icon {
+  flex-basis: 35px;
+  width: 35px;
+  height: 35px;
+  color: #efd5ac;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-copy strong {
+  font-size: 13px;
+  color: #fffdf7;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-copy small {
+  font-size: 11px;
+  color: #c7d8c5;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-arrow {
+  color: #ead0a4;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item:focus-visible,
+.admin-app[data-active-tab] .sidebar .sidebar-public-link:focus-visible,
+.admin-app[data-active-tab] .sidebar > .brand:focus-visible {
+  outline: 2px solid #efca91;
+  outline-offset: 3px;
+}
+
+@media (min-width: 801px) {
+  .admin-app[data-active-tab] .admin-main {
+    margin-left: var(--catalog-nav-width);
+  }
+}
+@media (max-width: 800px) {
+  .admin-app[data-active-tab] .sidebar,
+  .admin-app[data-active-tab][data-theme="dark"] .sidebar {
+    width: min(286px, 90vw);
+    padding: 13px 14px 15px;
+  }
+}
+@media (max-height: 690px) {
+  .admin-app[data-active-tab] .sidebar > .brand { min-height: 60px; margin-bottom: 7px; }
+  .admin-app[data-active-tab] .sidebar .workspace-label { min-height: 53px; margin-bottom: 9px; padding: 6px 8px; }
+  .admin-app[data-active-tab] .sidebar .nav-group-second { padding-top: 12px; }
+  .admin-app[data-active-tab] .sidebar nav .nav-item { min-height: 43px; padding-top: 4px; padding-bottom: 4px; }
+  .admin-app[data-active-tab] .sidebar .sidebar-public-link { min-height: 51px; padding-top: 6px; padding-bottom: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app[data-active-tab] .sidebar nav .nav-item,
+  .admin-app[data-active-tab] .sidebar nav .nav-icon,
+  .admin-app[data-active-tab] .sidebar .sidebar-public-link {
+    transition: none;
+  }
+}
