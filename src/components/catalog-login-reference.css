@@ -1,0 +1,106 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Karla:wght@400;500;600;700&display=swap");
+
+/* Supplied split-screen kiosk login reference, retaining real Supabase Auth. */
+.admin-app.admin-access-shell {background:#f7f4ee;color-scheme:light;}
+.admin-app.admin-access-shell .catalog-login-page {
+  min-height:100dvh;
+  padding:0;
+  overflow:hidden;
+  background:#f8f6f1;
+}
+.admin-app.admin-access-shell .catalog-login-page::before {display:none;}
+.admin-app.admin-access-shell .catalog-login-shell {
+  width:100%;
+  max-width:none;
+  min-height:100dvh;
+  grid-template-columns:1fr 1fr;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  animation:none;
+}
+.admin-app.admin-access-shell .catalog-login-story {
+  background:#322a24 url("/brutti-catalog/reference/kiosk.svg") center / cover no-repeat;
+  padding:clamp(30px,4vw,70px);
+}
+.admin-app.admin-access-shell .catalog-login-story::after {
+  z-index:0;
+  inset:0;
+  background:linear-gradient(180deg,rgba(24,19,14,.22),rgba(24,19,14,.08) 36%,rgba(24,19,14,.78));
+}
+.admin-app.admin-access-shell .catalog-login-story-art {display:none;}
+.admin-app.admin-access-shell .catalog-login-story-top,
+.admin-app.admin-access-shell .catalog-login-story-copy,
+.admin-app.admin-access-shell .catalog-login-story-foot {z-index:2;}
+.admin-app.admin-access-shell .catalog-login-story-top {align-self:flex-start;}
+.admin-app.admin-access-shell .catalog-login-story-copy {padding-bottom:clamp(20px,6vh,70px);max-width:500px;}
+.admin-app.admin-access-shell .catalog-login-story-copy h2 {
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:clamp(58px,5.5vw,100px);
+  line-height:.93;
+  letter-spacing:-.045em;
+}
+.admin-app.admin-access-shell .catalog-login-story-copy h2 em {color:#e8d2b7;}
+.admin-app.admin-access-shell .catalog-login-story-kicker {font-size:10px;letter-spacing:2.4px;color:#f4e8d7;}
+.admin-app.admin-access-shell .catalog-login-story-copy p {color:#f5e8d8;font:14px/1.8 "Karla",system-ui,sans-serif;max-width:350px;}
+.admin-app.admin-access-shell .catalog-login-story-foot,
+.admin-app.admin-access-shell .catalog-login-story-serial {color:#f7e6ce;}
+.admin-app.admin-access-shell .catalog-login-form-side {
+  background:#faf8f4;
+  color:#342d26;
+  padding:clamp(35px,6vw,90px);
+}
+.admin-app.admin-access-shell .catalog-login-auth-surface {max-width:425px;}
+.admin-app.admin-access-shell .catalog-login-kicker {color:#aa7d5e;letter-spacing:3px;font-size:10px;}
+.admin-app.admin-access-shell .catalog-login-kicker-dot {background:#ab7953;box-shadow:0 0 0 4px #d6bba32c;}
+.admin-app.admin-access-shell .catalog-login-heading {margin:25px 0 30px;}
+.admin-app.admin-access-shell .catalog-login-heading h1 {
+  font-family:"Cormorant Garamond",Georgia,serif;
+  color:#352b23;
+  font-size:clamp(55px,5vw,82px);
+  letter-spacing:-.03em;
+  line-height:.96;
+  font-weight:500;
+}
+.admin-app.admin-access-shell .catalog-login-description {font-size:13px;line-height:1.85;color:#8b7b6c;margin-top:13px;}
+.admin-app.admin-access-shell .catalog-login-field > label,
+.admin-app.admin-access-shell .catalog-login-field-head label {font-size:10px;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;color:#8d6c54;}
+.admin-app.admin-access-shell .catalog-login-input {
+  background:#fffdf8;border:1px solid #d9c7b5;border-radius:5px;
+  box-shadow:none;min-height:52px;
+}
+.admin-app.admin-access-shell .catalog-login-input:focus-within {border-color:#ac7b5c;box-shadow:0 0 0 3px #cba37f2b;}
+.admin-app.admin-access-shell .catalog-login-input > svg {color:#a18368;}
+.admin-app.admin-access-shell .catalog-login-input input,
+.admin-app.admin-access-shell .catalog-login-input input:focus {color:#382e28;}
+.admin-app.admin-access-shell .catalog-login-forgot {color:#967054;font-size:11px;}
+.admin-app.admin-access-shell .catalog-login-submit {
+  background:#342c26;border:1px solid #342c26;border-radius:4px;
+  min-height:52px;box-shadow:none;text-transform:uppercase;
+  letter-spacing:1.7px;font-size:11px;
+}
+.admin-app.admin-access-shell .catalog-login-submit:hover:not(:disabled) {
+  background:#73523a;box-shadow:none;
+}
+.admin-app.admin-access-shell .catalog-login-public {
+  color:#74513a;border:1px solid #e5d7c9;border-radius:4px;background:#eee8df;
+}
+.admin-app.admin-access-shell .catalog-login-public:hover {background:#e9d8c5;}
+.admin-app.admin-access-shell .catalog-login-security {color:#9f9181;}
+.admin-app.admin-access-shell .catalog-login-security > svg {color:#ac8b6d;}
+.admin-app.admin-access-shell .catalog-login-form-foot {color:#9d8c79;}
+@media(max-width:800px) {
+  .admin-app.admin-access-shell .catalog-login-shell {grid-template-columns:1fr;}
+  .admin-app.admin-access-shell .catalog-login-story {min-height:290px;padding:28px 7%;}
+  .admin-app.admin-access-shell .catalog-login-story-top,
+  .admin-app.admin-access-shell .catalog-login-story-foot {display:none;}
+  .admin-app.admin-access-shell .catalog-login-story-copy {margin-top:auto;padding:0;max-width:100%;}
+  .admin-app.admin-access-shell .catalog-login-story-copy h2 {font-size:64px;}
+  .admin-app.admin-access-shell .catalog-login-story-copy p {display:none;}
+  .admin-app.admin-access-shell .catalog-login-form-side {padding:42px 7%;}
+}
+@media(max-width:480px) {
+  .admin-app.admin-access-shell .catalog-login-story {min-height:215px;}
+  .admin-app.admin-access-shell .catalog-login-story-copy h2 {font-size:49px;}
+  .admin-app.admin-access-shell .catalog-login-heading h1 {font-size:60px;}
+}
