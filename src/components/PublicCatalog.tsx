@@ -19,6 +19,7 @@ import { productIdFromHash } from "../lib/routes";
 import ProductModelViewer from "./ProductModelViewer";
 import { modelForProduct } from "../lib/product-models";
 import "./public.css";
+import "./brutti-3d.css";
 
 interface Props {
   products: Product[];
