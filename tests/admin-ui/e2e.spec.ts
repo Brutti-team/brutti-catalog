@@ -216,7 +216,7 @@ test('premium sidebar remains useful on narrow mobile and short screens', async 
   expect(measurements.width).toBeLessThan(measurements.viewport);
   expect(measurements.horizontalOverflow).toBe(false);
   await sidebar.getByRole('button', { name: 'Public catalog' }).click();
-  await expect(page.getByRole('heading', { name: 'Spaces with purpose. Made to belong.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'SPACE, MADE TO ORDER.' })).toBeVisible();
 });
 
 test('latest change appears only on Overview, not in sidebar, and opens Activity Log', async ({ page }) => {
@@ -278,7 +278,7 @@ test('Premium Overview animations respect reduced motion without removing real m
 test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
-  await expect(page.getByRole('heading', { name: /A home for your craft./ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /A place for the work./ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
   await expect(page.locator('.catalog-command')).toBeVisible();
@@ -701,7 +701,7 @@ test('dark admin navigation leaves the public catalog light and preserves the sa
   await openAdmin(page);
   await expectTheme(page, 'dark');
   await page.locator('.topbar').getByRole('button', { name: 'View catalog', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Spaces with purpose. Made to belong.', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'SPACE, MADE TO ORDER.', exact: true })).toBeVisible();
   await expect(page.locator('[data-theme]')).toHaveCount(0);
   await expect(page.locator('.admin-app')).toHaveCount(0);
   const publicSurface = await colors(page.locator('.pub-app'));
