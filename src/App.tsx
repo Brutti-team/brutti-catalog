@@ -569,6 +569,28 @@ export default function App() {
           </div>
         </header>
         <div className="admin-content">
+          {tab === "overview" && (
+            <section className="brutti-staff-welcome" aria-label="Brutti collection studio">
+              <div className="brutti-staff-welcome-copy">
+                <span>BENUA BRUTTI / CONTENT MANAGER</span>
+                <h2>Welcome to the studio.</h2>
+                <p>Made to manage every detail of your furniture and kiosk collection.</p>
+              </div>
+              <div className="brutti-staff-welcome-nav" role="group" aria-label="Collection studio shortcuts">
+                <button type="button" onClick={() => switchTab("products")}>
+                  <Package size={17} aria-hidden="true" /> Products <ArrowUpRight size={14} aria-hidden="true" />
+                </button>
+                {accountRole !== "editor" && (
+                  <button type="button" onClick={() => switchTab("categories")}>
+                    <Layers size={17} aria-hidden="true" /> Categories <ArrowUpRight size={14} aria-hidden="true" />
+                  </button>
+                )}
+                <button type="button" onClick={() => { switchTab("products"); changeProductView("gallery"); }}>
+                  <Images size={17} aria-hidden="true" /> Gallery <ArrowUpRight size={14} aria-hidden="true" />
+                </button>
+              </div>
+            </section>
+          )}
           {tab === "profile" || tab === "users" || tab === "activity" ? (
             <AccountCenter view={tab} onProfileChanged={setAccountName} />
           ) : (<>
