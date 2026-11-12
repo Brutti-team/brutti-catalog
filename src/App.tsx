@@ -21,6 +21,7 @@ import {
   Trash2,
   ChevronRight,
   ArrowRight,
+  ArrowLeft,
   Menu,
   X,
   LogOut,
@@ -420,7 +421,7 @@ export default function App() {
           : b.updatedAt.localeCompare(a.updatedAt),
     );
   return (
-    <div className="admin-app" data-theme={theme} data-active-tab={tab}>
+    <div className="admin-app brutti-staff-redesign" data-theme={theme} data-active-tab={tab}>
       <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
         <a
           href="#/admin"
@@ -432,12 +433,12 @@ export default function App() {
         <div className="workspace-label" aria-label="Current workspace: Brutti Catalog">
           <span className="workspace-symbol" aria-hidden="true"><Layers size={19} strokeWidth={1.9} /></span>
           <span className="workspace-meta">
-            <strong>Brutti Catalog</strong>
-            <small>Product management</small>
+            <strong>Benua Brutti</strong>
+            <small>Collection studio</small>
           </span>
         </div>
         <nav aria-label="Admin navigation">
-          <span className="nav-group-label">WORKSPACE</span>
+          <span className="nav-group-label">COLLECTION MANAGEMENT</span>
           {(
             [
               { id: "overview", text: "Overview", icon: LayoutDashboard },
@@ -504,7 +505,7 @@ export default function App() {
             >
               {mobileNav ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <span>Workspace</span>
+            <span>Brutti Studio</span>
             <ChevronRight size={13} />
             <strong>{label(tab)}</strong>
           </div>
@@ -568,15 +569,37 @@ export default function App() {
           </div>
         </header>
         <div className="admin-content">
+          {tab === "overview" && (
+            <section className="brutti-staff-welcome" aria-label="Brutti collection studio">
+              <div className="brutti-staff-welcome-copy">
+                <span>BENUA BRUTTI / CONTENT MANAGER</span>
+                <h2>Welcome to the studio.</h2>
+                <p>Made to manage every detail of your furniture and kiosk collection.</p>
+              </div>
+              <div className="brutti-staff-welcome-nav" role="group" aria-label="Collection studio shortcuts">
+                <button type="button" onClick={() => switchTab("products")}>
+                  <Package size={17} aria-hidden="true" /> Products <ArrowUpRight size={14} aria-hidden="true" />
+                </button>
+                {accountRole !== "editor" && (
+                  <button type="button" onClick={() => switchTab("categories")}>
+                    <Layers size={17} aria-hidden="true" /> Categories <ArrowUpRight size={14} aria-hidden="true" />
+                  </button>
+                )}
+                <button type="button" onClick={() => { switchTab("products"); changeProductView("gallery"); }}>
+                  <Images size={17} aria-hidden="true" /> Gallery <ArrowUpRight size={14} aria-hidden="true" />
+                </button>
+              </div>
+            </section>
+          )}
           {tab === "profile" || tab === "users" || tab === "activity" ? (
             <AccountCenter view={tab} onProfileChanged={setAccountName} />
           ) : (<>
           {tab === "overview" ? (
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
-                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BRUTTI CATALOG <span aria-hidden="true">/</span> COLLECTION STUDIO</div>
-                <h1 id="catalog-overview-title">Manage your furniture<br /><span>catalog &amp; collections.</span></h1>
-                <p>Everything your workshop creates, beautifully organised. Curate products, check the details and choose what customers see.</p>
+                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BENUA BRUTTI <span aria-hidden="true">/</span> THE COLLECTION STUDIO</div>
+                <h1 id="catalog-overview-title">Your collection,<br /><span>beautifully considered.</span></h1>
+                <p>A dedicated space to manage Benua Brutti furniture, kiosks, counters and custom pieces. Curate every detail before customers see your work.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -591,13 +614,13 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="catalog-command-art" aria-label={heroProduct ? `Catalog photo: ${heroProduct.name}` : "Furniture collection"}>
+              <div className="catalog-command-art" aria-label={heroProduct ? `Catalog photo: ${heroProduct.name}` : "Brutti kiosk design reference"}>
                 {heroProduct ? (
                   <SafeImage src={heroProduct.images[0]?.url} alt={heroProduct.images[0]?.alt || heroProduct.name} loading="lazy" />
                 ) : (
-                  <div className="catalog-command-art-fallback" aria-hidden="true"><Layers size={66} strokeWidth={1} /></div>
+                  <img src={import.meta.env.BASE_URL + "reference/kiosk.jpg"} alt="Benua Brutti kiosk showroom design reference" loading="lazy" />
                 )}
-                {heroProduct && <span className="catalog-command-art-label">{heroProduct.name}</span>}
+                <span className="catalog-command-art-label">{heroProduct ? heroProduct.name : "BRUTTI / SHOWROOM INSPIRATION"}</span>
               </div>
               <button type="button" className="catalog-command-insight" disabled={loading} aria-label="View drafts awaiting review"
                 onClick={() => { switchTab("products"); setStatus("draft"); }}>
@@ -610,7 +633,7 @@ export default function App() {
           ) : tab === "products" ? (
             <section className="catalog-product-hero" aria-labelledby="catalog-products-title">
               <div className="catalog-product-hero-main">
-                <span className="catalog-product-hero-eyebrow"><span className="catalog-hero-pulse" aria-hidden="true" /> PRODUCT MANAGEMENT <span aria-hidden="true">/</span> BRUTTI WORKSPACE</span>
+                <span className="catalog-product-hero-eyebrow"><span className="catalog-hero-pulse" aria-hidden="true" /> BENUA BRUTTI <span aria-hidden="true">/</span> PRODUCTS & DETAILS</span>
                 <h1 id="catalog-products-title">Products</h1>
                 <p>Organise, review and manage your collection from one workspace.</p>
                 <div className="catalog-product-hero-meta">
@@ -1430,14 +1453,14 @@ function Login({
   }
 
   return (
-    <div className="access-page catalog-login-page">
+    <div className="access-page catalog-login-page brutti-login-redesign">
       <div className="catalog-login-shell">
         <section className="catalog-login-story" aria-label="Brutti Catalog collection studio" style={{ backgroundImage: "url(" + import.meta.env.BASE_URL + "reference/kiosk.jpg)" }}>
           <div className="catalog-login-story-top">
             <a href="#/catalog" className="catalog-login-wordmark" aria-label="Open Brutti public catalog">
               <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" />
             </a>
-            <span className="catalog-login-story-serial">EST. WITH PURPOSE</span>
+            <span className="catalog-login-story-serial">CUSTOM FURNITURE · KIOSKS</span>
           </div>
           <div className="catalog-login-story-art" aria-hidden="true">
             <span className="catalog-login-wood-disc" />
@@ -1445,31 +1468,38 @@ function Login({
             <span className="catalog-login-grain" />
           </div>
           <div className="catalog-login-story-copy">
-            <span className="catalog-login-story-kicker">BENUA BRUTTI / STAFF PORTAL</span>
+            <span className="catalog-login-story-kicker">BENUA BRUTTI · COLLECTION STUDIO</span>
             <h2>Crafted with care.<br /><em>Managed with ease.</em></h2>
-            <p>A thoughtful place for our team to curate the Brutti collection.</p>
+            <p>Crafting considered spaces. Curating every detail.</p>
           </div>
           <div className="catalog-login-story-foot">
             <span>BENUA BRUTTI</span>
-            <span>CRAFT • CURATE • CREATE</span>
+            <span>KOTA KINABALU · SABAH</span>
           </div>
         </section>
 
         <main className="catalog-login-form-side">
-          <a href="#/catalog" className="catalog-login-mobile-logo" aria-label="Open Brutti public catalog">
-            <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" />
-          </a>
+          <div className="brutti-login-top">
+            <button type="button" className="brutti-login-back" onClick={onCatalog}>
+              <ArrowLeft size={15} aria-hidden="true" /> Back to collection
+            </button>
+            <span>STAFF ACCESS / 01</span>
+          </div>
           <div className="catalog-login-auth-surface">
+            <div className="brutti-login-brand">
+              <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti official logo" />
+              <span>BENUA BRUTTI SDN. BHD.</span>
+            </div>
             <div className="catalog-login-kicker">
               <span className="catalog-login-kicker-dot" aria-hidden="true" />
-              PRIVATE WORKSPACE
+              STAFF PORTAL
             </div>
             <div className="catalog-login-heading">
               <h1>{authenticated ? "Access restricted." : "Welcome back."}</h1>
               <p className="catalog-login-description">
                 {authenticated
                   ? "Your account does not have catalog administrator access. Please contact your workspace owner."
-                  : "Sign in to curate your products and manage the Brutti collection."}
+                  : "Sign in to manage Benua Brutti products, materials, photos and showroom details."}
               </p>
             </div>
 
@@ -1487,7 +1517,7 @@ function Login({
             ) : (
               <form className="catalog-login-form" onSubmit={submit}>
                 <div className="catalog-login-field">
-                  <label htmlFor="catalog-login-email">Work email</label>
+                  <label htmlFor="catalog-login-email">Email</label>
                   <div className="catalog-login-input">
                     <Mail size={18} aria-hidden="true" />
                     <input
@@ -1530,7 +1560,7 @@ function Login({
                   </div>
                 </div>
                 <button type="submit" className="catalog-login-submit" disabled={busy}>
-                  <span>{busy ? "Signing in…" : "Sign in to workspace"}</span>
+                  <span>{busy ? "Signing in…" : "Sign in"}</span>
                   {busy ? <LoaderCircle className="spin" size={18} aria-hidden="true" />
                     : <ArrowRight size={18} aria-hidden="true" />}
                 </button>
@@ -1540,7 +1570,7 @@ function Login({
               </form>
             )}
             {error && <div className="notice error catalog-login-alert" role="alert">{error}</div>}
-            <div className="catalog-login-divider"><span>OR</span></div>
+            <div className="catalog-login-divider"><span>PUBLIC COLLECTION</span></div>
             <button type="button" className="catalog-login-public" onClick={onCatalog}>
               Explore public catalog <ArrowUpRight size={17} aria-hidden="true" />
             </button>
@@ -1548,7 +1578,7 @@ function Login({
               Secure access for authorised Brutti Catalog staff only.
             </p>
           </div>
-          <div className="catalog-login-form-foot"><span>BRUTTI CATALOG</span><span>COLLECTION MANAGEMENT</span></div>
+          <div className="catalog-login-form-foot"><span>BENUA BRUTTI © 2026</span><span>CRAFTED FOR OUR TEAM</span></div>
         </main>
       </div>
     </div>

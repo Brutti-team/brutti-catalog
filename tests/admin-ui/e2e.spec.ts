@@ -144,6 +144,21 @@ async function expectReadable(page: Page, selectors: string[], darkSurface = fal
   }
 }
 
+test('Brutti collection studio preserves real product actions with new branded design', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  await expect(page.locator('.admin-app.brutti-staff-redesign')).toBeVisible();
+  await expect(page.locator('.sidebar .brutti-official-logo')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome to the studio.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Your collection/ })).toBeVisible();
+  await expect(page.locator('.catalog-command-art > img')).toBeVisible();
+  const shortcuts = page.getByRole('group', { name: 'Collection studio shortcuts' });
+  await expect(shortcuts.getByRole('button', { name: /Products/ })).toBeVisible();
+  await shortcuts.getByRole('button', { name: /Gallery/ }).click();
+  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.locator('.catalog-gallery-card')).toContainText(fixtureProduct.name);
+});
+
 test('premium sidebar has clear workspace hierarchy and a pinned public-catalog action', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
