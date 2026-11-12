@@ -203,7 +203,7 @@ export default function PublicCatalog({
   );
 
   return (
-    <div className="pub-app">
+    <div className="pub-app pub-refined">
       <a
         className="pub-skip-link"
         href="#pub-main"
