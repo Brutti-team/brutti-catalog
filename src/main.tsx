@@ -16,6 +16,8 @@ import "./components/catalog-heritage-overview.css";
 import "./components/catalog-login-premium.css";
 import "./components/catalog-sidebar-premium.css";
 import "./components/catalog-login-reference.css";
+import "./components/brutti-staff-login-v2.css";
+import "./components/brutti-staff-dashboard-v2.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
