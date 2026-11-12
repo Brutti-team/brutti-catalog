@@ -85,8 +85,8 @@ test('concrete site and project Pages entries load directly and refresh on a raw
   page.on('pageerror', error => errors.push(error.message));
   page.on('response', response => { if (response.url().startsWith(origin) && response.status() >= 400) errors.push(`HTTP ${response.status()}`); });
   for (const [path, heading] of [
-    ['/', 'Website preservation fixture'], ['/admin', 'Welcome back.'], ['/catalog', 'Good design. Better living.'],
-    ['/brutti-catalog/', 'Welcome back.'], ['/brutti-catalog/admin', 'Welcome back.'], ['/brutti-catalog/catalog', 'Good design. Better living.'],
+    ['/', 'Website preservation fixture'], ['/admin', 'Welcome back.'], ['/catalog', 'Made for your space. Built with purpose.'],
+    ['/brutti-catalog/', 'Welcome back.'], ['/brutti-catalog/admin', 'Welcome back.'], ['/brutti-catalog/catalog', 'Made for your space. Built with purpose.'],
   ]) {
     const response = await page.goto(`${origin}${path}`);
     expect(response?.status()).toBe(200);
