@@ -17,6 +17,7 @@ import { publicAssetUrl } from "../lib/assets";
 import { formatProductPrice } from "../lib/price";
 import { productIdFromHash } from "../lib/routes";
 import "./public.css";
+import "./brutti-editorial.css";
 
 interface Props {
   products: Product[];
@@ -98,6 +99,9 @@ export default function PublicCatalog({
     () => products.filter((product) => product.status === "published"),
     [products],
   );
+  const heroImage = published.find((item) => item.featured && item.images[0]?.url)?.images[0]?.url
+    ?? published.find((item) => item.images[0]?.url)?.images[0]?.url
+    ?? "/images/hero.jpg";
   const product =
     productId === null
       ? undefined
@@ -207,7 +211,7 @@ export default function PublicCatalog({
           aria-label="Brutti catalog home"
         >
           <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="pub-official-logo" />
-          <small>THE FURNITURE COLLECTION</small>
+          <small>BESPOKE FURNITURE & SPACES</small>
         </a>
         <nav
           id="pub-mobile-nav"
@@ -218,7 +222,7 @@ export default function PublicCatalog({
             Collection
           </button>
           <button onClick={() => browseCollection(true)}>
-            Featured pieces
+            Selected pieces
           </button>
           <button
             onClick={() => {
@@ -228,7 +232,7 @@ export default function PublicCatalog({
               setMobileMenu(false);
             }}
           >
-            Our philosophy
+            Our workshop
           </button>
         </nav>
         <div className="pub-header-actions">
@@ -253,16 +257,16 @@ export default function PublicCatalog({
             <section className="pub-hero">
               <div className="pub-hero-copy">
                 <p className="pub-eyebrow">
-                  <span /> THE BRUTTI COLLECTION · VOL. 01
+                  <span /> BENUA BRUTTI · THE CRAFTED COLLECTION
                 </p>
                 <h1>
-                  Good design.
+                  Spaces with purpose.
                   <br />
-                  <em>Better living.</em>
+                  <em>Made to belong.</em>
                 </h1>
                 <p className="pub-hero-description">
-                  Considered furniture for the spaces you call home. Natural
-                  materials, quiet details, enduring character.
+                  Custom furniture, retail kiosks and made-for-purpose pieces.
+                  Designed around the people, the place and the way it works.
                 </p>
                 <button
                   className="pub-primary-button"
@@ -271,51 +275,57 @@ export default function PublicCatalog({
                   Explore the collection <ArrowRight size={17} />
                 </button>
                 <div className="pub-hero-footnote">
-                  <span className="pub-hero-line" /> Thoughtfully selected.
-                  Beautifully simple.
+                  <span className="pub-hero-line" /> Crafted with intention. Made for real spaces.
                 </div>
               </div>
               <div className="pub-hero-visual">
                 <FurnitureImage
-                  src="/images/hero.jpg"
-                  alt="A warm, considered living space with natural wood furniture"
+                  src={heroImage}
+                   alt="Furniture or custom fixture in the Benua Brutti collection"
                   eager
                 />
                 <div className="pub-hero-image-label">
-                  <span>A LITTLE MORE HOME.</span>
+                  <span>A SPACE OF YOUR OWN.</span>
                   <ArrowUpRight size={23} />
                 </div>
                 <span className="pub-hero-number">
-                  01 / THE ART OF EVERYDAY
+                  01 / BUILT WITH PURPOSE
                 </span>
               </div>
             </section>
             <div className="pub-values-strip">
               <span>
-                <Check size={15} /> Considered materials
+                <Check size={15} /> Made for purpose
               </span>
               <span>
-                <Check size={15} /> Purposeful design
+                <Check size={15} /> Thoughtful details
               </span>
               <span>
-                <Check size={15} /> Spaces with character
+                <Check size={15} /> Crafted for everyday use
               </span>
               <span className="pub-strip-location">
                 BENUA BRUTTI SDN. BHD. <ArrowDown size={14} />
               </span>
             </div>
+            <section className="pub-editorial-note" aria-label="Our approach">
+              <div className="pub-editorial-side">Not just furniture / The Brutti approach</div>
+              <div>
+                <h2>Beautiful is good. <em>Useful is essential.</em></h2>
+                <p>From a single custom counter to an entire retail setting, each space asks for its own solution. Explore the collection, discover the details, and picture what is possible for yours.</p>
+              </div>
+            </section>
             <section id="pub-collection" className="pub-collection">
               <div className="pub-section-heading">
                 <div>
-                  <p className="pub-eyebrow">FIND YOUR NEXT FAVOURITE</p>
+                  <p className="pub-eyebrow">EXPLORE WHAT WE MAKE</p>
                   <h2>
                     The collection<span>.</span>
                   </h2>
                 </div>
                 <p>
-                  Pieces to make a space your own.
-                  <br />
-                  Explore, discover, and make room.
+                  Practical pieces, carefully considered.
+                   <br />
+                   Browse without pressure or checkout.
                 </p>
               </div>
               <div className="pub-collection-tools">
@@ -361,7 +371,7 @@ export default function PublicCatalog({
                     className={category === "all" ? "pub-filter-active" : ""}
                     onClick={() => setCategory("all")}
                   >
-                    All furniture <span>{published.length}</span>
+                    All pieces <span>{published.length}</span>
                   </button>
                   {categories.map((item) => (
                     <button
@@ -424,7 +434,7 @@ export default function PublicCatalog({
                   <h3>No pieces found.</h3>
                   <p>Try another search or explore a different category.</p>
                   <button className="pub-primary-button" onClick={resetFilters}>
-                    View all furniture <ArrowRight size={16} />
+                    Explore all pieces <ArrowRight size={16} />
                   </button>
                 </div>
               )}
@@ -575,9 +585,9 @@ export default function PublicCatalog({
                     <div className="pub-detail-promise">
                       <span className="pub-promise-symbol">b.</span>
                       <p>
-                        A considered addition to your everyday.
-                        <br />
-                        <span>Designed to feel right at home.</span>
+                        The right piece should belong to its space.
+                         <br />
+                         <span>Details, materials and proportions matter.</span>
                       </p>
                     </div>
                   </div>
@@ -602,20 +612,19 @@ export default function PublicCatalog({
         )}
         <section className="pub-story" id="pub-story">
           <div>
-            <p className="pub-eyebrow">LESS, BUT BETTER</p>
+            <p className="pub-eyebrow">THE WORKSHOP MINDSET</p>
             <h2>
-              A home is a feeling.
-              <br />
-              <em>Make room for it.</em>
+              Every space has a story.
+               <br />
+               <em>We help shape it.</em>
             </h2>
           </div>
           <div>
             <p>
-              We believe beautiful spaces begin with thoughtful choices.
-              Furniture with warmth, purpose, and room for the way you live.
+              Whether it’s a retail kiosk, display counter or a custom-made piece, the details should serve the people using it. Form and function belong together.
             </p>
             <button onClick={() => browseCollection()}>
-              Find your piece <ArrowRight size={18} />
+              Explore our work <ArrowRight size={18} />
             </button>
           </div>
         </section>
@@ -628,13 +637,13 @@ export default function PublicCatalog({
           <p>
             BENUA BRUTTI SDN. BHD.
             <br />
-            Furniture for a more considered everyday.
+            Custom furniture, kiosks & commercial spaces.
           </p>
         </div>
         <div className="pub-footer-right">
           {enquiryEmail ? (
             <a href={`mailto:${enquiryEmail}`}>
-              Let’s make room. <ArrowUpRight size={15} />
+              Start a conversation <ArrowUpRight size={15} />
             </a>
           ) : (
             <span className="pub-footer-enquiry">Enquiries coming soon.</span>
