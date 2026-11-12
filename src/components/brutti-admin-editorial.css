@@ -253,3 +253,13 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-app[data-active-tab] .catalog-command-actions button { transition: none; }
 }
+
+/* The dark sidebar must retain legible labels on an explicitly dark surface. */
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active {
+  background: #385642 !important;
+  color: #fff7e9 !important;
+}
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
+  color: #fff7e9 !important;
+  background: #42634d !important;
+}
