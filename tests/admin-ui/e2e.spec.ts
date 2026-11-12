@@ -149,7 +149,7 @@ test('Brutti collection studio preserves real product actions with new branded d
   await openAdmin(page);
   await expect(page.locator('.admin-app.brutti-staff-redesign')).toBeVisible();
   await expect(page.locator('.sidebar .brutti-official-logo')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Welcome to the studio.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Collection studio.' })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Your collection/ })).toBeVisible();
   await expect(page.locator('.catalog-command-art > img')).toBeVisible();
   const shortcuts = page.getByRole('group', { name: 'Collection studio shortcuts' });
