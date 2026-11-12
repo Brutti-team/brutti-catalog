@@ -1495,7 +1495,7 @@ function Login({
             ) : (
               <form className="catalog-login-form" onSubmit={submit}>
                 <div className="catalog-login-field">
-                  <label htmlFor="catalog-login-email">Work email</label>
+                  <label htmlFor="catalog-login-email">Email</label>
                   <div className="catalog-login-input">
                     <Mail size={18} aria-hidden="true" />
                     <input
@@ -1538,7 +1538,7 @@ function Login({
                   </div>
                 </div>
                 <button type="submit" className="catalog-login-submit" disabled={busy}>
-                  <span>{busy ? "Signing in…" : "Sign in to workspace"}</span>
+                  <span>{busy ? "Signing in…" : "Sign in"}</span>
                   {busy ? <LoaderCircle className="spin" size={18} aria-hidden="true" />
                     : <ArrowRight size={18} aria-hidden="true" />}
                 </button>
