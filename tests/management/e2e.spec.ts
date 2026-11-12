@@ -321,7 +321,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     expect(overlap, 'Admin breadcrumb and connection/actions must never overlap').toBe(false);
     await page.screenshot({ path: testInfo.outputPath('admin-test-fixtures.png'), fullPage: true });
     await page.goto('/#/catalog');
-    await expect(page.getByRole('heading', { name: 'Good design. Better living.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Spaces with purpose. Made to belong.' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: testInfo.outputPath('public-empty-test-backend.png'), fullPage: true });
   });
