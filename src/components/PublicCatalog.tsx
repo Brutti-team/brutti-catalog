@@ -16,6 +16,8 @@ import type { Category, Product } from "../lib/types";
 import { publicAssetUrl } from "../lib/assets";
 import { formatProductPrice } from "../lib/price";
 import { productIdFromHash } from "../lib/routes";
+import ProductModelViewer from "./ProductModelViewer";
+import { modelForProduct } from "../lib/product-models";
 import "./public.css";
 
 interface Props {
@@ -83,11 +85,13 @@ export default function PublicCatalog({
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [sort, setSort] = useState("curated");
   const [imageIndex, setImageIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<"photos" | "3d">("photos");
   const [mobileMenu, setMobileMenu] = useState(false);
   useEffect(() => {
     const changeRoute = () => {
       setProductId(currentProductId());
       setImageIndex(0);
+      setViewMode("photos");
       setMobileMenu(false);
       window.scrollTo({ top: 0, behavior: "instant" });
     };
@@ -102,6 +106,9 @@ export default function PublicCatalog({
     productId === null
       ? undefined
       : published.find((item) => item.id === productId);
+  const selectedModel = product ? modelForProduct(product) : null;
+  const heroShowcase = published.find(item => item.images.length && /kiosk|counter|reception|display/i.test(item.name))
+    ?? published.find(item => item.images.length);
   const categoryName = (id: string) =>
     categories.find((item) => item.id === id)?.name || "Furniture";
   const filtered = useMemo(() => {
@@ -207,7 +214,7 @@ export default function PublicCatalog({
           aria-label="Brutti catalog home"
         >
           <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="pub-official-logo" />
-          <small>THE FURNITURE COLLECTION</small>
+          <small>CUSTOM FURNITURE · KIOSKS · FIT-OUT</small>
         </a>
         <nav
           id="pub-mobile-nav"
@@ -253,52 +260,52 @@ export default function PublicCatalog({
             <section className="pub-hero">
               <div className="pub-hero-copy">
                 <p className="pub-eyebrow">
-                  <span /> THE BRUTTI COLLECTION · VOL. 01
+                  <span /> BENUA BRUTTI · CUSTOM MADE IN SABAH
                 </p>
                 <h1>
-                  Good design.
+                  Made for your space.
                   <br />
-                  <em>Better living.</em>
+                  <em>Built with purpose.</em>
                 </h1>
                 <p className="pub-hero-description">
-                  Considered furniture for the spaces you call home. Natural
-                  materials, quiet details, enduring character.
+                  From retail kiosks and statement counters to bespoke cabinetry,
+                  we craft considered pieces that bring ideas into the real world.
                 </p>
                 <button
                   className="pub-primary-button"
                   onClick={() => browseCollection()}
                 >
-                  Explore the collection <ArrowRight size={17} />
+                  Explore our work <ArrowRight size={17} />
                 </button>
                 <div className="pub-hero-footnote">
                   <span className="pub-hero-line" /> Thoughtfully selected.
-                  Beautifully simple.
+                  Built with character.
                 </div>
               </div>
               <div className="pub-hero-visual">
                 <FurnitureImage
-                  src="/images/hero.jpg"
-                  alt="A warm, considered living space with natural wood furniture"
+                  src={heroShowcase?.images[0]?.url ?? "/images/hero.jpg"}
+                  alt={heroShowcase?.images[0]?.alt || heroShowcase?.name || "Benua Brutti furniture craftsmanship"}
                   eager
                 />
                 <div className="pub-hero-image-label">
-                  <span>A LITTLE MORE HOME.</span>
+                  <span>MADE TO FIT YOUR SPACE.</span>
                   <ArrowUpRight size={23} />
                 </div>
                 <span className="pub-hero-number">
-                  01 / THE ART OF EVERYDAY
+                  01 / THE BRUTTI WORKSHOP
                 </span>
               </div>
             </section>
             <div className="pub-values-strip">
               <span>
-                <Check size={15} /> Considered materials
+                <Check size={15} /> Materials with purpose
               </span>
               <span>
-                <Check size={15} /> Purposeful design
+                <Check size={15} /> Custom-made solutions
               </span>
               <span>
-                <Check size={15} /> Spaces with character
+                <Check size={15} /> Crafted for real spaces
               </span>
               <span className="pub-strip-location">
                 BENUA BRUTTI SDN. BHD. <ArrowDown size={14} />
@@ -307,15 +314,15 @@ export default function PublicCatalog({
             <section id="pub-collection" className="pub-collection">
               <div className="pub-section-heading">
                 <div>
-                  <p className="pub-eyebrow">FIND YOUR NEXT FAVOURITE</p>
+                  <p className="pub-eyebrow">EXPLORE OUR WORK</p>
                   <h2>
-                    The collection<span>.</span>
+                    Crafted to fit<span>.</span>
                   </h2>
                 </div>
                 <p>
-                  Pieces to make a space your own.
+                  Kiosks, counters, cabinetry and furniture.
                   <br />
-                  Explore, discover, and make room.
+                  Explore the details behind every piece.
                 </p>
               </div>
               <div className="pub-collection-tools">
@@ -324,7 +331,7 @@ export default function PublicCatalog({
                   <span className="pub-sr-only">Search the catalog</span>
                   <input
                     type="search"
-                    placeholder="Search furniture, materials…"
+                    placeholder="Search kiosks, counters, materials…"
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                   />
@@ -361,7 +368,7 @@ export default function PublicCatalog({
                     className={category === "all" ? "pub-filter-active" : ""}
                     onClick={() => setCategory("all")}
                   >
-                    All furniture <span>{published.length}</span>
+                    All projects <span>{published.length}</span>
                   </button>
                   {categories.map((item) => (
                     <button
@@ -387,7 +394,7 @@ export default function PublicCatalog({
               <div className="pub-results-label" role="status">
                 {loading
                   ? "Loading the collection…"
-                  : `${filtered.length} ${filtered.length === 1 ? "piece" : "pieces"}${query ? ` matching “${query}”` : " in the collection"}`}
+                  : `${filtered.length} ${filtered.length === 1 ? "project" : "projects"}${query ? ` matching “${query}”` : " in the collection"}`}
                 {(query || category !== "all" || featuredOnly) && (
                   <button onClick={resetFilters}>
                     Clear filters <X size={12} />
@@ -424,7 +431,7 @@ export default function PublicCatalog({
                   <h3>No pieces found.</h3>
                   <p>Try another search or explore a different category.</p>
                   <button className="pub-primary-button" onClick={resetFilters}>
-                    View all furniture <ArrowRight size={16} />
+                    View all projects <ArrowRight size={16} />
                   </button>
                 </div>
               )}
@@ -467,6 +474,18 @@ export default function PublicCatalog({
               <>
                 <div className="pub-product-detail">
                   <div className="pub-detail-gallery">
+                    <div className="pub-media-switch" role="group" aria-label="Product viewing mode">
+                      <button type="button" className={viewMode === "photos" ? "active" : ""}
+                        aria-pressed={viewMode === "photos"} onClick={() => setViewMode("photos")}>Original photos</button>
+                      <button type="button" className={viewMode === "3d" ? "active" : ""}
+                        aria-pressed={viewMode === "3d"} disabled={!selectedModel}
+                        title={!selectedModel ? "A verified 3D model is not yet available for this product" : "Explore this product in 3D"}
+                        onClick={() => setViewMode("3d")}>360° 3D {selectedModel ? "" : "· Coming soon"}</button>
+                    </div>
+                    {viewMode === "3d" && selectedModel ? (
+                      <ProductModelViewer model={selectedModel} productName={product.name}
+                        poster={product.images[0]?.url} />
+                    ) : (
                     <div className="pub-detail-main-image">
                       <FurnitureImage
                         src={
@@ -484,7 +503,8 @@ export default function PublicCatalog({
                         </span>
                       )}
                     </div>
-                    {product.images.length > 1 && (
+                    )}
+                    {viewMode !== "3d" && product.images.length > 1 && (
                       <div
                         className="pub-gallery-thumbnails"
                         aria-label="Product image gallery"
@@ -504,6 +524,7 @@ export default function PublicCatalog({
                         ))}
                       </div>
                     )}
+                    {!selectedModel && <p className="pub-model-availability">3D rotation is enabled only after an accurate model of this exact product has been approved. The original photos remain available to inspect.</p>}
                   </div>
                   <div className="pub-detail-copy">
                     <p className="pub-eyebrow">
@@ -575,9 +596,9 @@ export default function PublicCatalog({
                     <div className="pub-detail-promise">
                       <span className="pub-promise-symbol">b.</span>
                       <p>
-                        A considered addition to your everyday.
+                        Made for the spaces you imagine.
                         <br />
-                        <span>Designed to feel right at home.</span>
+                        <span>Crafted with care by Benua Brutti.</span>
                       </p>
                     </div>
                   </div>
@@ -586,8 +607,8 @@ export default function PublicCatalog({
                   <section className="pub-related">
                     <div className="pub-section-heading">
                       <div>
-                        <p className="pub-eyebrow">A LITTLE MORE INSPIRATION</p>
-                        <h2>In good company.</h2>
+                        <p className="pub-eyebrow">MORE FROM THE WORKSHOP</p>
+                        <h2>Explore related works.</h2>
                       </div>
                       <a href="#/catalog">
                         View the collection <ArrowRight size={16} />
@@ -602,20 +623,19 @@ export default function PublicCatalog({
         )}
         <section className="pub-story" id="pub-story">
           <div>
-            <p className="pub-eyebrow">LESS, BUT BETTER</p>
+            <p className="pub-eyebrow">CUSTOM BY NATURE</p>
             <h2>
-              A home is a feeling.
+              Every space has a story.
               <br />
-              <em>Make room for it.</em>
+              <em>We help build yours.</em>
             </h2>
           </div>
           <div>
             <p>
-              We believe beautiful spaces begin with thoughtful choices.
-              Furniture with warmth, purpose, and room for the way you live.
+              Every kiosk, custom counter and furnishing project begins with a purpose. We bring together practical design, material character and workshop craftsmanship.
             </p>
             <button onClick={() => browseCollection()}>
-              Find your piece <ArrowRight size={18} />
+              View our work <ArrowRight size={18} />
             </button>
           </div>
         </section>
@@ -628,7 +648,7 @@ export default function PublicCatalog({
           <p>
             BENUA BRUTTI SDN. BHD.
             <br />
-            Furniture for a more considered everyday.
+            Bespoke furniture, kiosks & commercial fit-out.
           </p>
         </div>
         <div className="pub-footer-right">
