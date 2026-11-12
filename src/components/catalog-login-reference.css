@@ -20,7 +20,10 @@
   animation:none;
 }
 .admin-app.admin-access-shell .catalog-login-story {
-  background:#322a24 url("/brutti-catalog/reference/kiosk.svg") center / cover no-repeat;
+  background-color:#322a24;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
   padding:clamp(30px,4vw,70px);
 }
 .admin-app.admin-access-shell .catalog-login-story::after {
