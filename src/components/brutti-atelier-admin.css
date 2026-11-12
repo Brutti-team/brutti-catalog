@@ -191,3 +191,42 @@
   color:#faf7ec!important;
   background:transparent!important;
 }
+
+/* Dark-mode counterpart to the light editorial collection desk. */
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-command,
+.admin-app[data-active-tab="products"][data-theme="dark"] .catalog-product-hero {
+  background:#26342a;
+  border-color:#465a4b;
+}
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-command h1,
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-command h1 span,
+.admin-app[data-active-tab="products"][data-theme="dark"] .catalog-product-hero h1 {
+  color:#f6f3e9;
+  -webkit-text-fill-color:#f6f3e9;
+}
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-command p,
+.admin-app[data-active-tab="products"][data-theme="dark"] .catalog-product-hero p { color:#d8dfd3; }
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-hero-secondary { background:#344b3b; color:#fff; border-color:#536b59; }
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-hero-tertiary { color:#e2e8d9; }
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-overview-automations { border-color:#405046; }
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats { border-color:#3d5444; }
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat,
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat:first-child,
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat:nth-child(2),
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat:nth-child(3),
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat:nth-child(4),
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat:nth-child(6) {
+  background:#26372c;border-color:#445849;color:#f4f1e7;
+}
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat > strong {
+  color:#faf7ed;
+}
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-stats .overview-stat .overview-stat-icon {
+  background:#365041;color:#fff;
+}
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-operations > section,
+.admin-app[data-active-tab="overview"][data-theme="dark"] .catalog-studio-bottom > section,
+.admin-app[data-active-tab="overview"][data-theme="dark"] .overview-collection,
+.admin-app[data-active-tab="products"][data-theme="dark"] .catalog-products-panel {
+  background:var(--admin-surface);border-color:var(--admin-border)!important;color:var(--admin-text);
+}
