@@ -291,7 +291,7 @@ export default function PublicCatalog({
               </div>
               <div className="pub-hero-visual">
                 <FurnitureImage
-                  src={import.meta.env.BASE_URL + "reference/kiosk.svg"}
+                  src={import.meta.env.BASE_URL + "reference/kiosk.jpg"}
                   alt="Custom timber kiosk design inspiration from the supplied Benua Brutti showroom reference"
                   eager
                 />
