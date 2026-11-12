@@ -270,13 +270,13 @@ export default function PublicCatalog({
                   <span /> BENUA BRUTTI · CUSTOM MADE IN SABAH
                 </p>
                 <h1>
-                  Made for your space.
+                  Custom furniture.
                   <br />
-                  <em>Built with purpose.</em>
+                  <em>Made to fit.</em>
                 </h1>
                 <p className="pub-hero-description">
-                  Custom kiosks, built-in furniture and considered details —
-                  made for spaces that need to look good and work hard.
+                  Kiosks, cabinetry and furniture built to suit real spaces —
+                  from individual pieces to complete fit-outs.
                 </p>
                 <button
                   className="pub-primary-button"
@@ -323,7 +323,7 @@ export default function PublicCatalog({
                 <div>
                   <p className="pub-eyebrow">EXPLORE OUR WORK</p>
                   <h2>
-                    Explore the collection<span>.</span>
+                    The collection
                   </h2>
                 </div>
                 <p>
@@ -633,9 +633,9 @@ export default function PublicCatalog({
           <div>
             <p className="pub-eyebrow">CUSTOM BY NATURE</p>
             <h2>
-              Every space has a story.
+              Built around your brief.
               <br />
-              <em>We help build yours.</em>
+              <em>Made for daily use.</em>
             </h2>
           </div>
           <div>

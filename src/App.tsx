@@ -523,7 +523,7 @@ export default function App() {
             </form>
             <span className="connection-pill">
               <span />
-              Supabase connected
+              {error ? "Sync needs attention" : lastSyncedAt ? "Catalog synced" : "Catalog workspace"}
             </span>
             <button
               className="catalog-link"
@@ -569,37 +569,15 @@ export default function App() {
           </div>
         </header>
         <div className="admin-content">
-          {tab === "overview" && (
-            <section className="brutti-staff-welcome" aria-label="Brutti collection studio">
-              <div className="brutti-staff-welcome-copy">
-                <span>BENUA BRUTTI / CATALOG WORKSPACE</span>
-                <h2>Catalog workspace</h2>
-                <p>A clearer place for products, people and the collection.</p>
-              </div>
-              <div className="brutti-staff-welcome-nav" role="group" aria-label="Collection studio shortcuts">
-                <button type="button" onClick={() => switchTab("products")}>
-                  <Package size={17} aria-hidden="true" /> Products <ArrowUpRight size={14} aria-hidden="true" />
-                </button>
-                {accountRole !== "editor" && (
-                  <button type="button" onClick={() => switchTab("categories")}>
-                    <Layers size={17} aria-hidden="true" /> Categories <ArrowUpRight size={14} aria-hidden="true" />
-                  </button>
-                )}
-                <button type="button" onClick={() => { switchTab("products"); changeProductView("gallery"); }}>
-                  <Images size={17} aria-hidden="true" /> Gallery <ArrowUpRight size={14} aria-hidden="true" />
-                </button>
-              </div>
-            </section>
-          )}
           {tab === "profile" || tab === "users" || tab === "activity" ? (
             <AccountCenter view={tab} onProfileChanged={setAccountName} />
           ) : (<>
           {tab === "overview" ? (
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
-                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BENUA BRUTTI <span aria-hidden="true">/</span> WORKSHOP OVERVIEW</div>
-                <h1 id="catalog-overview-title">Made with care.<br /><span>Managed with clarity.</span></h1>
-                <p>Bring the whole collection together — from product photos and specifications to the next piece ready for review.</p>
+                <div className="catalog-command-eyebrow">Collection management</div>
+                <h1 id="catalog-overview-title">Catalog overview</h1>
+                <p>Manage products, photographs and publishing in one place.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -609,8 +587,8 @@ export default function App() {
                     onClick={() => { switchTab("products"); setStatus(draftCount > 0 ? "draft" : "all"); }}>
                     {draftCount > 0 ? "Review drafts" : "View products"} <ArrowUpRight size={16} aria-hidden="true" />
                   </button>
-                  <button type="button" className="catalog-hero-tertiary" onClick={() => navigate("/catalog")}>
-                    View public catalog <ArrowUpRight size={16} aria-hidden="true" />
+                  <button type="button" className="catalog-hero-tertiary" onClick={() => { switchTab("products"); changeProductView("gallery"); }}>
+                    Open gallery <Images size={16} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -622,18 +600,11 @@ export default function App() {
                 )}
                 <span className="catalog-command-art-label">{heroProduct ? heroProduct.name : "BRUTTI / SHOWROOM INSPIRATION"}</span>
               </div>
-              <button type="button" className="catalog-command-insight" disabled={loading} aria-label="View drafts awaiting review"
-                onClick={() => { switchTab("products"); setStatus("draft"); }}>
-                <span>AWAITING REVIEW</span>
-                <strong>{loading ? "—" : draftCount.toLocaleString("en-MY")}</strong>
-                <small>products waiting for your review</small>
-                <div className="catalog-command-insight-foot"><span className="catalog-command-insight-dot" /> {publishedCount} published <ArrowUpRight size={15} aria-hidden="true" /></div>
-              </button>
             </section>
           ) : tab === "products" ? (
             <section className="catalog-product-hero" aria-labelledby="catalog-products-title">
               <div className="catalog-product-hero-main">
-                <span className="catalog-product-hero-eyebrow"><span className="catalog-hero-pulse" aria-hidden="true" /> BENUA BRUTTI <span aria-hidden="true">/</span> PRODUCTS & DETAILS</span>
+                <span className="catalog-product-hero-eyebrow">Inventory</span>
                 <h1 id="catalog-products-title">Products</h1>
                 <p>Organise, review and manage your collection from one workspace.</p>
                 <div className="catalog-product-hero-meta">
@@ -644,7 +615,7 @@ export default function App() {
               </div>
               <div className="catalog-product-hero-side">
                 <div className="catalog-product-hero-status">
-                  <span>REVIEW QUEUE</span>
+                  <span>Drafts to review</span>
                   <div><strong>{draftCount}</strong><span>Draft products</span></div>
                 </div>
                 <button className="catalog-products-add-button" type="button" disabled={loading || busy}
@@ -694,7 +665,7 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="catalog-os-section-title"><div><span>YOUR WORKSPACE</span><h2>Collection at a glance</h2></div><p>Live numbers from your catalog</p></div>
+              <div className="catalog-os-section-title"><div><span>OVERVIEW</span><h2>Collection at a glance</h2></div><p>Live numbers from your catalog</p></div>
               <div className="stats-grid overview-stats">
                 {stats.map((s) => (
                   <button type="button" className="stat-card overview-stat" key={s.title} disabled={loading}
@@ -867,7 +838,6 @@ export default function App() {
               <div className="panel-heading">
                 <div className="catalog-collection-heading-main">
                   <span className="catalog-collection-eyebrow">
-                    <span className="catalog-collection-eyebrow-dot" aria-hidden="true" />
                     PRODUCT INVENTORY
                   </span>
                   <h2>

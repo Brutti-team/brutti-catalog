@@ -16,9 +16,9 @@ export default function ShowroomSections({ onExplore, section = "categories" }: 
       <section className="pub-reference-intro" id="pub-expertise">
         <div className="pub-reference-intro-head">
           <p className="pub-reference-eyebrow">WHAT WE CREATE / BENUA BRUTTI</p>
-          <h2>One partner.<br /><em>Every detail, considered.</em></h2>
+          <h2>Furniture, kiosks<br /><em>and joinery.</em></h2>
         </div>
-        <p>We design and build tailored furniture, kiosks and commercial interiors that work beautifully, endure daily use and express your space.</p>
+        <p>Benua Brutti builds custom furniture, retail kiosks, cabinetry and commercial fit-outs in Sabah.</p>
       </section>
 
       <section className="pub-reference-category-grid" aria-label="Explore furniture and fabrication categories">
@@ -48,8 +48,8 @@ export default function ShowroomSections({ onExplore, section = "categories" }: 
     <>
       <section className="pub-reference-process" id="pub-process">
         <div className="pub-reference-process-top">
-          <div><p className="pub-reference-eyebrow">OUR APPROACH</p><h2>Designed with purpose.<br /><em>Finished with care.</em></h2></div>
-          <p>Good fabrication is more than its final shape. From brief to finishing detail, every decision is shaped around how your space should look, feel and function.</p>
+          <div><p className="pub-reference-eyebrow">OUR APPROACH</p><h2>From brief<br /><em>to installation.</em></h2></div>
+          <p>From measurements and material selection to fabrication and finishing, we work around the needs of each project.</p>
         </div>
         <div className="pub-reference-process-grid">
           <article><DraftingCompass size={27} strokeWidth={1.4} /><span>01 / DESIGN</span><h3>Tailored by nature</h3><p>Solutions built around your brief, business and daily operation.</p></article>
