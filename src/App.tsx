@@ -573,8 +573,8 @@ export default function App() {
             <section className="brutti-staff-welcome" aria-label="Brutti collection studio">
               <div className="brutti-staff-welcome-copy">
                 <span>BENUA BRUTTI / CONTENT MANAGER</span>
-                <h2>Welcome to the studio.</h2>
-                <p>Made to manage every detail of your furniture and kiosk collection.</p>
+                <h2>Collection studio.</h2>
+                <p>Your products, photos and updates — all in one place.</p>
               </div>
               <div className="brutti-staff-welcome-nav" role="group" aria-label="Collection studio shortcuts">
                 <button type="button" onClick={() => switchTab("products")}>
@@ -598,8 +598,8 @@ export default function App() {
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
                 <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BENUA BRUTTI <span aria-hidden="true">/</span> THE COLLECTION STUDIO</div>
-                <h1 id="catalog-overview-title">Your collection,<br /><span>beautifully considered.</span></h1>
-                <p>A dedicated space to manage Benua Brutti furniture, kiosks, counters and custom pieces. Curate every detail before customers see your work.</p>
+                <h1 id="catalog-overview-title">Your collection,<br /><span>in good order.</span></h1>
+                <p>Keep product details clear, images current and your catalog ready for customers.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -624,7 +624,7 @@ export default function App() {
               </div>
               <button type="button" className="catalog-command-insight" disabled={loading} aria-label="View drafts awaiting review"
                 onClick={() => { switchTab("products"); setStatus("draft"); }}>
-                <span>DRAFTS TO REVIEW</span>
+                <span>AWAITING REVIEW</span>
                 <strong>{loading ? "—" : draftCount.toLocaleString("en-MY")}</strong>
                 <small>products waiting for your review</small>
                 <div className="catalog-command-insight-foot"><span className="catalog-command-insight-dot" /> {publishedCount} published <ArrowUpRight size={15} aria-hidden="true" /></div>
