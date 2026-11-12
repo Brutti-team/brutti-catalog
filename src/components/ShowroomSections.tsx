@@ -10,8 +10,8 @@ const collectionTypes = [
   { title: "Custom furniture", image: "sofa", keyword: "furniture", text: "Furniture designed for the room, not just the floor plan.", category: "04" },
 ] as const;
 
-export default function ShowroomSections({ onExplore }: { onExplore: (keyword: string) => void }) {
-  return (
+export default function ShowroomSections({ onExplore, section = "categories" }: { onExplore: (keyword: string) => void; section?: "categories" | "approach" }) {
+  if (section === "categories") return (
     <>
       <section className="pub-reference-intro" id="pub-expertise">
         <div className="pub-reference-intro-head">
@@ -42,6 +42,10 @@ export default function ShowroomSections({ onExplore }: { onExplore: (keyword: s
       </section>
       <p className="pub-reference-image-note">Editorial inspiration images · Actual Brutti product records and photos appear in the collection below.</p>
 
+    </>
+  );
+  return (
+    <>
       <section className="pub-reference-process" id="pub-process">
         <div className="pub-reference-process-top">
           <div><p className="pub-reference-eyebrow">OUR APPROACH</p><h2>Designed with purpose.<br /><em>Finished with care.</em></h2></div>
