@@ -1,0 +1,663 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Caslon+Display&display=swap");
+
+/* Benua Brutti / restrained furniture-studio art direction.
+   Original wordmark, staff permissions, product records, and public URLs unchanged.
+   The storefront uses a photo-and-editorial layout rather than text over a full-bleed photo. */
+
+/* -------------------------- CUSTOMER CATALOG -------------------------- */
+.pub-app.pub-refined {
+  --pub-green:#254733;
+  --pub-text:#2f382f;
+  --pub-muted:#74776c;
+  --pub-cream:#f6f5f0;
+  --pub-border:#e1e1d8;
+  background:#fbfaf7;
+  font-family:"DM Sans",system-ui,sans-serif;
+  color:#273e30;
+}
+.pub-app.pub-refined h1,
+.pub-app.pub-refined h2,
+.pub-app.pub-refined h3,
+.pub-app.pub-refined .pub-reference-category-tile strong {
+  font-family:"Libre Caslon Display",Georgia,serif;
+  font-weight:400;
+  letter-spacing:-.024em;
+}
+.pub-app.pub-refined .pub-header {
+  width:100%;
+  max-width:none;
+  min-height:88px;
+  padding:0 clamp(25px,5vw,90px);
+  border-bottom:1px solid #e8e7e0;
+  background:#fbfaf7;
+}
+.pub-app.pub-refined .pub-wordmark .pub-official-logo {
+  width:118px;
+  height:auto;
+  max-height:64px;
+  object-fit:contain;
+}
+.pub-app.pub-refined .pub-wordmark > small {
+  color:#7a806f;
+  font-size:8px;
+  letter-spacing:1.45px;
+  margin-top:0;
+}
+.pub-app.pub-refined .pub-nav {gap:31px;}
+.pub-app.pub-refined .pub-nav button {
+  font:600 10px/1.4 "DM Sans",sans-serif !important;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#71746b;
+  padding:12px 0;
+}
+.pub-app.pub-refined .pub-nav .pub-nav-active {color:#254733;}
+.pub-app.pub-refined .pub-nav .pub-nav-active:after {background:#254733;height:1px;bottom:5px;}
+.pub-app.pub-refined .pub-admin-link {
+  background:transparent;
+  border:1px solid #bfc8bc;
+  border-radius:2px;
+  color:#254733;
+  padding:12px 19px;
+  gap:18px;
+  font:600 10px/1.2 "DM Sans",sans-serif !important;
+  letter-spacing:.6px;
+}
+.pub-app.pub-refined .pub-admin-link:hover {
+  background:#254733;
+  border-color:#254733;
+  color:#fff;
+}
+/* Purposefully split photo + text hero; restrained height and type. */
+.pub-app.pub-refined .pub-hero {
+  display:grid;
+  grid-template-columns:minmax(0,.91fr) minmax(0,1.09fr);
+  align-items:stretch;
+  position:relative;
+  width:calc(100% - clamp(28px,5vw,90px)*2);
+  max-width:1510px;
+  min-height:530px;
+  height:auto;
+  margin:clamp(16px,2.3vw,34px) auto 0;
+  overflow:hidden;
+  background:#f3f1e9;
+  border:1px solid #e8e4d9;
+}
+.pub-app.pub-refined .pub-hero-copy {
+  position:relative;
+  z-index:2;
+  width:auto;
+  height:auto;
+  min-height:530px;
+  margin:0;
+  padding:clamp(50px,5vw,88px) clamp(40px,5.2vw,91px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:0;
+  background:#f4f2eb;
+}
+.pub-app.pub-refined .pub-hero .pub-eyebrow {
+  color:#687767;
+  font:700 9px/1.5 "DM Sans",sans-serif;
+  letter-spacing:1.6px;
+  margin:0;
+}
+.pub-app.pub-refined .pub-hero .pub-eyebrow > span {
+  background:#6f806c;
+  width:20px;
+}
+.pub-app.pub-refined .pub-hero h1 {
+  max-width:690px;
+  margin:23px 0 25px;
+  font:400 clamp(49px,5.1vw,79px)/1.055 "Libre Caslon Display",Georgia,serif;
+  color:#273f30;
+  letter-spacing:-.045em;
+  text-wrap:balance;
+}
+.pub-app.pub-refined .pub-hero h1 em {
+  color:#5a7259;
+  font-style:normal;
+  font-weight:400;
+}
+.pub-app.pub-refined .pub-hero-description {
+  color:#707569;
+  max-width:420px;
+  margin:0;
+  font:400 13px/1.9 "DM Sans",sans-serif;
+}
+.pub-app.pub-refined .pub-hero .pub-primary-button {
+  color:#fff !important;
+  background:#254733;
+  border:1px solid #254733;
+  border-radius:2px;
+  padding:15px 22px;
+  margin-top:33px;
+  min-height:48px;
+  font:600 10px/1.3 "DM Sans",sans-serif;
+  letter-spacing:.7px;
+  gap:28px;
+  box-shadow:none;
+}
+.pub-app.pub-refined .pub-hero .pub-primary-button:hover {
+  background:#396248;
+  border-color:#396248;
+}
+.pub-app.pub-refined .pub-hero-footnote {
+  margin-top:auto;
+  padding-top:36px;
+  color:#8a8e81;
+  font:600 9px/1.5 "DM Sans",sans-serif;
+  letter-spacing:1.7px;
+  text-transform:uppercase;
+}
+.pub-app.pub-refined .pub-hero-line {background:#96a294;}
+.pub-app.pub-refined .pub-hero-visual {
+  position:relative;
+  inset:auto;
+  width:100%;
+  height:100%;
+  min-height:530px;
+  background:#ded6c9;
+}
+.pub-app.pub-refined .pub-hero-visual > img {
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:saturate(.85) contrast(.98);
+}
+.pub-app.pub-refined .pub-hero-visual::after {
+  inset:55% 0 0;
+  z-index:0;
+  background:linear-gradient(0deg,rgba(18,26,20,.39),transparent);
+}
+.pub-app.pub-refined .pub-hero-image-label {
+  z-index:2;
+  left:30px;
+  right:30px;
+  bottom:26px;
+  color:#fff;
+  min-width:0;
+  border-top:1px solid #ffffff80;
+  padding-top:13px;
+  font:600 9px/1.3 "DM Sans",sans-serif;
+  letter-spacing:1.1px;
+}
+.pub-app.pub-refined .pub-hero-number {
+  z-index:2;
+  top:25px;
+  right:29px;
+  color:#fff;
+  font:600 9px/1.3 "DM Sans",sans-serif;
+  letter-spacing:1.4px;
+}
+.pub-app.pub-refined .pub-values-strip {
+  border:0;
+  max-width:1510px;
+  padding:19px clamp(25px,3vw,43px);
+  background:transparent;
+  gap:20px;
+  justify-content:space-between;
+}
+.pub-app.pub-refined .pub-values-strip > span {
+  font:500 10px/1.5 "DM Sans",sans-serif;
+  color:#747b6d;
+}
+.pub-app.pub-refined .pub-values-strip svg {color:#497154;}
+.pub-app.pub-refined .pub-values-strip .pub-strip-location {letter-spacing:1px;color:#8f907f;}
+/* Four quiet editorial photo tiles rather than a dramatic AI-style mosaic. */
+.pub-app.pub-refined .pub-reference-intro {
+  padding:clamp(65px,7vw,100px) clamp(24px,5vw,74px) 29px;
+  max-width:1510px;
+  gap:70px;
+}
+.pub-app.pub-refined .pub-reference-eyebrow {
+  color:#73866e;
+  font:700 9px/1.4 "DM Sans",sans-serif;
+  letter-spacing:1.65px;
+}
+.pub-app.pub-refined .pub-reference-intro h2 {
+  font:400 clamp(38px,3.8vw,57px)/1.1 "Libre Caslon Display",Georgia,serif;
+  color:#294633;
+  letter-spacing:-.03em;
+}
+.pub-app.pub-refined .pub-reference-intro h2 em,
+.pub-app.pub-refined .pub-reference-process h2 em {
+  color:#627b60;
+  font-weight:400;
+}
+.pub-app.pub-refined .pub-reference-intro > p {
+  font:400 13px/1.95 "DM Sans",sans-serif;
+  max-width:450px;
+  color:#777c70;
+  margin:0 0 5px;
+}
+.pub-app.pub-refined .pub-reference-category-grid {
+  max-width:1510px;
+  padding:0 clamp(24px,5vw,74px);
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:minmax(240px,300px);
+  gap:14px;
+}
+.pub-app.pub-refined .pub-reference-category-tile,
+.pub-app.pub-refined .pub-reference-category-tile:first-child {
+  grid-column:auto;
+  grid-row:auto;
+  min-width:0;
+  border-radius:3px;
+}
+.pub-app.pub-refined .pub-reference-category-tile > img {
+  filter:saturate(.85);
+  transition:transform .35s ease;
+}
+.pub-app.pub-refined .pub-reference-category-shade {
+  background:linear-gradient(0deg,#0d1f13a6,transparent 62%);
+}
+.pub-app.pub-refined .pub-reference-category-index {
+  top:18px;
+  left:19px;
+  font:600 9px/1.4 "DM Sans",sans-serif;
+  letter-spacing:1.2px;
+}
+.pub-app.pub-refined .pub-reference-category-caption {
+  left:19px;
+  right:17px;
+  bottom:21px;
+  align-items:flex-end;
+  gap:8px;
+}
+.pub-app.pub-refined .pub-reference-category-caption strong {
+  font:400 clamp(22px,2.15vw,31px)/1.15 "Libre Caslon Display",Georgia,serif;
+  color:#fff;
+}
+.pub-app.pub-refined .pub-reference-category-caption small {
+  font:400 10px/1.55 "DM Sans",sans-serif;
+  color:#f3eee4;
+  margin-top:6px;
+}
+.pub-app.pub-refined .pub-reference-category-caption svg {width:17px;height:17px;}
+.pub-app.pub-refined .pub-reference-image-note {font-size:9px;letter-spacing:0;color:#98978a;padding:11px 15px;}
+/* Tidy catalog, simplified photo cards and smaller typography. */
+.pub-app.pub-refined .pub-collection {
+  max-width:1510px;
+  padding:clamp(65px,6vw,88px) clamp(24px,5vw,74px) 95px;
+}
+.pub-app.pub-refined .pub-section-heading {
+  align-items:end;
+  margin-bottom:30px;
+}
+.pub-app.pub-refined .pub-section-heading h2 {
+  font:400 clamp(39px,4vw,60px)/1.09 "Libre Caslon Display",Georgia,serif;
+  color:#294633;
+  letter-spacing:-.03em;
+}
+.pub-app.pub-refined .pub-section-heading h2 > span {color:#90a28c;}
+.pub-app.pub-refined .pub-section-heading > p {font:400 12px/1.8 "DM Sans",sans-serif;color:#838477;}
+.pub-app.pub-refined .pub-search {
+  background:#fff;
+  border:1px solid #e0e0d7;
+  border-radius:3px;
+  max-width:350px;
+}
+.pub-app.pub-refined .pub-search input {font:400 12px "DM Sans",sans-serif;}
+.pub-app.pub-refined .pub-category-filters button {
+  padding:9px 14px;
+  border:1px solid #dddcd3;
+  border-radius:2px;
+  font:600 10px/1.3 "DM Sans",sans-serif;
+  background:#fff;
+}
+.pub-app.pub-refined .pub-category-filters .pub-filter-active {
+  background:#254733;
+  border-color:#254733;
+  color:#fff;
+}
+.pub-app.pub-refined .pub-products-grid {
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:23px;
+  row-gap:40px;
+}
+.pub-app.pub-refined .pub-card-image {
+  border-radius:3px;
+  aspect-ratio:1.18;
+  background:#f0eee8;
+}
+.pub-app.pub-refined .pub-card-meta {margin-top:14px;}
+.pub-app.pub-refined .pub-card-meta > span:first-child {color:#78826f;font-size:9px;letter-spacing:1.4px;}
+.pub-app.pub-refined .pub-card-bottom h3 {
+  font:400 clamp(23px,2.1vw,31px)/1.1 "Libre Caslon Display",Georgia,serif;
+  color:#284b35;
+}
+.pub-app.pub-refined .pub-card-material {color:#8b8f80;font:400 11px/1.8 "DM Sans",sans-serif;}
+.pub-app.pub-refined .pub-story {
+  max-width:1510px;
+  background:#eff0e9;
+  padding:48px clamp(24px,5vw,74px);
+}
+.pub-app.pub-refined .pub-story h2 {font:400 clamp(35px,3.8vw,52px)/1.11 "Libre Caslon Display",Georgia,serif;}
+.pub-app.pub-refined .pub-reference-process {
+  max-width:1510px;
+  padding:70px clamp(24px,5vw,74px) 80px;
+}
+.pub-app.pub-refined .pub-reference-process h2 {font:400 clamp(36px,3.9vw,57px)/1.1 "Libre Caslon Display",Georgia,serif;}
+.pub-app.pub-refined .pub-reference-process-grid {gap:22px;margin-top:38px;}
+.pub-app.pub-refined .pub-reference-process-grid h3 {font:400 28px/1.15 "Libre Caslon Display",Georgia,serif;color:#294b35;}
+.pub-app.pub-refined .pub-reference-process-grid p {font:400 12px/1.85 "DM Sans",sans-serif;}
+.pub-app.pub-refined .pub-reference-wide-feature {
+  max-width:1510px;
+  min-height:330px;
+  padding:35px clamp(30px,6vw,85px);
+  margin-bottom:60px;
+}
+.pub-app.pub-refined .pub-reference-wide-feature > img {filter:saturate(.8) brightness(.68);}
+.pub-app.pub-refined .pub-reference-wide-feature h2 {font:400 clamp(43px,5vw,72px)/1.02 "Libre Caslon Display",Georgia,serif;color:#fff;}
+.pub-app.pub-refined .pub-reference-wide-feature h2 em {color:#eee8dd;}
+.pub-app.pub-refined .pub-reference-wide-feature button {margin-top:23px;}
+.pub-app.pub-refined .pub-footer {background:#1e3a2b;color:#f4f2e9;}
+.pub-app.pub-refined .pub-detail-section {max-width:1510px;}
+.pub-app.pub-refined .pub-detail-copy h1 {font:400 clamp(43px,4.2vw,64px)/1.06 "Libre Caslon Display",Georgia,serif;color:#294a37;}
+
+/* ------------------------ STAFF COLLECTION STUDIO ------------------------ */
+.admin-app.brutti-staff-redesign[data-active-tab] {
+  font-family:"DM Sans",system-ui,sans-serif;
+  background:#f8f9f5;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .admin-main {
+  background:#f8f9f5;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar,
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme="dark"] .sidebar {
+  background:#f7f8f3;
+  border-color:#e0e5dc;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .topbar {
+  min-height:70px;
+  background:#fff;
+  border-color:#e5e8e0;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .admin-content {
+  padding-top:clamp(23px,3vw,36px);
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome {
+  padding:3px 0 18px;
+  margin-bottom:18px;
+  gap:15px;
+  border-color:#e2e5da;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-copy > span {
+  color:#7b9076;
+  font:700 9px/1.5 "DM Sans",sans-serif;
+  letter-spacing:1.7px;
+  margin-bottom:4px;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-copy h2 {
+  font:400 clamp(26px,2.6vw,39px)/1.12 "Libre Caslon Display",Georgia,serif;
+  letter-spacing:-.027em;
+  color:#294632;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-copy p {
+  font:400 11px/1.6 "DM Sans",sans-serif;
+  color:#7c8377;
+  margin-top:6px;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav {
+  background:transparent;
+  border:1px solid #dfe5db;
+  border-radius:3px;
+  padding:4px;
+  gap:3px;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button {
+  min-height:37px;
+  padding:9px 12px;
+  border-radius:2px;
+  font:600 10px/1.3 "DM Sans",sans-serif;
+  letter-spacing:0;
+  color:#697468;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button:first-child {
+  border-color:#dfe6db;
+  color:#294d37;
+  box-shadow:none;
+}
+/* Replace the giant dark marketing banner with a compact studio operations panel. */
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command {
+  position:relative;
+  min-height:276px;
+  padding:28px clamp(25px,3.5vw,53px);
+  align-items:center;
+  margin-bottom:21px;
+  border:1px solid #e0e5da;
+  border-radius:4px;
+  box-shadow:none;
+  color:#284331;
+  background:#edf1e9;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-content {
+  width:61%;
+  max-width:610px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-eyebrow {
+  color:#66826a;
+  font:700 9px/1.4 "DM Sans",sans-serif;
+  letter-spacing:1.6px;
+  margin:0 0 12px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-live-dot {
+  background:#638c66;
+  box-shadow:none;
+  border-radius:50%;
+  width:6px;height:6px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command h1 {
+  color:#254733;
+  font:400 clamp(35px,3.4vw,51px)/1.07 "Libre Caslon Display",Georgia,serif;
+  letter-spacing:-.026em;
+  text-wrap:balance;
+  max-width:550px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command h1 span {
+  color:#52735b;
+  -webkit-text-fill-color:currentColor;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command p {
+  color:#677566;
+  font:400 12px/1.75 "DM Sans",sans-serif;
+  max-width:430px;
+  margin:13px 0 17px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-art {
+  width:40%;
+  inset:0 0 0 auto;
+  background:#e0e2d7;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-art img {
+  filter:saturate(.87) brightness(1.02);
+  object-fit:cover;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-art::after {
+  background:linear-gradient(90deg,#edf1e9 0%,#edf1e9bb 21%,#edf1e900 60%);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-art-label {
+  top:auto;
+  left:auto;
+  bottom:12px;right:13px;
+  background:#fffef2eb;
+  color:#46634a;
+  padding:7px 9px;
+  font:700 8px/1.3 "DM Sans",sans-serif;
+  letter-spacing:.7px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-actions {
+  gap:7px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-actions button {
+  min-height:38px;
+  padding:9px 12px;
+  border-radius:2px;
+  font:600 10px/1.3 "DM Sans",sans-serif;
+  letter-spacing:0;
+  box-shadow:none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-hero-primary {
+  background:#254733;
+  border-color:#254733;
+  color:#fff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-hero-secondary {
+  color:#315a3d;
+  background:#ffffffbd;
+  border:1px solid #c9d7c7;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-hero-tertiary {
+  color:#315b3e;
+  background:transparent;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-insight {
+  position:absolute;
+  width:145px;
+  right:13px;
+  bottom:12px;
+  background:#fffdf8f2;
+  border:1px solid #e5e8df;
+  border-radius:3px;
+  padding:10px 12px;
+  box-shadow:0 1px 4px #10261915;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-insight > strong {
+  color:#2b5138;
+  font:400 32px/1 "Libre Caslon Display",Georgia,serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-insight > span {color:#829181;font-size:8px;letter-spacing:.6px;}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-insight > small {color:#778477;font-size:9px;}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats {
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:11px;
+  margin:0 0 19px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats .overview-stat,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats .overview-stat:nth-child(1),
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats .overview-stat:nth-child(2),
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats .overview-stat:nth-child(3),
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats .overview-stat:nth-child(4) {
+  min-height:102px;
+  padding:14px 17px;
+  border:1px solid #e2e7de;
+  border-radius:3px;
+  background:#fff;
+  box-shadow:none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats .overview-stat > strong {
+  font:400 32px/1 "Libre Caslon Display",Georgia,serif;
+  color:#2e553b;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-product-hero,
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-management-heading,
+.admin-app.brutti-staff-redesign[data-active-tab] .table-panel,
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-gallery-card {
+  border-radius:3px;
+  border-color:#e1e7dd;
+  box-shadow:none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-product-hero h1,
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-management-heading h1 {
+  font:400 clamp(36px,3.8vw,54px)/1.05 "Libre Caslon Display",Georgia,serif;
+  color:#294e36;
+}
+
+/* ---------------------- RESPONSIVE & ACCESSIBILITY --------------------- */
+@media(max-width:1100px) {
+  .pub-app.pub-refined .pub-hero {grid-template-columns:.95fr 1.05fr;min-height:460px;}
+  .pub-app.pub-refined .pub-hero-copy {min-height:460px;padding:45px clamp(28px,4vw,50px);}
+  .pub-app.pub-refined .pub-hero-visual {min-height:460px;}
+  .pub-app.pub-refined .pub-hero h1 {font-size:clamp(42px,5.4vw,68px);}
+  .pub-app.pub-refined .pub-reference-category-grid {grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,255px);}
+  .pub-app.pub-refined .pub-reference-category-tile:first-child {grid-column:auto;grid-row:auto;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-art {width:42%;}
+}
+@media(max-width:800px) {
+  .pub-app.pub-refined .pub-header {min-height:75px;padding:0 5%;}
+  .pub-app.pub-refined .pub-hero {
+    grid-template-columns:1fr;
+    width:90%;
+    min-height:0;
+    height:auto;
+    margin-top:16px;
+  }
+  .pub-app.pub-refined .pub-hero-copy {
+    min-height:0;
+    padding:48px 6% 33px;
+  }
+  .pub-app.pub-refined .pub-hero h1 {font-size:clamp(49px,8.4vw,67px);max-width:570px;}
+  .pub-app.pub-refined .pub-hero-footnote {padding-top:20px;margin-top:18px;}
+  .pub-app.pub-refined .pub-hero-visual {position:relative;width:100%;height:380px;min-height:380px;}
+  .pub-app.pub-refined .pub-hero-visual > img {position:absolute;inset:0;}
+  .pub-app.pub-refined .pub-values-strip {flex-wrap:wrap;padding:18px 5%;gap:10px 18px;}
+  .pub-app.pub-refined .pub-reference-intro {grid-template-columns:1fr;gap:15px;}
+  .pub-app.pub-refined .pub-reference-intro > p {max-width:650px;}
+  .pub-app.pub-refined .pub-products-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .admin-app.brutti-staff-redesign .brutti-staff-welcome {flex-direction:column;align-items:flex-start;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command {min-height:295px;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-content {width:100%;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-art {width:100%;opacity:.17;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-art::after {background:linear-gradient(90deg,#edf1e9 15%,#edf1e9b3);}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-insight {display:none;}
+}
+@media(max-width:580px) {
+  .pub-app.pub-refined .pub-header {min-height:70px;}
+  .pub-app.pub-refined .pub-hero-copy {padding:40px 24px 30px;}
+  .pub-app.pub-refined .pub-hero h1 {font-size:clamp(41px,12vw,59px);margin:18px 0;}
+  .pub-app.pub-refined .pub-hero .pub-eyebrow {font-size:8px;letter-spacing:1.1px;}
+  .pub-app.pub-refined .pub-hero-description {font-size:12px;}
+  .pub-app.pub-refined .pub-hero-visual {height:260px;min-height:260px;}
+  .pub-app.pub-refined .pub-hero-image-label {left:17px;right:17px;bottom:15px;font-size:8px;}
+  .pub-app.pub-refined .pub-hero-number {top:15px;right:16px;font-size:8px;}
+  .pub-app.pub-refined .pub-values-strip .pub-strip-location {display:none;}
+  .pub-app.pub-refined .pub-reference-intro {padding:52px 6% 25px;}
+  .pub-app.pub-refined .pub-reference-intro h2 {font-size:40px;}
+  .pub-app.pub-refined .pub-reference-category-grid {padding:0 5%;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,205px);gap:8px;}
+  .pub-app.pub-refined .pub-reference-category-caption {left:12px;right:12px;bottom:12px;}
+  .pub-app.pub-refined .pub-reference-category-caption strong {font-size:22px;}
+  .pub-app.pub-refined .pub-reference-category-caption small {font-size:9px;}
+  .pub-app.pub-refined .pub-collection {padding:59px 5% 65px;}
+  .pub-app.pub-refined .pub-section-heading h2 {font-size:42px;}
+  .pub-app.pub-refined .pub-products-grid {grid-template-columns:1fr;gap:28px;}
+  .pub-app.pub-refined .pub-reference-process {padding:60px 6%;}
+  .pub-app.pub-refined .pub-reference-wide-feature {min-height:305px;padding:35px 7%;}
+  .pub-app.pub-refined .pub-reference-wide-feature h2 {font-size:46px;}
+  .admin-app.brutti-staff-redesign .brutti-staff-welcome-copy h2 {font-size:32px;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command {min-height:285px;padding:21px;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command h1 {font-size:37px;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command p {font-size:11px;line-height:1.55;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-command-actions button {flex:1 1 auto;font-size:9px;}
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] {
+  background:#17261d;
+  color:#e2e8e0;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] .admin-main {background:#17261d;}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] .topbar {background:#22392b;border-color:#385842;}
+.admin-app.brutti-staff-redesign[data-theme="dark"] .brutti-staff-welcome-copy h2 {color:#edf1e9;}
+.admin-app.brutti-staff-redesign[data-theme="dark"] .brutti-staff-welcome-copy p {color:#c4cebe;}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .catalog-command {background:#223e2c;border-color:#395742;}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .catalog-command h1 {color:#f2f5ed;}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .catalog-command h1 span {color:#c5ddc6;}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .catalog-command p {color:#cad9c8;}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .catalog-command-art::after {background:linear-gradient(90deg,#223e2c,#223e2c70 70%);}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-stats .overview-stat,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-stats .overview-stat:nth-child(1),
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-stats .overview-stat:nth-child(2),
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-stats .overview-stat:nth-child(3),
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-stats .overview-stat:nth-child(4) {
+  background:#263b2e;border-color:#435d48;color:#ebf0e7;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-stats .overview-stat > strong {color:#f1f4eb;}
+@media(prefers-reduced-motion:reduce) {
+  .pub-app.pub-refined .pub-reference-category-tile > img,
+  .pub-app.pub-refined .pub-product-card img {transition:none;}
+}
