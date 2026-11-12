@@ -278,7 +278,7 @@ test('Premium Overview animations respect reduced motion without removing real m
 test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
-  await expect(page.getByRole('heading', { name: /A place for the work./ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Collection desk./ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
   await expect(page.locator('.catalog-command')).toBeVisible();
