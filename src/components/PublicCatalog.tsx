@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  Check,
   ChevronDown,
   Mail,
   Search,
@@ -17,6 +16,7 @@ import { publicAssetUrl } from "../lib/assets";
 import { formatProductPrice } from "../lib/price";
 import { productIdFromHash } from "../lib/routes";
 import "./public.css";
+import "./brutti-atelier.css";
 
 interface Props {
   products: Product[];
@@ -98,6 +98,9 @@ export default function PublicCatalog({
     () => products.filter((product) => product.status === "published"),
     [products],
   );
+  // Only published project imagery may appear on the catalogue cover.
+  const heroImage = published.find((item) => item.featured && item.images[0]?.url)?.images[0]?.url
+    ?? published.find((item) => item.images[0]?.url)?.images[0]?.url;
   const product =
     productId === null
       ? undefined
@@ -153,20 +156,21 @@ export default function PublicCatalog({
         )
         .slice(0, 3)
     : [];
-  const card = (item: Product) => (
+  const card = (item: Product, index: number) => (
     <a
       href={`#/product/${encodeURIComponent(item.id)}`}
       className="pub-product-card"
       key={item.id}
     >
       <div className="pub-card-image">
+        <span className="pub-card-index">{String(index + 1).padStart(2, "0")} / B.</span>
         <FurnitureImage
           src={item.images[0]?.url}
           alt={item.images[0]?.alt || item.name}
         />
         {item.featured && (
           <span className="pub-featured-tag">
-            <Sparkles size={11} /> Featured
+            Selected work
           </span>
         )}
         <span className="pub-card-open" aria-hidden="true">
@@ -207,7 +211,7 @@ export default function PublicCatalog({
           aria-label="Brutti catalog home"
         >
           <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" className="pub-official-logo" />
-          <small>THE FURNITURE COLLECTION</small>
+          <small>WORKSHOP / COLLECTION</small>
         </a>
         <nav
           id="pub-mobile-nav"
@@ -215,10 +219,10 @@ export default function PublicCatalog({
           aria-label="Main navigation"
         >
           <button className="pub-nav-active" onClick={() => browseCollection()}>
-            Collection
+            The index
           </button>
           <button onClick={() => browseCollection(true)}>
-            Featured pieces
+            Highlights
           </button>
           <button
             onClick={() => {
@@ -228,13 +232,11 @@ export default function PublicCatalog({
               setMobileMenu(false);
             }}
           >
-            Our philosophy
+            About
           </button>
         </nav>
         <div className="pub-header-actions">
-          <button className="pub-admin-link" onClick={onAdmin}>
-            Manage catalog <ArrowUpRight size={15} />
-          </button>
+          <span className="pub-header-edition">COLLECTION / 2026</span>
           <button
             className="pub-menu-toggle"
             aria-expanded={mobileMenu}
@@ -250,72 +252,56 @@ export default function PublicCatalog({
       <main id="pub-main" tabIndex={-1}>
         {productId === null && (
           <>
-            <section className="pub-hero">
+            <section className="pub-hero" aria-labelledby="pub-hero-title">
               <div className="pub-hero-copy">
-                <p className="pub-eyebrow">
-                  <span /> THE BRUTTI COLLECTION · VOL. 01
-                </p>
-                <h1>
-                  Good design.
-                  <br />
-                  <em>Better living.</em>
-                </h1>
-                <p className="pub-hero-description">
-                  Considered furniture for the spaces you call home. Natural
-                  materials, quiet details, enduring character.
-                </p>
-                <button
-                  className="pub-primary-button"
-                  onClick={() => browseCollection()}
-                >
-                  Explore the collection <ArrowRight size={17} />
-                </button>
-                <div className="pub-hero-footnote">
-                  <span className="pub-hero-line" /> Thoughtfully selected.
-                  Beautifully simple.
+                <div className="pub-hero-topline"><span>BENUA BRUTTI / THE CURRENT EDITION</span><span>01 — 26</span></div>
+                <p className="pub-eyebrow">FURNITURE, FIXTURES & CUSTOM SPACES</p>
+                <h1 id="pub-hero-title">SPACE,<br />MADE TO<br /><em>ORDER.</em></h1>
+                <div className="pub-hero-bottom">
+                  <p className="pub-hero-description">Furniture. Kiosks. Counters. Custom pieces.<br />Built around the brief, not a template.</p>
+                  <button className="pub-primary-button" onClick={() => browseCollection()}>
+                    Explore the collection <ArrowUpRight size={17} />
+                  </button>
                 </div>
+                <div className="pub-hero-footnote"><span>BENUA BRUTTI</span><span>DESIGN & FABRICATION / SABAH</span></div>
               </div>
               <div className="pub-hero-visual">
-                <FurnitureImage
-                  src="/images/hero.jpg"
-                  alt="A warm, considered living space with natural wood furniture"
-                  eager
-                />
+                {heroImage ? (
+                  <FurnitureImage src={heroImage} alt="Selected published piece from Benua Brutti's collection" eager />
+                ) : (
+                  <div className="pub-hero-no-photo" role="img" aria-label="Brutti collection cover">
+                    <span>B.</span><small>THE WORK / EDITION 01</small>
+                  </div>
+                )}
                 <div className="pub-hero-image-label">
-                  <span>A LITTLE MORE HOME.</span>
-                  <ArrowUpRight size={23} />
+                  <span>{heroImage ? "FROM THE BRUTTI COLLECTION" : "THE BRUTTI WORK INDEX"}</span>
+                  <span>01 / SELECTED WORK</span>
                 </div>
-                <span className="pub-hero-number">
-                  01 / THE ART OF EVERYDAY
-                </span>
               </div>
             </section>
-            <div className="pub-values-strip">
-              <span>
-                <Check size={15} /> Considered materials
-              </span>
-              <span>
-                <Check size={15} /> Purposeful design
-              </span>
-              <span>
-                <Check size={15} /> Spaces with character
-              </span>
-              <span className="pub-strip-location">
-                BENUA BRUTTI SDN. BHD. <ArrowDown size={14} />
-              </span>
+            <div className="pub-values-strip" aria-label="Collection index">
+              <span><b>001</b> / BRUTTI WORK INDEX</span>
+              <span>FURNITURE <i/> FIXTURES <i/> SPACES</span>
+              <span className="pub-strip-location">SCROLL TO EXPLORE <ArrowDown size={16} /></span>
             </div>
+            <section className="pub-editorial-note" aria-label="About the Brutti collection">
+              <div className="pub-editorial-side">A NOTE FROM THE WORKSHOP <span>— 01</span></div>
+              <div>
+                <h2>Every brief is <em>different.</em><br />So is every build.</h2>
+                <p>From retail counters to one-off furniture, the collection brings together pieces made for different spaces and different needs. Take a closer look at the work.</p>
+              </div>
+              <div className="pub-editorial-number" aria-hidden="true">B/01</div>
+            </section>
             <section id="pub-collection" className="pub-collection">
               <div className="pub-section-heading">
                 <div>
-                  <p className="pub-eyebrow">FIND YOUR NEXT FAVOURITE</p>
+                  <p className="pub-eyebrow">02 / THE WORK INDEX</p>
                   <h2>
-                    The collection<span>.</span>
+                    Selected work<span>.</span>
                   </h2>
                 </div>
                 <p>
-                  Pieces to make a space your own.
-                  <br />
-                  Explore, discover, and make room.
+                  Furniture, fixtures and projects.<br />A closer look at what we make.
                 </p>
               </div>
               <div className="pub-collection-tools">
@@ -324,7 +310,7 @@ export default function PublicCatalog({
                   <span className="pub-sr-only">Search the catalog</span>
                   <input
                     type="search"
-                    placeholder="Search furniture, materials…"
+                    placeholder="Search the collection..."
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                   />
@@ -361,7 +347,7 @@ export default function PublicCatalog({
                     className={category === "all" ? "pub-filter-active" : ""}
                     onClick={() => setCategory("all")}
                   >
-                    All furniture <span>{published.length}</span>
+                    Everything <span>{published.length}</span>
                   </button>
                   {categories.map((item) => (
                     <button
@@ -381,7 +367,7 @@ export default function PublicCatalog({
                   aria-pressed={featuredOnly}
                   onClick={() => setFeaturedOnly(!featuredOnly)}
                 >
-                  <Sparkles size={14} /> Featured only
+                  Selected only
                 </button>
               </div>
               <div className="pub-results-label" role="status">
@@ -417,14 +403,14 @@ export default function PublicCatalog({
                   </button>
                 </div>
               ) : filtered.length ? (
-                <div className="pub-products-grid">{filtered.map(card)}</div>
+                <div className="pub-products-grid">{filtered.map((item, index) => card(item, index))}</div>
               ) : (
                 <div className="pub-empty-state">
                   <Search size={28} />
                   <h3>No pieces found.</h3>
                   <p>Try another search or explore a different category.</p>
                   <button className="pub-primary-button" onClick={resetFilters}>
-                    View all furniture <ArrowRight size={16} />
+                    Explore all pieces <ArrowRight size={16} />
                   </button>
                 </div>
               )}
@@ -575,9 +561,9 @@ export default function PublicCatalog({
                     <div className="pub-detail-promise">
                       <span className="pub-promise-symbol">b.</span>
                       <p>
-                        A considered addition to your everyday.
-                        <br />
-                        <span>Designed to feel right at home.</span>
+                        The right piece should belong to its space.
+                         <br />
+                         <span>Details, materials and proportions matter.</span>
                       </p>
                     </div>
                   </div>
@@ -593,7 +579,7 @@ export default function PublicCatalog({
                         View the collection <ArrowRight size={16} />
                       </a>
                     </div>
-                    <div className="pub-products-grid">{related.map(card)}</div>
+                    <div className="pub-products-grid">{related.map((item, index) => card(item, index))}</div>
                   </section>
                 )}
               </>
@@ -602,20 +588,17 @@ export default function PublicCatalog({
         )}
         <section className="pub-story" id="pub-story">
           <div>
-            <p className="pub-eyebrow">LESS, BUT BETTER</p>
+            <p className="pub-eyebrow">03 / THE WORKSHOP</p>
             <h2>
-              A home is a feeling.
-              <br />
-              <em>Make room for it.</em>
+              The brief comes first.<br /><em>The build follows.</em>
             </h2>
           </div>
           <div>
             <p>
-              We believe beautiful spaces begin with thoughtful choices.
-              Furniture with warmth, purpose, and room for the way you live.
+              We make furniture and fixtures for the way spaces actually work. Different scales, different materials, different jobs — always a specific brief.
             </p>
             <button onClick={() => browseCollection()}>
-              Find your piece <ArrowRight size={18} />
+              Back to the index <ArrowRight size={18} />
             </button>
           </div>
         </section>
@@ -628,20 +611,19 @@ export default function PublicCatalog({
           <p>
             BENUA BRUTTI SDN. BHD.
             <br />
-            Furniture for a more considered everyday.
+            Custom furniture. Kiosks. Counters. Fixtures.
           </p>
         </div>
         <div className="pub-footer-right">
           {enquiryEmail ? (
             <a href={`mailto:${enquiryEmail}`}>
-              Let’s make room. <ArrowUpRight size={15} />
+              Start a conversation <ArrowUpRight size={15} />
             </a>
           ) : (
             <span className="pub-footer-enquiry">Enquiries coming soon.</span>
           )}
-          <small>
-            © {new Date().getFullYear()} Benua Brutti Sdn. Bhd.
-          </small>
+          <small>© {new Date().getFullYear()} Benua Brutti Sdn. Bhd.</small>
+          <button className="pub-footer-admin" onClick={onAdmin}>Staff access <ArrowUpRight size={12}/></button>
         </div>
       </footer>
     </div>
