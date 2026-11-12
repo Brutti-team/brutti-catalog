@@ -114,7 +114,7 @@ test("invite callback sets a verified user's password without granting admin mem
   expect(updates).toBe(0);
   await page.getByLabel("Confirm password", { exact: true }).fill("new-invite-password");
   await page.getByRole("button", { name: "Save password" }).click();
-  await expect(page.getByRole("heading", { name: "Admin access required" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Access restricted." })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add product" })).toHaveCount(0);
   expect(updates).toBe(1);
 });
