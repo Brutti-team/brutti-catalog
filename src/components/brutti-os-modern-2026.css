@@ -715,3 +715,159 @@
   .admin-app.brutti-staff-redesign[data-active-tab] .overview-stats .overview-stat,
   .pub-app.pub-refined .pub-product-card img { transition: none; transform: none; }
 }
+
+
+/* 7. PRODUCTS MANAGEMENT: keep every detail legible on the light OS canvas */
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero {
+  min-height: 174px;
+  padding: 25px 29px;
+  background: #fff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero::before { display: none; }
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero-eyebrow {
+  color: #638d70;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero p { color: #708474; }
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero-meta > span {
+  border: 1px solid #e2ebe3;
+  border-radius: 8px;
+  background: #f4f8f4;
+  color: #466c52;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero-status {
+  border-left: 1px solid #dfebe1;
+  color: #667d6c;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero-status > span,
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero-status div span { color: #748c78; }
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-product-hero-status strong { color: #205238; }
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-products-add-button {
+  border: 1px solid #20523a;
+  box-shadow: none;
+  background: #20523a;
+  color: #fff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="products"] .catalog-products-add-button:hover:not(:disabled) { background: #153f2c; color: #fff; }
+.admin-app.brutti-staff-redesign[data-active-tab] .category-card,
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-gallery-card {
+  overflow: hidden;
+  border: 1px solid #dfe9e1;
+  border-radius: 14px;
+  background: var(--admin-surface);
+  box-shadow: 0 5px 15px rgb(26 54 35 / 4%);
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .category-cover { overflow: hidden; }
+.admin-app.brutti-staff-redesign[data-active-tab] .category-card:hover,
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-gallery-card:hover {
+  border-color: #b7cdbd;
+  box-shadow: 0 10px 30px rgb(26 54 35 / 8%);
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .upload-zone {
+  border: 1px dashed #9db9a5;
+  border-radius: 12px;
+  background: #f5f9f4;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .category-form input,
+.admin-app.brutti-staff-redesign[data-active-tab] .category-form textarea,
+.admin-app.brutti-staff-redesign[data-active-tab] .form-section input,
+.admin-app.brutti-staff-redesign[data-active-tab] .form-section textarea,
+.admin-app.brutti-staff-redesign[data-active-tab] .form-section select {
+  border-radius: 9px;
+}
+
+/* 8. STAFF LOGIN: same clear OS typography and surfaces, all auth preserved */
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-shell {
+  grid-template-columns: minmax(0, .9fr) minmax(430px, 1.1fr);
+  background: #f3f7f3;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story {
+  background-color: #1f4331;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story::after {
+  background: linear-gradient(180deg, rgb(10 33 19 / 44%), rgb(13 47 27 / 14%) 38%, rgb(12 39 24 / 88%));
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 {
+  max-width: 620px;
+  color: #fff;
+  font: 750 clamp(43px, 4.4vw, 71px)/1.1 "Manrope", "DM Sans", sans-serif;
+  letter-spacing: -.05em;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 em {
+  color: #cce4cb;
+  font-style: normal;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-form-side {
+  background: #f4f7f4;
+  color: #1d3b2b;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-auth-surface {
+  max-width: 460px;
+  padding: clamp(22px, 2.8vw, 38px);
+  border: 1px solid #dfebe1;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 15px 45px rgb(26 63 39 / 6%);
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-brand {
+  margin-bottom: 24px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-brand img { width: 125px; }
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-kicker {
+  color: #4c8663;
+  letter-spacing: 1.5px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-kicker-dot {
+  background: #4c8663;
+  border-radius: 50%;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-heading h1 {
+  color: #1f4630;
+  font: 750 clamp(30px, 3.3vw, 45px)/1.13 "Manrope", sans-serif;
+  letter-spacing: -.045em;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-description {
+  color: #6d8171;
+  font: 400 12px/1.8 "DM Sans", sans-serif;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-field > label,
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-field-head label {
+  color: #466a52;
+  letter-spacing: .5px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input {
+  min-height: 48px;
+  border: 1px solid #dce8df;
+  border-radius: 9px;
+  background: #f9fbf9;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input svg { color: #718e78; }
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-submit {
+  min-height: 48px;
+  border: 1px solid #1e5438;
+  border-radius: 9px;
+  background: #1e5438;
+  font: 700 12px/1.4 "DM Sans", sans-serif;
+  letter-spacing: .15px;
+  text-transform: none;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-public {
+  min-height: 43px;
+  border: 1px solid #d7e5da;
+  border-radius: 9px;
+  background: #eff6ef;
+  color: #24543a;
+  font: 700 11px/1.4 "DM Sans", sans-serif;
+  letter-spacing: .2px;
+  text-transform: none;
+}
+@media (max-width: 850px) {
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-shell { grid-template-columns: 1fr; }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story { min-height: 255px; }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 { font-size: clamp(36px, 7vw, 52px); }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-form-side { min-height: auto; }
+}
+@media (max-width: 480px) {
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-auth-surface { padding: 22px 20px; }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story { min-height: 210px; }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 { font-size: 36px; }
+}
