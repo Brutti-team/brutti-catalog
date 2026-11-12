@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  Check,
   ChevronDown,
   Mail,
   Search,
