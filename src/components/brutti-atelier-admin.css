@@ -181,3 +181,13 @@
   .admin-app[data-active-tab="products"] .catalog-product-hero {padding:28px 22px}
   .admin-app[data-active-tab="products"] .catalog-product-hero h1 {font-size:49px}
 }
+
+/* Preserve WCAG contrast and authentic dark-mode surfaces. */
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active {
+  background:#364b3b!important;
+  color:#faf7ec!important;
+}
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
+  color:#faf7ec!important;
+  background:transparent!important;
+}
