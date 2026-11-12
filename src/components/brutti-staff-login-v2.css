@@ -1,0 +1,293 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Karla:wght@400;500;600;700&display=swap");
+
+/* Benua Brutti staff access v2. Original Brutti logo preserved; Auth untouched. */
+.admin-app.admin-access-shell .catalog-login-page.brutti-login-redesign {
+  min-height:100dvh;
+  padding:0;
+  background:#f8f5ee;
+  overflow-x:clip;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-shell {
+  min-height:100dvh;
+  width:100%;
+  max-width:none;
+  margin:0;
+  border:0;
+  border-radius:0;
+  display:grid;
+  grid-template-columns:minmax(0, 1.04fr) minmax(430px, .96fr);
+  box-shadow:none;
+  background:#f8f5ee;
+  animation:none;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story {
+  display:flex;
+  min-height:100dvh;
+  padding:clamp(30px,4vw,60px);
+  justify-content:space-between;
+  color:#fffaf2;
+  background-color:#3a3026;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  isolation:isolate;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story::after {
+  z-index:0;
+  background:linear-gradient(180deg,rgba(12,20,15,.33),transparent 27%),
+    linear-gradient(0deg,rgba(10,20,15,.78),rgba(10,20,15,.18) 49%,transparent);
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-art {display:none;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-top {align-items:start;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-serial {
+  font:700 9px/1.6 "Karla",sans-serif;
+  letter-spacing:2px;
+  color:#f1e7d8;
+  text-align:right;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-wordmark {
+  width:148px;
+  height:auto;
+  min-height:80px;
+  align-items:flex-start;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-wordmark img {
+  width:100%;
+  height:auto;
+  filter:brightness(0) invert(1);
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy {
+  max-width:650px;
+  padding-bottom:clamp(38px,6vh,86px);
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-kicker {
+  color:#eddcc5;
+  font:700 10px/1.4 "Karla",sans-serif;
+  letter-spacing:2.7px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 {
+  font:500 clamp(63px,6.2vw,108px)/.94 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:-2.2px;
+  color:#fffaf2;
+  margin:0;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 em {
+  color:#ecd7ba;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy p {
+  font:400 14px/1.9 "Karla",sans-serif;
+  color:#f1e8d9;
+  max-width:380px;
+  margin-top:24px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-foot {
+  font:600 9px/1.5 "Karla",sans-serif;
+  color:#e5d8c8;
+  letter-spacing:2.1px;
+  border-color:#ffffff55;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-form-side {
+  padding:0 clamp(32px,5vw,105px) 24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:stretch;
+  gap:16px;
+  background:#faf8f3;
+  color:#264d39;
+  min-height:100dvh;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  width:100%;
+  margin-top:clamp(24px,3.5vw,47px);
+  font:700 10px/1.5 "Karla",sans-serif;
+  letter-spacing:1.45px;
+  color:#a19484;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-back {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 0;
+  color:#43664e;
+  background:transparent;
+  border:0;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-back:hover {
+  color:#9b6a43;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-auth-surface {
+  width:100%;
+  max-width:440px;
+  margin:auto;
+  padding:25px 0;
+  border:0;
+  box-shadow:none;
+  background:transparent;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-brand {
+  display:flex;
+  align-items:center;
+  flex-direction:column;
+  gap:5px;
+  margin:0 0 clamp(28px,4vw,53px);
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-brand img {
+  display:block;
+  width:150px;
+  height:auto;
+  max-height:92px;
+  object-fit:contain;
+  object-position:center;
+  filter:none;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .brutti-login-brand span {
+  display:block;
+  color:#8e947f;
+  font:700 9px/1.4 "Karla",sans-serif;
+  letter-spacing:3px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-kicker {
+  font:700 10px/1.5 "Karla",sans-serif;
+  letter-spacing:2.7px;
+  color:#9b7756;
+  gap:10px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-kicker-dot {
+  width:6px;height:6px;flex-basis:6px;
+  background:#a9855d;box-shadow:none;border-radius:0;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-heading {
+  margin:12px 0 31px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-heading h1 {
+  font:500 clamp(58px,5vw,78px)/.98 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:-.03em;
+  color:#263f2d;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-description {
+  color:#83796c;
+  font:400 13px/1.9 "Karla",sans-serif;
+  margin-top:14px;
+  max-width:340px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-form {gap:23px;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-field {gap:9px;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-field > label,
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-field-head label {
+  color:#6f665b;
+  font:700 10px/1.5 "Karla",sans-serif;
+  letter-spacing:1.9px;
+  text-transform:uppercase;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input {
+  border:1px solid #dad1c3;
+  border-radius:3px;
+  background:#fffefa;
+  box-shadow:none;
+  min-height:53px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input:focus-within {
+  border-color:#43684e;
+  box-shadow:0 0 0 3px #2d563318;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input svg {color:#9e8b71;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input input,
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input input:focus {
+  color:#283e2d;
+  font:500 15px/1.5 "Karla",sans-serif;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-input input::placeholder {
+  font:400 13px "Karla",sans-serif;
+  color:#a8a397;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-forgot {color:#9b7858;font-size:11px;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-submit {
+  min-height:54px;
+  margin-top:8px;
+  border:1px solid #254c38;
+  border-radius:3px;
+  box-shadow:none;
+  background:#254c38;
+  color:#fff;
+  font:700 11px/1.5 "Karla",sans-serif;
+  text-transform:uppercase;
+  letter-spacing:1.8px;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-submit:hover:not(:disabled) {
+  background:#356448;
+  box-shadow:none;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-divider {margin:23px 0 15px;color:#ada18f;font-size:9px;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-public {
+  border:1px solid #dfd5c7;
+  border-radius:3px;
+  min-height:45px;
+  background:transparent;
+  color:#32543c;
+  font:700 10px/1.5 "Karla",sans-serif;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-public:hover {
+  background:#f0eadf;
+  border-color:#d0bea7;
+}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-security {font-size:10px;color:#958d81;}
+.admin-app.admin-access-shell .brutti-login-redesign .catalog-login-form-foot {
+  color:#ac9a84;
+  font:700 9px/1.5 "Karla",sans-serif;
+  letter-spacing:1.4px;
+  margin:0 auto;
+  width:100%;
+  max-width:500px;
+  padding-bottom:14px;
+}
+@media(max-width:850px) {
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-shell {
+    grid-template-columns:1fr;
+    max-width:none;
+  }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story {
+    display:flex;
+    min-height:265px;
+    padding:20px 7%;
+    justify-content:end;
+  }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-top,
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-foot {display:none;}
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy {
+    margin:0;
+    max-width:none;
+    padding:0;
+  }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 {
+    font-size:clamp(41px,8vw,66px);
+    line-height:.96;
+  }
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy p {display:none;}
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-form-side {
+    min-height:0;
+    padding:22px 7% 18px;
+  }
+  .admin-app.admin-access-shell .brutti-login-redesign .brutti-login-top {margin:0 0 15px;}
+  .admin-app.admin-access-shell .brutti-login-redesign .brutti-login-brand {margin:6px 0 30px;}
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-auth-surface {padding:8px 0 24px;}
+}
+@media(max-width:480px) {
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story {min-height:205px;}
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-story-copy h2 {font-size:46px;}
+  .admin-app.admin-access-shell .brutti-login-redesign .brutti-login-top > span {display:none;}
+  .admin-app.admin-access-shell .brutti-login-redesign .catalog-login-heading h1 {font-size:62px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .admin-app.admin-access-shell .brutti-login-redesign * {animation:none;transition:none;}
+}
