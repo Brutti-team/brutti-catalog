@@ -398,7 +398,10 @@ export default function App() {
     ...item, count: data.products.filter(product => product.categoryId === item.id).length,
   })).sort((a, b) => b.count - a.count);
   const maxCategoryCount = Math.max(1, ...categoryInsights.map(item => item.count));
-  const heroProduct = data.products.find(product => product.images.length && /chair|sofa|bench|armchair/i.test(product.name))
+  const heroProduct = data.products.find(product =>
+    product.status === "published" && product.images.length &&
+    /kiosk|counter|cabinet|display|retail|booth|joinery|fitting/i.test(product.name))
+    ?? data.products.find(product => product.status === "published" && product.images.length)
     ?? data.products.find(product => product.images.length);
   const recentProducts = [...data.products].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 4);
   const filtered = data.products
@@ -575,7 +578,7 @@ export default function App() {
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
                 <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BENUA BRUTTI <span aria-hidden="true">/</span> COLLECTION STUDIO</div>
-                <h1 id="catalog-overview-title">A place for the work.<br /><span>Not another dashboard.</span></h1>
+                <h1 id="catalog-overview-title">Collection desk.<br /><span>Everything in its place.</span></h1>
                 <p>Add a piece, update the photos, set its status and put it in the right collection. Everything in one place.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
