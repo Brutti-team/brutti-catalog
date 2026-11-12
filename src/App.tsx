@@ -1432,7 +1432,7 @@ function Login({
   return (
     <div className="access-page catalog-login-page">
       <div className="catalog-login-shell">
-        <section className="catalog-login-story" aria-label="Brutti Catalog collection studio">
+        <section className="catalog-login-story" aria-label="Brutti Catalog collection studio" style={{ backgroundImage: "url(" + import.meta.env.BASE_URL + "reference/kiosk.svg)" }}>
           <div className="catalog-login-story-top">
             <a href="#/catalog" className="catalog-login-wordmark" aria-label="Open Brutti public catalog">
               <img src={publicAssetUrl("/images/brutti-wordmark.svg")} alt="Brutti" />
@@ -1445,9 +1445,9 @@ function Login({
             <span className="catalog-login-grain" />
           </div>
           <div className="catalog-login-story-copy">
-            <span className="catalog-login-story-kicker">THE COLLECTION STUDIO</span>
-            <h2>Every piece has<br /><em>a story.</em></h2>
-            <p>A considered space for the furniture we make and the details that define it.</p>
+            <span className="catalog-login-story-kicker">BENUA BRUTTI / STAFF PORTAL</span>
+            <h2>Crafted with care.<br /><em>Managed with ease.</em></h2>
+            <p>A thoughtful place for our team to curate the Brutti collection.</p>
           </div>
           <div className="catalog-login-story-foot">
             <span>BENUA BRUTTI</span>
