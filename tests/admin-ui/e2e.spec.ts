@@ -167,7 +167,7 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   // The rail must be consistently sized but may adapt as the brand design evolves.
   expect(styles.width).toBeGreaterThanOrEqual(270);
   expect(styles.width).toBeLessThanOrEqual(310);
-  expect(styles.background).toBe('rgb(33, 59, 47)');
+  expect(styles.background).toBe('rgb(32, 43, 36)');
   // The collection studio has calm navigation and a distinct public-catalog shortcut.
   const railSurface = await sidebar.evaluate(el => ({
     workspaceBorder: getComputedStyle(el.querySelector('.workspace-label')!).borderTopWidth,
@@ -282,7 +282,7 @@ test('enterprise overview shows real catalog health and review actions', async (
   await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
   await expect(page.locator('.catalog-command')).toBeVisible();
-  await expect(page.locator('.catalog-category-bar')).toHaveCount(5);
+  await expect(page.locator('.catalog-category-bar')).toHaveCount(6);
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toBeVisible();
   await expect(page.getByRole('progressbar', { name: 'Published products' })).toBeVisible();
   await page.getByRole('button', { name: 'View products', exact: true }).last().click();
@@ -306,7 +306,7 @@ test('Overview analytics uses a unified premium palette without changing real co
   await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
   await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
-  await expect(page.locator('.catalog-category-bar')).toHaveCount(5);
+  await expect(page.locator('.catalog-category-bar')).toHaveCount(6);
   const bars = await page.locator('.catalog-category-track > span').evaluateAll(items =>
     items.map(el => getComputedStyle(el).backgroundColor));
   expect(new Set(bars.slice(1)).size).toBe(1);
