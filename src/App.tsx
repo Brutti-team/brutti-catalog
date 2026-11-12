@@ -574,9 +574,9 @@ export default function App() {
           {tab === "overview" ? (
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
-                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BRUTTI CATALOG <span aria-hidden="true">/</span> COLLECTION STUDIO</div>
-                <h1 id="catalog-overview-title">Manage your furniture<br /><span>catalog &amp; collections.</span></h1>
-                <p>Everything your workshop creates, beautifully organised. Curate products, check the details and choose what customers see.</p>
+                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BENUA BRUTTI <span aria-hidden="true">/</span> COLLECTION STUDIO</div>
+                <h1 id="catalog-overview-title">A home for your craft.<br /><span>A studio for every detail.</span></h1>
+                <p>Bring your furniture, kiosks and custom work together. Review the details, tell each piece’s story and choose what customers get to explore.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -591,7 +591,7 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="catalog-command-art" aria-label={heroProduct ? `Catalog photo: ${heroProduct.name}` : "Furniture collection"}>
+              <div className="catalog-command-art" aria-label={heroProduct ? `Catalog photo: ${heroProduct.name}` : "Brutti furniture and fixtures"}>
                 {heroProduct ? (
                   <SafeImage src={heroProduct.images[0]?.url} alt={heroProduct.images[0]?.alt || heroProduct.name} loading="lazy" />
                 ) : (
@@ -610,9 +610,9 @@ export default function App() {
           ) : tab === "products" ? (
             <section className="catalog-product-hero" aria-labelledby="catalog-products-title">
               <div className="catalog-product-hero-main">
-                <span className="catalog-product-hero-eyebrow"><span className="catalog-hero-pulse" aria-hidden="true" /> PRODUCT MANAGEMENT <span aria-hidden="true">/</span> BRUTTI WORKSPACE</span>
+                <span className="catalog-product-hero-eyebrow"><span className="catalog-hero-pulse" aria-hidden="true" /> COLLECTION MANAGEMENT <span aria-hidden="true">/</span> BRUTTI STUDIO</span>
                 <h1 id="catalog-products-title">Products</h1>
-                <p>Organise, review and manage your collection from one workspace.</p>
+                <p>Keep each piece beautifully presented, with its own story, imagery and details.</p>
                 <div className="catalog-product-hero-meta">
                   <span><Package size={14} aria-hidden="true" /> {data.products.length} products</span>
                   <span><Images size={14} aria-hidden="true" /> {withPhotos} with photos</span>
