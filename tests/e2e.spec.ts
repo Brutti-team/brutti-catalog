@@ -48,7 +48,7 @@ test("invalid credentials never grant administrator access", async ({ page }) =>
 
 test("catalog public page never fabricates sample products", async ({ page }) => {
   await page.goto("/#/catalog");
-  await expect(page.getByRole("heading", { name: "Good design. Better living." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Made for your space. Built with purpose." })).toBeVisible();
   await expect(page.locator(".pub-products-grid .pub-product-card")).toHaveCount(0);
   await expect(page.getByText("Demo catalog", { exact: false })).toHaveCount(0);
 });
@@ -56,7 +56,7 @@ test("catalog public page never fabricates sample products", async ({ page }) =>
 test("mobile catalog preserves its design and does not overflow horizontally", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/catalog");
-  await expect(page.getByRole("heading", { name: "Good design. Better living." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Made for your space. Built with purpose." })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
