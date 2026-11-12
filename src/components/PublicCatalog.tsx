@@ -17,9 +17,11 @@ import { publicAssetUrl } from "../lib/assets";
 import { formatProductPrice } from "../lib/price";
 import { productIdFromHash } from "../lib/routes";
 import ProductModelViewer from "./ProductModelViewer";
+import ShowroomSections from "./ShowroomSections";
 import { modelForProduct } from "../lib/product-models";
 import "./public.css";
 import "./brutti-3d.css";
+import "./public-reference.css";
 
 interface Props {
   products: Product[];
@@ -108,8 +110,6 @@ export default function PublicCatalog({
       ? undefined
       : published.find((item) => item.id === productId);
   const selectedModel = product ? modelForProduct(product) : null;
-  const heroShowcase = published.find(item => item.images.length && /kiosk|counter|reception|display/i.test(item.name))
-    ?? published.find(item => item.images.length);
   const categoryName = (id: string) =>
     categories.find((item) => item.id === id)?.name || "Furniture";
   const filtered = useMemo(() => {
@@ -147,6 +147,12 @@ export default function PublicCatalog({
       document
         .getElementById("pub-collection")
         ?.scrollIntoView({ behavior: "smooth" });
+  };
+  const exploreShowroom = (keyword: string) => {
+    setQuery(keyword);
+    setCategory("all");
+    setFeaturedOnly(false);
+    browseCollection(false);
   };
   const resetFilters = () => {
     setQuery("");
@@ -226,22 +232,22 @@ export default function PublicCatalog({
             Collection
           </button>
           <button onClick={() => browseCollection(true)}>
-            Featured pieces
+            Featured
           </button>
           <button
             onClick={() => {
               document
-                .getElementById("pub-story")
+                .getElementById("pub-process")
                 ?.scrollIntoView({ behavior: "smooth" });
               setMobileMenu(false);
             }}
           >
-            Our philosophy
+            Our approach
           </button>
         </nav>
         <div className="pub-header-actions">
           <button className="pub-admin-link" onClick={onAdmin}>
-            Manage catalog <ArrowUpRight size={15} />
+            Staff portal <ArrowUpRight size={15} />
           </button>
           <button
             className="pub-menu-toggle"
@@ -285,8 +291,8 @@ export default function PublicCatalog({
               </div>
               <div className="pub-hero-visual">
                 <FurnitureImage
-                  src={heroShowcase?.images[0]?.url ?? "/images/hero.jpg"}
-                  alt={heroShowcase?.images[0]?.alt || heroShowcase?.name || "Benua Brutti furniture craftsmanship"}
+                  src={import.meta.env.BASE_URL + "reference/kiosk.svg"}
+                  alt="Custom timber kiosk design inspiration from the supplied Benua Brutti showroom reference"
                   eager
                 />
                 <div className="pub-hero-image-label">
@@ -312,12 +318,13 @@ export default function PublicCatalog({
                 BENUA BRUTTI SDN. BHD. <ArrowDown size={14} />
               </span>
             </div>
+            <ShowroomSections onExplore={exploreShowroom} />
             <section id="pub-collection" className="pub-collection">
               <div className="pub-section-heading">
                 <div>
                   <p className="pub-eyebrow">EXPLORE OUR WORK</p>
                   <h2>
-                    Crafted to fit<span>.</span>
+                    Made for modern spaces<span>.</span>
                   </h2>
                 </div>
                 <p>
@@ -622,6 +629,7 @@ export default function PublicCatalog({
             )}
           </section>
         )}
+        {productId === null && <ShowroomSections onExplore={exploreShowroom} section="approach" />}
         <section className="pub-story" id="pub-story">
           <div>
             <p className="pub-eyebrow">CUSTOM BY NATURE</p>
