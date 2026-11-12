@@ -37,6 +37,23 @@ test("catalog admin requires actual authentication and never shows unsecured dem
   await expect(page.getByRole("button", { name: "Add product" })).toHaveCount(0);
 });
 
+test("Brutti staff portal keeps the official brand and responsive kiosk login", async ({ page }) => {
+  await page.goto("/#/admin");
+  await expect(page.locator(".brutti-login-redesign")).toBeVisible();
+  await expect(page.getByRole("img", { name: "Brutti official logo" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Welcome back." })).toBeVisible();
+  await expect(page.locator(".catalog-login-story")).toBeVisible();
+  await expect(page.locator(".catalog-login-story-copy")).toContainText("Crafted with care.");
+  await expect(page.getByRole("button", { name: "Back to collection" })).toBeVisible();
+  const photo = await page.locator(".catalog-login-story").evaluate(el => getComputedStyle(el).backgroundImage);
+  expect(photo).toContain("reference/kiosk.jpg");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator(".catalog-login-story")).toBeVisible();
+  await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
 test("invalid credentials never grant administrator access", async ({ page }) => {
   await page.goto("/#/admin");
   await page.getByLabel("Email", { exact: true }).fill("unauthorized@example.test");
