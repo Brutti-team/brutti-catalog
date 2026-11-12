@@ -95,9 +95,9 @@ test('Draft with unknown sizes persists; edit, upload, publish, public filters a
   expect(db.uploads()).toBe(1);
   await page.goto('/#/catalog');
   await expect(page.locator('.pub-product-card')).toHaveCount(1);
-  await page.getByPlaceholder('Search furniture, materials…').fill('no-match');
+  await page.getByPlaceholder('Search the collection...').fill('no-match');
   await expect(page.locator('.pub-product-card')).toHaveCount(0);
-  await page.getByPlaceholder('Search furniture, materials…').fill('');
+  await page.getByPlaceholder('Search the collection...').fill('');
   await page.locator('.pub-category-filters').getByRole('button', { name: 'Rentals', exact: true }).click();
   await expect(page.locator('.pub-product-card')).toHaveCount(0);
   await page.locator('.pub-category-filters').getByRole('button', { name: 'Racks & Shelves', exact: true }).click();
