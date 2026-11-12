@@ -572,9 +572,9 @@ export default function App() {
           {tab === "overview" && (
             <section className="brutti-staff-welcome" aria-label="Brutti collection studio">
               <div className="brutti-staff-welcome-copy">
-                <span>BENUA BRUTTI / CONTENT MANAGER</span>
-                <h2>Collection studio.</h2>
-                <p>Your products, photos and updates — all in one place.</p>
+                <span>BENUA BRUTTI / CATALOG WORKSPACE</span>
+                <h2>Catalog workspace</h2>
+                <p>A clearer place for products, people and the collection.</p>
               </div>
               <div className="brutti-staff-welcome-nav" role="group" aria-label="Collection studio shortcuts">
                 <button type="button" onClick={() => switchTab("products")}>
@@ -597,9 +597,9 @@ export default function App() {
           {tab === "overview" ? (
             <section className="catalog-command" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
-                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BENUA BRUTTI <span aria-hidden="true">/</span> THE COLLECTION STUDIO</div>
-                <h1 id="catalog-overview-title">Your collection,<br /><span>in good order.</span></h1>
-                <p>Keep product details clear, images current and your catalog ready for customers.</p>
+                <div className="catalog-command-eyebrow"><span className="catalog-command-live-dot" /> BENUA BRUTTI <span aria-hidden="true">/</span> WORKSHOP OVERVIEW</div>
+                <h1 id="catalog-overview-title">Made with care.<br /><span>Managed with clarity.</span></h1>
+                <p>Bring the whole collection together — from product photos and specifications to the next piece ready for review.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -694,6 +694,7 @@ export default function App() {
                   </button>
                 </div>
               </div>
+              <div className="catalog-os-section-title"><div><span>YOUR WORKSPACE</span><h2>Collection at a glance</h2></div><p>Live numbers from your catalog</p></div>
               <div className="stats-grid overview-stats">
                 {stats.map((s) => (
                   <button type="button" className="stat-card overview-stat" key={s.title} disabled={loading}
