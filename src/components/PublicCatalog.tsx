@@ -275,18 +275,17 @@ export default function PublicCatalog({
                   <em>Built with purpose.</em>
                 </h1>
                 <p className="pub-hero-description">
-                  From retail kiosks and statement counters to bespoke cabinetry,
-                  we craft considered pieces that bring ideas into the real world.
+                  Custom kiosks, built-in furniture and considered details —
+                  made for spaces that need to look good and work hard.
                 </p>
                 <button
                   className="pub-primary-button"
                   onClick={() => browseCollection()}
                 >
-                  Explore our work <ArrowRight size={17} />
+                  View the collection <ArrowRight size={17} />
                 </button>
                 <div className="pub-hero-footnote">
-                  <span className="pub-hero-line" /> Thoughtfully selected.
-                  Built with character.
+                  <span className="pub-hero-line" /> CUSTOM BUILT · SABAH
                 </div>
               </div>
               <div className="pub-hero-visual">
@@ -296,11 +295,11 @@ export default function PublicCatalog({
                   eager
                 />
                 <div className="pub-hero-image-label">
-                  <span>MADE TO FIT YOUR SPACE.</span>
+                  <span>KIOSKS & CUSTOM INTERIORS</span>
                   <ArrowUpRight size={23} />
                 </div>
                 <span className="pub-hero-number">
-                  01 / THE BRUTTI WORKSHOP
+                  BENUA BRUTTI / THE WORKSHOP
                 </span>
               </div>
             </section>
@@ -324,7 +323,7 @@ export default function PublicCatalog({
                 <div>
                   <p className="pub-eyebrow">EXPLORE OUR WORK</p>
                   <h2>
-                    Made for modern spaces<span>.</span>
+                    Explore the collection<span>.</span>
                   </h2>
                 </div>
                 <p>
