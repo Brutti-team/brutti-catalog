@@ -1,7 +1,7 @@
 import { ArrowRight, DraftingCompass, Hammer, Layers3 } from "lucide-react";
 
 const referenceImage = (name: string) =>
-  import.meta.env.BASE_URL + "reference/" + name + ".svg";
+  import.meta.env.BASE_URL + "reference/" + name + ".jpg";
 
 const collectionTypes = [
   { title: "Retail kiosks", image: "kiosk", keyword: "kiosk", text: "Destinations designed around the customer experience.", category: "01" },
