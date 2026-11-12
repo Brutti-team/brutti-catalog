@@ -420,3 +420,92 @@
   .admin-app.brutti-staff-redesign[data-active-tab] *,
   .admin-app.admin-access-shell .brutti-login-redesign * {animation:none!important;transition:none!important;}
 }
+
+
+/* The reference catalog's understated content-manager navigation, wired to real screens. */
+.admin-app.brutti-staff-redesign .brutti-staff-welcome {
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:24px;
+  padding:9px 0 28px;
+  margin:0 0 22px;
+  border-bottom:1px solid #ded5c7;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-copy > span {
+  display:block;
+  color:#977556;
+  font:700 10px/1.5 "Karla",sans-serif;
+  letter-spacing:2.2px;
+  margin-bottom:10px;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-copy h2 {
+  margin:0;
+  color:#274734;
+  font:500 clamp(38px,4vw,55px)/1 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:-.025em;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-copy p {
+  color:#807769;
+  font:400 12px/1.8 "Karla",sans-serif;
+  margin-top:10px;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav {
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:wrap;
+  background:#f0ebe1;
+  padding:5px;
+  border-radius:5px;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  justify-content:center;
+  border:1px solid transparent;
+  border-radius:3px;
+  padding:12px 14px;
+  min-height:43px;
+  font:700 10px/1.3 "Karla",sans-serif;
+  letter-spacing:.5px;
+  color:#5f6257;
+  background:transparent;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button:hover {
+  color:#284d38;
+  background:#fffdf7;
+  border-color:#e6ded2;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button:first-child {
+  background:#fffdf8;
+  color:#244d37;
+  box-shadow:0 2px 7px #3b2b1510;
+}
+.admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button:focus-visible {
+  outline:2px solid #457753;
+  outline-offset:2px;
+}
+@media(max-width:1100px) {
+  .admin-app.brutti-staff-redesign .brutti-staff-welcome {
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
+@media(max-width:500px) {
+  .admin-app.brutti-staff-redesign .brutti-staff-welcome {gap:16px;}
+  .admin-app.brutti-staff-redesign .brutti-staff-welcome-nav {width:100%;flex-wrap:nowrap;}
+  .admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button {
+    flex:1;
+    padding:10px 5px;
+    font-size:9px;
+    gap:5px;
+  }
+  .admin-app.brutti-staff-redesign .brutti-staff-welcome-nav button svg:last-child {display:none;}
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"] .brutti-staff-welcome {
+  border-color:#405641;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"] .brutti-staff-welcome-copy h2 {color:#e9efe3;}
+.admin-app.brutti-staff-redesign[data-theme="dark"] .brutti-staff-welcome-copy p {color:#bccab8;}
