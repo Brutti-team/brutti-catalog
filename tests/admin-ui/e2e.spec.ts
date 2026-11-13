@@ -150,8 +150,8 @@ test('Brutti collection studio preserves real product actions with new branded d
   await expect(page.locator('.admin-app.brutti-staff-redesign')).toBeVisible();
   await expect(page.locator('.sidebar .brutti-official-logo')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Collection snapshot' })).toBeVisible();
-  await expect(page.locator('.catalog-command-art > img')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Collection snapshot' })).toBeVisible();
+  await expect(page.getByRole('button', { name: `Edit ${fixtureProduct.name}` }).locator('img')).toBeVisible();
   await page.getByRole('button', { name: 'Open gallery' }).click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.locator('.catalog-gallery-card')).toContainText(fixtureProduct.name);
@@ -165,8 +165,8 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   await expect(sidebar.locator('.sidebar-brand-mark')).toHaveCount(0);
   await expect(sidebar.locator('.brutti-official-logo')).toBeVisible();
   await expect(sidebar.locator('.workspace-label .workspace-meta strong')).toHaveText('Benua Brutti');
-  await expect(navigation.locator('.nav-group-label').first()).toHaveText('WORKSPACE');
-  await expect(navigation.locator('.nav-group-label').last()).toHaveText('HISTORY & ACCESS');
+  await expect(navigation.locator('.nav-group-label').first()).toHaveText('Workspace');
+  await expect(navigation.locator('.nav-group-label').last()).toHaveText('History & access');
   await expect(sidebar.locator('.sidebar-last-change')).toHaveCount(0);
   await expect(sidebar.locator('.sidebar-utility .sidebar-public-link')).toBeVisible();
   await expect(navigation.getByRole('button', { name: 'Overview', exact: true })).toHaveAttribute('aria-current', 'page');
@@ -174,36 +174,29 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   await expect(navigation.getByRole('button', { name: /Products/ })).toHaveAttribute('aria-current', 'page');
   await expect(navigation.getByRole('button', { name: 'Overview', exact: true })).not.toHaveAttribute('aria-current', 'page');
 
-  const styles = await sidebar.evaluate(el => {
-    const computed = getComputedStyle(el);
-    return { background: computed.backgroundColor, width: el.getBoundingClientRect().width };
+  const rail = await sidebar.evaluate(el => {
+    const active = el.querySelector('.nav-item.active')!;
+    const item = el.querySelector('nav .nav-item')!;
+    return {
+      position: getComputedStyle(el).position,
+      width: el.getBoundingClientRect().width,
+      footerFill: getComputedStyle(el.querySelector('.sidebar-public-link')!).backgroundColor,
+      activeMark: getComputedStyle(active, '::before').backgroundColor,
+      rowHeight: item.getBoundingClientRect().height,
+    };
   });
-  expect(styles.width).toBeGreaterThanOrEqual(242);
-  expect(styles.width).toBeLessThanOrEqual(246);
-  expect(styles.background).toBe('rgb(242, 240, 233)');
-  const rail = await sidebar.evaluate(el => ({
-    workspaceFill: getComputedStyle(el.querySelector('.workspace-label')!).backgroundColor,
-    activeIconFill: getComputedStyle(el.querySelector('.nav-item.active .nav-icon')!).backgroundColor,
-    footerFill: getComputedStyle(el.querySelector('.sidebar-public-link')!).backgroundColor,
-  }));
-  expect(rail.workspaceFill).toBe('rgba(0, 0, 0, 0)');
-  expect(rail.activeIconFill).toBe('rgba(0, 0, 0, 0)');
-  expect(rail.footerFill).toBe('rgb(33, 75, 53)');
-  const menu = await sidebar.locator('nav .nav-item').first().evaluate(el => ({
-    font: parseFloat(getComputedStyle(el).fontSize),
-    height: el.getBoundingClientRect().height,
-    icon: el.querySelector('.nav-icon')?.getBoundingClientRect().width ?? 0,
-  }));
-  expect(menu.font).toBeGreaterThanOrEqual(12);
-  expect(menu.height).toBeGreaterThanOrEqual(40);
-  expect(menu.icon).toBeGreaterThanOrEqual(17);
+  expect(rail.position).toBe('fixed');
+  expect(rail.width).toBeLessThan(240);
+  expect(rail.footerFill).toBe('rgba(0, 0, 0, 0)');
+  expect(rail.activeMark).not.toBe('rgba(0, 0, 0, 0)');
+  expect(rail.rowHeight).toBeGreaterThanOrEqual(36);
+  expect(rail.rowHeight).toBeLessThanOrEqual(44);
   await expectReadable(page, [
     '.sidebar .workspace-meta strong',
     '.sidebar .workspace-meta small',
     '.sidebar .nav-group-label',
     '.sidebar nav .nav-item.active',
-    '.sidebar .sidebar-public-copy strong',
-    '.sidebar .sidebar-public-copy small',
+    '.sidebar .sidebar-public-link',
   ]);
 });
 
@@ -223,6 +216,19 @@ test('premium sidebar remains useful on narrow mobile and short screens', async 
   }));
   expect(measurements.width).toBeLessThan(measurements.viewport);
   expect(measurements.horizontalOverflow).toBe(false);
+  await expect(sidebar.getByRole('button', { name: 'Close navigation' })).toBeFocused();
+  await expect(page.locator('.admin-main')).toHaveAttribute('inert', '');
+  await page.keyboard.press('Escape');
+  const openNavigation = page.getByRole('button', { name: 'Open navigation' });
+  await expect(openNavigation).toBeFocused();
+  await expect(openNavigation).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('.admin-main')).not.toHaveAttribute('inert', '');
+  await openNavigation.click();
+  await page.setViewportSize({ width: 900, height: 600 });
+  await expect(page.locator('.admin-main')).not.toHaveAttribute('inert', '');
+  await page.setViewportSize({ width: 390, height: 600 });
+  await expect(openNavigation).toHaveAttribute('aria-expanded', 'false');
+  await openNavigation.click();
   await sidebar.getByRole('button', { name: /View public catalog/ }).click();
   await expect(page.getByRole('heading', { name: /Considered spaces/ })).toBeVisible();
 });
@@ -252,81 +258,74 @@ test('Overview auto sync and read-only draft checks remain actionable', async ({
   await refreshNow.click();
   await expect(sync).toContainText('Auto-sync enabled');
   await expect(page.locator('.catalog-recent-title strong')).toHaveText(fixtureProduct.name);
-  const checks = page.locator('.atelier-checklist');
-  await expect(checks).toContainText('Details to verify');
+  const checks = page.getByRole('list', { name: 'Details to verify' });
   await expect(checks).toContainText('Dimensions not confirmed');
   await expect(checks).toContainText('Material details missing');
   await expect(checks).toContainText('Descriptions incomplete');
   await expect(checks.locator('button')).toHaveCount(3);
-  await page.locator('.atelier-review').getByRole('button', { name: 'Review drafts' }).click();
+  await page.getByRole('region', { name: 'Publishing workflow' }).getByRole('button', { name: 'Review drafts' }).click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Quick product status filters' }).getByRole('button', { name: /Draft/ })).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('Premium Overview animations respect reduced motion without removing real metrics', async ({ page }) => {
+test('Overview metrics and category shortcuts stay usable with reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
-  const animations = await page.evaluate(() => ({
-    tile: getComputedStyle(document.querySelector('.overview-stat')!).animationName,
-    category: getComputedStyle(document.querySelector('.atelier-category-track > span')!).animationName,
-    sync: getComputedStyle(document.querySelector('.catalog-overview-automations')!).animationName,
-  }));
-  expect(animations).toEqual({ tile: 'none', category: 'none', sync: 'none' });
-  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(6);
-  await expect(page.locator('.atelier-checklist')).toBeVisible();
-  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
+  const metrics = page.getByRole('region', { name: 'Collection snapshot' });
+  const categories = page.getByRole('region', { name: 'By category' });
+  const buttons = metrics.getByRole('button');
+  await expect(buttons).toHaveCount(6);
+  const animations = await buttons.evaluateAll(items => items.map(item => getComputedStyle(item).animationName));
+  expect(animations).toEqual(Array(6).fill('none'));
+  await expect(page.getByRole('list', { name: 'Details to verify' })).toBeVisible();
+  await expect(categories.getByRole('button', { name: /^View .* products$/ })).toHaveCount(Math.min(7, bruttiCategories.length));
 });
 
-test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
+test('Overview uses a single catalog photograph and keeps coverage and edit actions', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
   await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Publishing workflow' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
-  await expect(page.locator('.catalog-command')).toBeVisible();
-  const feature = page.locator('.brutti-editorial-feature');
-  await expect(feature).toBeVisible();
+  const feature = page.getByRole('button', { name: `Edit ${fixtureProduct.name}`, exact: true });
   await expect(feature.locator('img')).toBeVisible();
   await expect(feature).toContainText(fixtureProduct.name);
-  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
   await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
-  await page.locator('.atelier-categories').getByRole('button', { name: /View .* products/ }).first().click();
-  await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await feature.click();
+  await expect(page.getByRole('dialog').getByLabel('Product name')).toHaveValue(fixtureProduct.name);
 });
 
-test('Overview analytics uses a quiet metric shelf without changing real counts', async ({ page }) => {
+test('Overview uses transparent, unequal metrics and a flat workspace without changing counts', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
-  const metrics = page.locator('.overview-stats .overview-stat');
-  await expect(metrics).toHaveCount(6);
-  const values = await metrics.locator(':scope > strong').allTextContents();
-  expect(values).toEqual(['1','1','0',String(bruttiCategories.length),'0','1']);
-  const backgrounds = await metrics.evaluateAll(items => items.map(el => getComputedStyle(el).backgroundColor));
-  expect(new Set(backgrounds).size).toBeGreaterThan(1);
-  await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
-  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
-  await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
-  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
+  const metrics = page.getByRole('region', { name: 'Collection snapshot' });
+  const values = await metrics.locator('.overview-metric-value').allTextContents();
+  expect(values).toEqual(['1', '0', '1', '0', '1', String(bruttiCategories.length)]);
+  const treatments = await page.locator('.overview-metric, .overview-workflow, .overview-categories').evaluateAll(items =>
+    items.map(item => {
+      const style = getComputedStyle(item);
+      return [style.backgroundColor, style.boxShadow, style.borderLeftWidth, style.borderRightWidth];
+    })
+  );
+  expect(treatments).toHaveLength(8);
+  expect(treatments.every(([fill, shadow, left, right]) => fill === 'rgba(0, 0, 0, 0)' && shadow === 'none' && left === '0px' && right === '0px')).toBe(true);
+  const widths = await metrics.locator('.overview-metric').evaluateAll(items => items.map(item => Math.round(item.getBoundingClientRect().width)));
+  expect(new Set(widths).size).toBeGreaterThan(1);
   await expect(page.locator('.catalog-last-activity')).toBeVisible();
-  await expectReadable(page, ['.overview-stat > strong', '.atelier-panel-heading h2', '.atelier-category-copy strong']);
+  await expectReadable(page, ['.overview-metric-value', '.overview-section-heading h2', '.overview-category-name']);
 });
 
-test('Overview colours preserve dark-mode contrast and mobile width', async ({ page }) => {
+test('Overview preserves dark-mode contrast and fits a mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
   await expectTheme(page, 'dark');
-  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(6);
-  await expectReadable(page, [
-    '.overview-stats .overview-stat:nth-child(1) > strong',
-    '.overview-stats .overview-stat:nth-child(2) > strong',
-    '.overview-stats .overview-stat:nth-child(3) > strong',
-    '.atelier-panel-heading h2',
-    '.atelier-focus-number strong',
-  ], true);
+  const title = page.getByRole('heading', { name: 'Catalog overview' });
+  await expect(title).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Add product', exact: true })).toBeInViewport();
+  await expectReadable(page, ['.overview-metric-value', '.overview-section-heading h2', '.overview-category-name'], true);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
@@ -334,10 +333,11 @@ test('Overview colours preserve dark-mode contrast and mobile width', async ({ p
 test('workshop category directory navigates to product filters without changing data', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
-  const directory = page.locator('.atelier-categories');
+  const directory = page.getByRole('region', { name: 'By category' });
   await expect(directory).toBeVisible();
   await directory.getByRole('button', { name: /View .* products/ }).first().click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Filter by category')).toHaveValue(bruttiCategories[0].id);
   await expect(page.locator('.product-cell').first()).toBeVisible();
 });
 
@@ -686,6 +686,9 @@ for (const role of ['super_admin', 'admin', 'editor'] as const) {
     const navigation = page.getByRole('navigation', { name: 'Admin navigation' });
     await expect(navigation.getByRole('button', { name: 'Users', exact: true })).toHaveCount(role === 'super_admin' ? 1 : 0);
     await expect(navigation.getByRole('button', { name: 'Categories', exact: true })).toHaveCount(role === 'editor' ? 0 : 1);
+    const overview = page.getByRole('region', { name: 'Collection snapshot' });
+    await expect(overview.getByRole('button', { name: 'Categories, view categories', exact: true })).toHaveCount(role === 'editor' ? 0 : 1);
+    await expect(page.getByRole('region', { name: 'By category' }).getByRole('button', { name: 'Manage categories', exact: true })).toHaveCount(role === 'editor' ? 0 : 1);
     await expect(navigation.getByRole('button', { name: 'Activity log', exact: true })).toBeVisible();
   });
 }
@@ -694,7 +697,7 @@ test('dark admin navigation leaves the public catalog light and preserves the sa
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
   await expectTheme(page, 'dark');
-  await page.locator('.topbar').getByRole('button', { name: 'View catalog', exact: true }).click();
+  await page.locator('.sidebar').getByRole('button', { name: 'View public catalog', exact: true }).click();
   await expect(page.getByRole('heading', { name: /Considered spaces/, exact: true })).toBeVisible();
   await expect(page.locator('[data-theme]')).toHaveCount(0);
   await expect(page.locator('.admin-app')).toHaveCount(0);

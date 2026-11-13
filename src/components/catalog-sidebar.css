@@ -1,349 +1,378 @@
-/* Brutti Catalog | refined OS-style navigation rail
-   Deliberately replaces the old card-within-card sidebar treatment.
-   Scoped to the admin shell; public catalog styling and data are untouched. */
-.admin-app {
-  --catalog-nav-width: 300px;
+/* Shared, authenticated Catalog Admin shell. */
+.admin-app[data-active-tab] {
+  --catalog-rail-width: 216px;
+  --catalog-header-height: 64px;
+  --catalog-gutter: clamp(24px, 3.6vw, 64px);
+  --catalog-paper: #faf8f3;
+  --catalog-rail: #f2efe8;
+  --catalog-ink: #292820;
+  --catalog-muted: #6a6457;
+  --catalog-line: #ded9ce;
+  --catalog-hover: #efebe2;
+  --catalog-selection: #e7ebe1;
+  --catalog-accent: #244a37;
+  --catalog-button: #244a37;
+  --catalog-on-button: #faf8f3;
+  --catalog-button-hover: #193a2a;
+  --catalog-error: #8a3a27;
 }
-.admin-app .sidebar,
-.admin-app[data-theme="dark"] .sidebar {
-  --rail-text: #eaf4ed;
-  --rail-muted: #c0d4c5;
-  --rail-label: #aac0b0;
-  --rail-separator: rgb(213 239 220 / 10%);
-  --rail-hover: rgb(226 250 232 / 7%);
-  --rail-selected: #254536;
-  width: var(--catalog-nav-width);
+.admin-app[data-active-tab][data-theme="dark"] {
+  --catalog-paper: #201f1b;
+  --catalog-rail: #282620;
+  --catalog-ink: #f2ede1;
+  --catalog-muted: #c0b8a8;
+  --catalog-line: #494439;
+  --catalog-hover: #312e27;
+  --catalog-selection: #343f33;
+  --catalog-accent: #b9d3b6;
+  --catalog-button: #bfd3bb;
+  --catalog-on-button: #19291f;
+  --catalog-button-hover: #d2e1cf;
+  --catalog-error: #efb29d;
+}
+.admin-app[data-active-tab] > .admin-main {
   min-width: 0;
-  box-sizing: border-box;
-  padding: 13px 17px 15px;
-  overflow: hidden;
-  color: var(--rail-text);
-  border-right: 1px solid #254333;
-  background: #10271e;
-  box-shadow: 2px 0 15px rgb(5 24 13 / 7%);
-  scrollbar-width: none;
+  min-height: 100vh;
+  margin-inline-start: var(--catalog-rail-width);
 }
-.admin-app .sidebar::-webkit-scrollbar { display: none; }
-
-/* Let the Brutti wordmark stand alone; no second brand badge. */
+.admin-app[data-active-tab] > .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  width: var(--catalog-rail-width);
+  padding: 24px 16px 12px;
+  border-inline-end: 1px solid var(--catalog-line);
+  background: var(--catalog-rail);
+  color: var(--catalog-ink);
+  font-family: "DM Sans", system-ui, sans-serif;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
 .admin-app .sidebar > .brand {
-  display: flex;
-  flex: 0 0 auto;
-  justify-content: flex-start;
   align-items: center;
-  width: 100%;
-  min-height: 77px;
+  width: fit-content;
+  margin: 0 0 12px 12px;
+}
+.admin-app .sidebar > .brand img {
+  display: block;
+  width: 92px;
   height: auto;
-  margin: 0 0 12px;
-  padding: 0 10px 12px;
-  border: 0;
-  border-bottom: 1px solid var(--rail-separator);
-  border-radius: 0;
 }
-.admin-app .sidebar > .brand .brutti-official-logo,
-.admin-app[data-theme="dark"] .sidebar > .brand .brutti-official-logo {
+.admin-app[data-theme="dark"] .sidebar > .brand img {
+  filter: brightness(0) invert(.92);
+}
+.admin-app .sidebar-dismiss,
+.admin-app .mobile-menu,
+.admin-app .nav-backdrop {
+  display: none;
+}
+.admin-app .workspace-label {
+  margin: 0 12px 24px;
+  line-height: 1.45;
+}
+.admin-app .workspace-meta strong,
+.admin-app .workspace-meta small {
   display: block;
-  width: 130px;
-  height: 57px;
-  max-height: 57px;
-  max-width: 130px;
-  margin: 0;
-  object-fit: contain;
-  object-position: left center;
-  filter: grayscale(1) brightness(0) invert(1);
-  opacity: .98;
+  overflow-wrap: anywhere;
 }
-
-/* Lightweight workspace identity, not a bordered promotional card. */
-.admin-app .sidebar .workspace-label {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex: 0 0 auto;
-  gap: 12px;
-  width: 100%;
-  min-height: 63px;
-  margin: 0 0 19px;
-  padding: 6px 10px;
-  background: transparent;
-  background-image: none;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  color: var(--rail-text);
-}
-.admin-app .sidebar .workspace-label .workspace-symbol {
-  display: grid;
-  flex: 0 0 34px;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: 0;
-  border-radius: 9px;
-  background: rgb(205 240 215 / 7%);
-  box-shadow: none;
-  color: #cbe6d1;
-}
-.admin-app .sidebar .workspace-label .workspace-symbol svg { width: 19px; height: 19px; }
-.admin-app .sidebar .workspace-label .workspace-meta {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-width: 0;
-  gap: 5px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-.admin-app .sidebar .workspace-label .workspace-meta strong {
-  color: #f1f8f3;
-  font-family: "Manrope", "DM Sans", sans-serif;
+.admin-app .workspace-meta strong {
   font-size: 14px;
-  font-weight: 740;
-  letter-spacing: -.025em;
-  line-height: 1.18;
-  white-space: normal;
+  font-weight: 600;
 }
-.admin-app .sidebar .workspace-label .workspace-meta small {
-  color: #bed0c1;
-  font-size: 11.5px;
-  font-weight: 475;
-  letter-spacing: 0;
-  line-height: 1.3;
-  white-space: normal;
+.admin-app .workspace-meta small {
+  margin-top: 2px;
+  color: var(--catalog-muted);
+  font-size: 12px;
 }
-
-/* A quiet typographic hierarchy, not lines and stacked boxes. */
-.admin-app .sidebar nav {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 0 0 14px;
-  scrollbar-width: none;
-}
-.admin-app .sidebar nav::-webkit-scrollbar { display: none; }
-.admin-app .sidebar .nav-group-label {
+.admin-app .nav-group-label {
   display: block;
-  flex: 0 0 auto;
-  margin: 0;
-  padding: 0 13px 10px;
-  color: var(--rail-label);
-  font-size: 10px;
-  font-weight: 740;
-  letter-spacing: 1.4px;
-  line-height: 1.4;
+  margin: 0 12px 4px;
+  color: var(--catalog-muted);
+  font-size: 12px;
 }
-.admin-app .sidebar .nav-group-label::after { display: none; }
-.admin-app .sidebar .nav-group-second { padding-top: 25px; }
-
-/* Icons are unboxed, active state is subtle with a thin left indicator. */
-.admin-app .sidebar nav .nav-item {
-  display: flex;
+.admin-app .nav-group-second {
+  margin-top: 24px;
+}
+.admin-app .nav-item {
   position: relative;
-  align-items: center;
-  flex: 0 0 auto;
-  gap: 13px;
+  display: flex;
   width: 100%;
-  min-height: 54px;
-  margin: 1px 0;
-  padding: 8px 14px;
-  background: transparent;
-  background-image: none;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  box-shadow: none;
-  color: var(--rail-muted);
-  font-size: 14px;
-  font-weight: 580;
-  letter-spacing: -.01em;
-  line-height: 1.3;
+  min-height: 40px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
   text-align: left;
-  transition: background-color 140ms ease, color 140ms ease;
+  color: var(--catalog-ink);
+  font-size: 14px;
+  font-weight: 500;
 }
-.admin-app .sidebar nav .nav-icon {
+.admin-app .nav-item + .nav-item {
+  margin-top: 2px;
+}
+.admin-app .nav-item:hover,
+.admin-app .sidebar-public-link:hover {
+  background: var(--catalog-hover);
+}
+.admin-app .nav-item[aria-current="page"] {
+  background: var(--catalog-selection);
+  color: var(--catalog-accent);
+  font-weight: 600;
+}
+.admin-app .nav-item[aria-current="page"]::before {
+  position: absolute;
+  inset: 8px auto 8px 0;
+  width: 2px;
+  background: var(--catalog-accent);
+  content: "";
+}
+.admin-app .nav-icon {
   display: grid;
   place-items: center;
-  flex: 0 0 38px;
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  color: #c3dbc8;
-  transition: color 140ms ease;
+  flex: 0 0 20px;
 }
-.admin-app .sidebar nav .nav-icon > svg { width: 20px; height: 20px; }
-.admin-app .sidebar nav .nav-item:hover:not(.active) {
-  background: var(--rail-hover);
-  border-color: transparent;
-  color: #f8fff9;
-}
-.admin-app .sidebar nav .nav-item:hover:not(.active) .nav-icon {
-  color: #effdf2;
-  background: transparent;
-}
-.admin-app .sidebar nav .nav-item.active,
-.admin-app[data-theme="dark"] .sidebar nav .nav-item.active {
-  color: #f9fffa;
-  background: var(--rail-selected);
-  background-image: none;
-  border-color: transparent;
-  box-shadow: none;
-  font-weight: 740;
-}
-.admin-app .sidebar nav .nav-item.active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 12px;
-  bottom: 12px;
-  width: 3px;
-  border-radius: 0 4px 4px 0;
-  background: #b8dec1;
-}
-.admin-app .sidebar nav .nav-item.active .nav-icon,
-.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  color: #effaf1;
-}
-.admin-app .sidebar nav .nav-count,
-.admin-app[data-theme="dark"] .sidebar nav .nav-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  min-width: 32px;
-  height: 26px;
-  margin-left: auto;
-  padding: 3px 7px;
-  border: 0;
-  border-radius: 7px;
-  background: rgb(217 239 222 / 9%);
-  color: #deefe2;
-  font-size: 11.5px;
-  font-weight: 730;
-  line-height: 1;
+.admin-app .nav-count {
+  margin-inline-start: auto;
+  color: var(--catalog-muted);
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
-.admin-app .sidebar nav .nav-item.active .nav-count,
-.admin-app[data-theme="dark"] .sidebar nav .nav-item.active .nav-count {
-  background: rgb(210 243 222 / 13%);
-  color: #f5fff8;
-  border-color: transparent;
+.admin-app .sidebar-utility {
+  margin-top: auto;
+  padding-top: 24px;
+}
+.admin-app .sidebar-public-link {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--catalog-line);
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+}
+.admin-app .sidebar-public-link svg {
+  flex: none;
+  color: var(--catalog-accent);
+}
+.admin-app .sidebar button:focus-visible,
+.admin-app .sidebar a:focus-visible,
+.admin-app .topbar button:focus-visible,
+.admin-app .catalog-overview button:focus-visible {
+  outline: 2px solid var(--catalog-accent);
+  outline-offset: 2px;
 }
 
-/* Footer is an understated utility link rather than another giant card. */
-.admin-app .sidebar .sidebar-utility {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  gap: 0;
-  width: 100%;
-  margin: 0;
-  padding: 11px 0 0;
-  border-top: 1px solid var(--rail-separator);
+/* Keep search and account controls on the same rail as the page content. */
+.admin-app .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: auto minmax(120px, 300px) auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: var(--catalog-header-height);
+  padding: 8px var(--catalog-gutter);
+  border-bottom: 1px solid var(--catalog-line);
+  background: var(--catalog-paper);
+  color: var(--catalog-ink);
 }
-.admin-app .sidebar .sidebar-public-link {
+.admin-app .breadcrumbs,
+.admin-app .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 11px;
-  width: 100%;
-  min-height: 57px;
-  padding: 8px 11px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: transparent;
-  color: #eef7f0;
-  cursor: pointer;
-  text-align: left;
-  box-shadow: none;
-  transition: background-color 140ms ease;
-}
-.admin-app .sidebar .sidebar-public-link:hover {
-  background: var(--rail-hover);
-  border-color: transparent;
-}
-.admin-app .sidebar .sidebar-public-icon {
-  display: grid;
-  flex: 0 0 38px;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  color: #cbe5d1;
-}
-.admin-app .sidebar .sidebar-public-icon > svg { width: 20px; height: 20px; }
-.admin-app .sidebar .sidebar-public-copy {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
+  gap: 12px;
   min-width: 0;
-  gap: 4px;
 }
-.admin-app .sidebar .sidebar-public-copy strong {
-  color: #f0fbf2;
-  font-size: 13.5px;
-  font-weight: 710;
-  line-height: 1.25;
+.admin-app .breadcrumbs {
+  gap: 8px;
+  color: var(--catalog-muted);
+  font-size: 13px;
+  white-space: nowrap;
 }
-.admin-app .sidebar .sidebar-public-copy small {
-  color: #c1d4c5;
-  font-size: 11px;
-  font-weight: 480;
-  line-height: 1.3;
+.admin-app .breadcrumbs strong {
+  color: var(--catalog-ink);
+  font-weight: 600;
 }
-.admin-app .sidebar .sidebar-public-arrow {
-  flex: 0 0 auto;
-  color: #c3dec9;
+.admin-app .catalog-header-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 36px;
+  padding-inline: 8px 0;
+  border-bottom: 1px solid var(--catalog-line);
+  color: var(--catalog-muted);
 }
-.admin-app .sidebar nav .nav-item:focus-visible,
-.admin-app .sidebar a:focus-visible,
-.admin-app .sidebar .sidebar-public-link:focus-visible {
-  outline: 2px solid #c4efcc;
-  outline-offset: 3px;
+.admin-app .catalog-header-search:focus-within {
+  border-color: var(--catalog-accent);
+}
+.admin-app .catalog-header-search input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--catalog-ink);
+  font-size: 14px;
+}
+.admin-app .catalog-header-search input::placeholder {
+  color: var(--catalog-muted);
+  opacity: 1;
+}
+.admin-app .catalog-header-search button,
+.admin-app .topbar :is(.theme-toggle, .header-signout, .header-profile, .mobile-menu) {
+  min-height: 40px;
+  min-width: 40px;
+  padding: 4px;
+  border-radius: 4px;
+}
+.admin-app .catalog-header-search button,
+.admin-app .topbar :is(.theme-toggle, .header-signout) {
+  display: grid;
+  place-items: center;
+}
+.admin-app .topbar button:hover {
+  background: var(--catalog-hover);
+  color: var(--catalog-accent);
+}
+.admin-app .topbar .header-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+.admin-app .topbar .header-profile.active {
+  background: var(--catalog-selection);
+}
+.admin-app .profile-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--catalog-selection);
+  color: var(--catalog-accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+.admin-app .profile-copy {
+  display: grid;
+  max-width: 136px;
+  min-width: 0;
+  gap: 2px;
+}
+.admin-app .profile-copy strong,
+.admin-app .profile-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-app .profile-copy strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.admin-app .profile-copy small {
+  color: var(--catalog-muted);
+  font-size: 12px;
 }
 
-/* Preserve content alignment, readable Profile cards and mobile ergonomics. */
-@media (min-width: 801px) {
-  .admin-app .admin-main {
-    margin-left: var(--catalog-nav-width);
-    min-width: 0;
+@media (min-width: 801px) and (max-width: 1050px) {
+  .admin-app[data-active-tab] {
+    --catalog-rail-width: 192px;
+    --catalog-gutter: 24px;
+  }
+  .admin-app .profile-copy {
+    max-width: 92px;
+  }
+  .admin-app .account-center .account-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-app .account-center .account-mini {
+    grid-column: 1;
   }
 }
-@media (min-width: 801px) and (max-width: 1050px) {
-  .admin-app .admin-content { padding-left: 18px; padding-right: 18px; }
-  .admin-app .account-center .account-cards { grid-template-columns: minmax(0, 1fr); }
-  .admin-app .account-center .account-mini { grid-column: 1; }
-}
-@media (max-height: 690px) {
-  .admin-app .sidebar > .brand { min-height: 66px; margin-bottom: 8px; padding-bottom: 8px; }
-  .admin-app .sidebar .workspace-label { min-height: 55px; margin-bottom: 10px; padding: 4px 9px; }
-  .admin-app .sidebar .nav-group-second { padding-top: 13px; }
-  .admin-app .sidebar nav .nav-item { min-height: 45px; padding-block: 4px; }
-  .admin-app .sidebar .sidebar-utility { padding-top: 6px; }
-  .admin-app .sidebar .sidebar-public-link { min-height: 47px; padding-block: 5px; }
+@media (max-width: 920px) {
+  .admin-app .breadcrumbs > span,
+  .admin-app .breadcrumbs > svg {
+    display: none;
+  }
 }
 @media (max-width: 800px) {
-  .admin-app .sidebar,
-  .admin-app[data-theme="dark"] .sidebar {
-    width: min(310px, 90vw);
-    padding: 13px 15px 16px;
+  .admin-app[data-active-tab] {
+    --catalog-gutter: 20px;
+  }
+  .admin-app[data-active-tab] > .admin-main {
+    margin-inline-start: 0;
+  }
+  .admin-app[data-active-tab] > .sidebar {
+    visibility: hidden;
+    width: min(280px, calc(100% - 48px));
+    transform: translateX(-100%);
+    transition: transform 180ms ease-out;
+  }
+  .admin-app[data-active-tab] > .sidebar.sidebar-open {
+    visibility: visible;
+    transform: translateX(0);
+  }
+  .admin-app .sidebar-dismiss,
+  .admin-app .topbar .mobile-menu {
+    display: grid;
+    place-items: center;
+  }
+  .admin-app .sidebar-dismiss {
+    position: absolute;
+    top: 20px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+  }
+  .admin-app .nav-item {
+    min-height: 44px;
+  }
+  .admin-app .nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgb(35 30 24 / 32%);
+  }
+  .admin-app .topbar {
+    gap: 8px;
+  }
+}
+@media (max-width: 560px) {
+  .admin-app .topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 6px 12px 6px 8px;
+  }
+  .admin-app .topbar-actions {
+    gap: 4px;
+  }
+  .admin-app .catalog-header-search,
+  .admin-app .profile-copy {
+    display: none;
+  }
+  .admin-app .topbar :is(.theme-toggle, .header-signout, .header-profile, .mobile-menu) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .admin-app .topbar .header-profile {
+    justify-content: center;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .admin-app .sidebar nav .nav-item,
-  .admin-app .sidebar nav .nav-icon,
-  .admin-app .sidebar .sidebar-public-link { transition: none; }
+  .admin-app[data-active-tab] > .sidebar {
+    transition: none;
+  }
 }

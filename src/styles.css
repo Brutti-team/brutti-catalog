@@ -122,113 +122,6 @@ h3 {
   margin-top: 5px;
   margin-left: 3px;
 }
-.sidebar {
-  position: fixed;
-  inset: 0 auto 0 0;
-  width: 230px;
-  background: #fff;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 35px 20px 0;
-  z-index: 15;
-}
-.sidebar > .brand {
-  margin: 0 14px 21px;
-}
-.workspace-label {
-  font-size: 8px;
-  color: #919b94;
-  letter-spacing: 1.7px;
-  border-top: 1px solid var(--border);
-  padding: 21px 13px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.workspace-label span {
-  border: 1px solid var(--border);
-  padding: 2px 4px;
-  border-radius: 4px;
-  letter-spacing: 0;
-  font-size: 9px;
-}
-.sidebar nav {
-  padding-top: 10px;
-}
-.nav-group-label {
-  font-size: 8px;
-  font-weight: 650;
-  letter-spacing: 1.6px;
-  color: #9aa59c;
-  padding: 0 14px 14px;
-  display: block;
-}
-.nav-group-second {
-  padding-top: 32px;
-}
-.nav-item {
-  width: 100%;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  text-align: left;
-  padding: 13px 14px;
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #66776a;
-  margin: 3px 0;
-}
-.nav-item:hover {
-  background: #f5f7f3;
-}
-.nav-item.active {
-  background: #eaf1e8;
-  color: #28533f;
-  font-weight: 700;
-}
-.nav-count {
-  margin-left: auto;
-  font-size: 10px;
-  background: #d7e5d4;
-  min-width: 21px;
-  text-align: center;
-  border-radius: 4px;
-  padding: 2px 5px;
-}
-.nav-trailing {
-  margin-left: auto;
-  color: #9aa59c;
-}
-.sidebar-bottom {
-  margin-top: auto;
-}
-.sidebar-note {
-  margin: 35px 7px 23px;
-  padding: 23px 15px 20px;
-  border: 1px solid #e5e9df;
-  border-radius: 8px;
-  background: #fafbf7;
-  color: #54704e;
-}
-.sidebar-note h3 {
-  font-size: 12px;
-  font-weight: 650;
-  margin: 13px 0 9px;
-}
-.sidebar-note p {
-  font-size: 11px;
-  line-height: 1.9;
-  color: #8b9586;
-}
-.sidebar-note > span {
-  font-size: 7px;
-  letter-spacing: 1.1px;
-  display: block;
-  margin-top: 22px;
-  text-transform: uppercase;
-}
 .account {
   display: flex;
   align-items: center;
@@ -274,58 +167,6 @@ h3 {
   margin-top: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.admin-main {
-  margin-left: 230px;
-}
-.topbar {
-  height: 73px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 38px;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-}
-.breadcrumbs {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  font-size: 11px;
-  color: #91a095;
-}
-.breadcrumbs strong {
-  color: #4b6150;
-  font-weight: 500;
-}
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-.connection-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 9px;
-  color: #60835b;
-  border: 1px solid #e2e9dc;
-  background: #f8faf4;
-  border-radius: 20px;
-  padding: 5px 9px;
-}
-.connection-pill > span {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #92ad70;
-}
-.catalog-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 550;
 }
 .admin-content {
   max-width: 1450px;
@@ -431,41 +272,6 @@ h3 {
 }
 .justify-end {
   justify-content: flex-end;
-}
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.stat-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-}
-.stat-card > div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #779171;
-}
-.stat-card > div > span {
-  font-size: 11px;
-  color: #7b8b7d;
-}
-.stat-card > strong {
-  display: block;
-  font-family: Manrope, sans-serif;
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -1.5px;
-  margin: 15px 0 8px;
-}
-.stat-card p {
-  font-size: 8px;
-  color: #9ca599;
-  line-height: 1.6;
 }
 .collection-banner {
   display: flex;
@@ -954,12 +760,6 @@ tr:last-child td {
     background-position: -200% 0;
   }
 }
-.mobile-menu {
-  display: none;
-}
-.nav-backdrop {
-  display: none;
-}
 .modal {
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1315,9 +1115,6 @@ tr:last-child td {
     padding-left: 55px;
     padding-right: 55px;
   }
-  .stats-grid {
-    gap: 22px;
-  }
   .collection-banner {
     height: 275px;
   }
@@ -1333,19 +1130,8 @@ tr:last-child td {
   }
 }
 @media (max-width: 1150px) {
-  .sidebar {
-    width: 200px;
-    padding-left: 13px;
-    padding-right: 13px;
-  }
-  .admin-main {
-    margin-left: 200px;
-  }
   .admin-content {
     padding: 20px 25px 0;
-  }
-  .topbar {
-    padding: 0 25px;
   }
   .table-toolbar {
     flex-wrap: wrap;
@@ -1356,15 +1142,6 @@ tr:last-child td {
   .filters {
     width: 100%;
   }
-  .stats-grid {
-    gap: 10px;
-  }
-  .stat-card {
-    padding: 16px 13px;
-  }
-  .stat-card p {
-    font-size: 7px;
-  }
   .category-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1373,47 +1150,14 @@ tr:last-child td {
   }
 }
 @media (max-width: 800px) {
-  .sidebar {
-    visibility: hidden;
-    transform: translateX(-100%);
-    transition: transform 0.25s;
-    width: 230px;
-  }
-  .sidebar-open {
-    visibility: visible;
-    transform: translateX(0);
-  }
-  .admin-main {
-    margin-left: 0;
-  }
-  .nav-backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: #17342666;
-    z-index: 14;
-  }
-  .mobile-menu {
-    display: grid;
-  }
-  .topbar {
-    height: 63px;
-    padding: 0 18px;
-  }
   .admin-content {
     padding: 18px 22px 0;
   }
   .page-heading {
     margin: 30px 0 24px;
   }
-  .stats-grid {
-    gap: 10px;
-  }
   .collection-banner {
     height: 230px;
-  }
-  .topbar-actions {
-    gap: 13px;
   }
   .editor-columns {
     grid-template-columns: 1fr 230px;
@@ -1437,28 +1181,6 @@ tr:last-child td {
 @media (max-width: 600px) {
   .admin-content {
     padding: 14px 16px 0;
-  }
-  .topbar {
-    height: auto;
-    min-height: 63px;
-    padding: 10px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .breadcrumbs {
-    flex-shrink: 0;
-    gap: 7px;
-    font-size: 10px;
-  }
-  .topbar-actions {
-    flex-shrink: 0;
-    margin-left: auto;
-  }
-  .connection-pill {
-    font-size: 8px;
-  }
-  .catalog-link {
-    font-size: 9px;
   }
   .demo-banner {
     padding: 10px;
@@ -1491,18 +1213,6 @@ tr:last-child td {
     font-size: 10px;
     gap: 5px;
     min-height: 36px;
-  }
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .stat-card {
-    padding: 16px;
-  }
-  .stat-card p {
-    font-size: 8px;
-  }
-  .stat-card > strong {
-    font-size: 29px;
   }
   .collection-banner {
     height: 230px;
@@ -1672,36 +1382,19 @@ tr:last-child td {
   max-width: none;
   flex-shrink: 0;
 }
-.sidebar > .brand {
-  height: 50px;
-  align-items: center;
-}
 .access-card .brand {
   align-items: center;
   min-height: 76px;
 }
 
 /* Catalog administration typography: readable without changing card sizes or layout. */
-.admin-app .workspace-label { font-size: 11px; }
-.admin-app .workspace-label span { font-size: 11px; }
-.admin-app .nav-group-label { font-size: 10px; }
-.admin-app .nav-item { font-size: 14px; }
-.admin-app .nav-count { font-size: 11px; }
-.admin-app .sidebar-note h3 { font-size: 14px; }
-.admin-app .sidebar-note p { font-size: 12px; }
-.admin-app .sidebar-note > span { font-size: 10px; }
 .admin-app .account strong { font-size: 12px; }
 .admin-app .account span { font-size: 11px; }
-.admin-app .breadcrumbs { font-size: 13px; }
-.admin-app .connection-pill { font-size: 11px; }
-.admin-app .catalog-link { font-size: 12px; }
 .admin-app .demo-banner p { font-size: 12px; }
 .admin-app .demo-banner button { font-size: 11px; }
 .admin-app .eyebrow { font-size: 11px; }
 .admin-app .page-heading p { font-size: 13px; }
 .admin-app .button { font-size: 13px; }
-.admin-app .stat-card > div > span { font-size: 13px; }
-.admin-app .stat-card p { font-size: 11px; }
 .admin-app .collection-banner .eyebrow { font-size: 10px; }
 .admin-app .collection-banner p,
 .admin-app .collection-banner button { font-size: 12px; }
@@ -1726,10 +1419,8 @@ tr:last-child td {
 
 @media (max-width: 600px) {
   /* Keep compact phone headings and controls while avoiding tiny labels. */
-  .admin-app .nav-item { font-size: 13px; }
   .admin-app .page-heading .eyebrow { font-size: 10px; }
   .admin-app .page-heading .button { font-size: 11px; }
-  .admin-app .stat-card p { font-size: 10px; }
   .admin-app .collection-banner .eyebrow { font-size: 9px; }
   .admin-app .collection-banner p,
   .admin-app .collection-banner button { font-size: 11px; }
@@ -1741,11 +1432,6 @@ tr:last-child td {
 
 /* Products readability pass: generous desktop type, unchanged table layout. */
 /* Only typography/legibility: no changes to spacing, widths, cards, colors or layout. */
-.admin-app .workspace-label { font-size: 12px; }
-.admin-app .nav-group-label { font-size: 11px; }
-.admin-app .nav-item { font-size: 15px; }
-.admin-app .sidebar-note p { font-size: 13px; }
-.admin-app .sidebar-note > span { font-size: 11px; }
 .admin-app .demo-banner p { font-size: 13px; }
 .admin-app .page-heading p { font-size: 14px; }
 
