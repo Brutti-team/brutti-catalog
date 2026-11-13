@@ -267,16 +267,16 @@ export default function PublicCatalog({
             <section className="pub-hero">
               <div className="pub-hero-copy">
                 <p className="pub-eyebrow">
-                  <span /> BENUA BRUTTI · CUSTOM MADE IN SABAH
+                  <span /> THE BENUA BRUTTI COLLECTION · SABAH
                 </p>
                 <h1>
-                  Custom furniture.
+                  Considered spaces.
                   <br />
-                  <em>Made to fit.</em>
+                  <em>Crafted to belong.</em>
                 </h1>
                 <p className="pub-hero-description">
-                  Kiosks, cabinetry and furniture built to suit real spaces —
-                  from individual pieces to complete fit-outs.
+                  Bespoke furniture, kiosks and fit-outs, thoughtfully made
+                  around the way you live, work and welcome others.
                 </p>
                 <button
                   className="pub-primary-button"
@@ -290,16 +290,16 @@ export default function PublicCatalog({
               </div>
               <div className="pub-hero-visual">
                 <FurnitureImage
-                  src={import.meta.env.BASE_URL + "reference/kiosk.jpg"}
-                  alt="Custom timber kiosk design inspiration from the supplied Benua Brutti showroom reference"
+                  src={import.meta.env.BASE_URL + "reference/hero.jpg"}
+                  alt="Warm interior with sculptural furniture, an editorial design reference for the Benua Brutti collection"
                   eager
                 />
                 <div className="pub-hero-image-label">
-                  <span>KIOSKS & CUSTOM INTERIORS</span>
+                  <span>FURNITURE · JOINERY · INTERIORS</span>
                   <ArrowUpRight size={23} />
                 </div>
                 <span className="pub-hero-number">
-                  BENUA BRUTTI / THE WORKSHOP
+                  BENUA BRUTTI / BESPOKE BY NATURE
                 </span>
               </div>
             </section>

@@ -1,0 +1,509 @@
+/* Benua Brutti — Maison editorial design.
+   Deliberately scoped to visual surfaces. Preserve original product data, photos,
+   filtering, routing, permissions, Supabase operations and approved 3D assets. */
+.pub-app.pub-refined {
+  --maison-ink: #322d27;
+  --maison-forest: #234b37;
+  --maison-paper: #f7f5f1;
+  --maison-muted: #81776c;
+  --maison-rule: #ded8cf;
+  --maison-copper: #a57755;
+  background: var(--maison-paper);
+  color: var(--maison-ink);
+  font-family: "DM Sans", "Karla", system-ui, sans-serif;
+}
+.pub-app.pub-refined h1,
+.pub-app.pub-refined h2,
+.pub-app.pub-refined h3,
+.pub-app.pub-refined .pub-reference-category-caption strong {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -.025em;
+}
+.pub-app.pub-refined .pub-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  width: 100%;
+  max-width: none;
+  min-height: 88px;
+  padding: 0 clamp(22px, 5.1vw, 90px);
+  background: rgb(249 247 243 / 95%);
+  border-bottom: 1px solid #e9e3db;
+  box-shadow: none;
+  backdrop-filter: blur(16px);
+}
+.pub-app.pub-refined .pub-wordmark .pub-official-logo {
+  width: clamp(122px, 11vw, 150px);
+  height: auto;
+}
+.pub-app.pub-refined .pub-wordmark > small {
+  color: #99745b;
+  font: 500 9px/1.5 "DM Sans", sans-serif;
+  letter-spacing: .17em;
+  margin-top: 8px;
+}
+.pub-app.pub-refined .pub-nav { gap: clamp(18px, 3vw, 46px); }
+.pub-app.pub-refined .pub-nav button {
+  color: #766c62;
+  font: 500 13px/1.5 "DM Sans", sans-serif;
+  letter-spacing: .015em;
+  text-transform: none;
+}
+.pub-app.pub-refined .pub-nav button:hover,
+.pub-app.pub-refined .pub-nav .pub-nav-active { color: var(--maison-forest); }
+.pub-app.pub-refined .pub-nav .pub-nav-active::after { background: var(--maison-forest); height: 1px; }
+.pub-app.pub-refined .pub-admin-link {
+  padding: 11px 22px;
+  border: 1px solid #cfc9c0;
+  border-radius: 99px;
+  color: #514a43;
+  background: transparent;
+  font: 600 11px/1.3 "DM Sans", sans-serif;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.pub-app.pub-refined .pub-admin-link:hover {
+  color: #fff;
+  background: var(--maison-forest);
+  border-color: var(--maison-forest);
+}
+.pub-app.pub-refined .pub-hero {
+  display: block;
+  position: relative;
+  width: calc(100% - clamp(28px, 5.1vw, 92px));
+  max-width: 1500px;
+  height: min(730px, calc(100svh - 150px));
+  min-height: 575px;
+  margin: clamp(24px, 3.6vw, 48px) auto 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 26px;
+  background: #3a3129;
+  box-shadow: none;
+}
+.pub-app.pub-refined .pub-hero-visual {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.pub-app.pub-refined .pub-hero-visual > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+  filter: saturate(.85) contrast(.99);
+}
+.pub-app.pub-refined .pub-hero-visual::after {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: linear-gradient(90deg, rgb(25 23 20 / 66%) 0%, rgb(32 28 24 / 38%) 47%, rgb(38 33 26 / 6%) 100%),
+              linear-gradient(0deg, rgb(27 25 21 / 33%), transparent 50%);
+  content: "";
+}
+.pub-app.pub-refined .pub-hero-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(42px, 6.2vw, 104px);
+  background: transparent;
+}
+.pub-app.pub-refined .pub-hero .pub-eyebrow {
+  margin: 0 0 12px;
+  color: #f7eee2;
+  font: 600 10px/1.6 "DM Sans", sans-serif;
+  letter-spacing: .32em;
+}
+.pub-app.pub-refined .pub-hero .pub-eyebrow > span { display: none; }
+.pub-app.pub-refined .pub-hero h1 {
+  max-width: 1000px;
+  margin: 0;
+  color: #fff9f0;
+  font: 400 clamp(62px, 7.8vw, 122px)/.95 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: -.046em;
+  text-shadow: 0 1px 16px rgb(0 0 0 / 12%);
+  text-wrap: balance;
+}
+.pub-app.pub-refined .pub-hero h1 em {
+  color: #f5e8d8;
+  font-style: italic;
+  font-weight: 400;
+}
+.pub-app.pub-refined .pub-hero-description {
+  max-width: 530px;
+  margin: 23px 0 0;
+  color: #f4ebdf;
+  font: 400 15px/1.78 "DM Sans", sans-serif;
+}
+.pub-app.pub-refined .pub-hero .pub-primary-button {
+  min-height: 49px;
+  margin: 28px 0 0;
+  padding: 13px 25px;
+  border: 1px solid #faf5ec;
+  border-radius: 999px;
+  background: #faf5ec;
+  color: #352e27 !important;
+  font: 600 12px/1.3 "DM Sans", sans-serif;
+  letter-spacing: .015em;
+  box-shadow: none;
+}
+.pub-app.pub-refined .pub-hero .pub-primary-button:hover {
+  background: #e7d8c5;
+  color: #352e27 !important;
+  border-color: #e7d8c5;
+}
+.pub-app.pub-refined .pub-hero-footnote { display: none; }
+.pub-app.pub-refined .pub-hero-number {
+  display: block;
+  top: 35px;
+  right: 40px;
+  color: rgb(255 250 242 / 85%);
+  font: 500 10px/1.4 "DM Sans", sans-serif;
+  letter-spacing: .23em;
+}
+.pub-app.pub-refined .pub-hero-image-label {
+  bottom: 28px;
+  right: 40px;
+  left: auto;
+  width: auto;
+  color: rgb(255 248 239 / 90%);
+  font: 500 9px/1.5 "DM Sans", sans-serif;
+  letter-spacing: .17em;
+}
+.pub-app.pub-refined .pub-values-strip {
+  display: flex;
+  max-width: 1500px;
+  padding: 21px clamp(24px, 4vw, 48px);
+  margin: 0 auto;
+  border-bottom: 1px solid var(--maison-rule);
+  background: transparent;
+  color: #696055;
+  justify-content: space-between;
+  gap: 18px;
+}
+.pub-app.pub-refined .pub-values-strip > span {
+  color: #696055;
+  font: 500 10px/1.6 "DM Sans", sans-serif;
+  letter-spacing: .075em;
+}
+.pub-app.pub-refined .pub-values-strip svg { color: var(--maison-copper); }
+.pub-app.pub-refined .pub-reference-intro {
+  max-width: 1500px;
+  padding: clamp(77px, 8vw, 128px) clamp(24px, 5vw, 78px) 34px;
+  background: transparent;
+}
+.pub-app.pub-refined .pub-reference-intro h2,
+.pub-app.pub-refined .pub-section-heading h2,
+.pub-app.pub-refined .pub-reference-process h2 {
+  color: var(--maison-ink);
+  font: 400 clamp(47px, 6.1vw, 86px)/.98 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: -.035em;
+}
+.pub-app.pub-refined .pub-reference-intro h2 em,
+.pub-app.pub-refined .pub-reference-process h2 em { font-weight: 400; color: #987457; }
+.pub-app.pub-refined .pub-reference-intro > p,
+.pub-app.pub-refined .pub-section-heading > p {
+  max-width: 410px;
+  color: var(--maison-muted);
+  font: 400 14px/1.85 "DM Sans", sans-serif;
+}
+.pub-app.pub-refined .pub-reference-eyebrow,
+.pub-app.pub-refined .pub-eyebrow {
+  color: #a0795a;
+  font: 600 10px/1.55 "DM Sans", sans-serif;
+  letter-spacing: .24em;
+}
+.pub-app.pub-refined .pub-reference-category-grid {
+  max-width: 1500px;
+  padding-inline: clamp(24px, 5vw, 78px);
+  gap: 14px;
+}
+.pub-app.pub-refined .pub-reference-category-tile {
+  overflow: hidden;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: none;
+  background: #e5dbcd;
+}
+.pub-app.pub-refined .pub-reference-category-tile > img {
+  filter: saturate(.82) contrast(1.01);
+  transition: transform .5s ease;
+}
+.pub-app.pub-refined .pub-reference-category-tile:hover > img { transform: scale(1.035); }
+.pub-app.pub-refined .pub-reference-category-shade {
+  background: linear-gradient(0deg, rgb(26 24 22 / 78%), transparent 66%);
+}
+.pub-app.pub-refined .pub-reference-category-index {
+  display: block;
+  color: #fffaf1;
+  font: 600 9px/1.3 "DM Sans", sans-serif;
+  letter-spacing: .19em;
+}
+.pub-app.pub-refined .pub-reference-category-caption strong {
+  color: #fff9f1;
+  font: 400 clamp(25px, 2.55vw, 38px)/1.02 "Cormorant Garamond", Georgia, serif;
+}
+.pub-app.pub-refined .pub-reference-category-caption small { color: #f6eee5; font-size: 11px; line-height: 1.55; }
+.pub-app.pub-refined .pub-reference-image-note {
+  color: #9a9186;
+  font: 400 10px/1.6 "DM Sans", sans-serif;
+  letter-spacing: .04em;
+  padding-top: 19px;
+}
+.pub-app.pub-refined .pub-collection {
+  max-width: none;
+  padding: clamp(70px, 7vw, 116px) clamp(24px, 5vw, 78px) 115px;
+  background: #f2eee7;
+  border-top: 1px solid #e7e0d6;
+}
+.pub-app.pub-refined .pub-collection > * { max-width: 1340px; margin-inline: auto; }
+.pub-app.pub-refined .pub-section-heading { margin-bottom: 38px; }
+.pub-app.pub-refined .pub-section-heading h2 {
+  color: var(--maison-ink);
+  margin-top: 8px;
+}
+.pub-app.pub-refined .pub-search,
+.pub-app.pub-refined .pub-sort {
+  min-height: 48px;
+  border: 1px solid #d7cfc3;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 60%);
+  color: #85796e;
+  box-shadow: none;
+}
+.pub-app.pub-refined .pub-search input { color: #38332d; font-family: "DM Sans", sans-serif; }
+.pub-app.pub-refined .pub-sort select { color: #51473e; }
+.pub-app.pub-refined .pub-filter-row { border-bottom: 1px solid var(--maison-rule); }
+.pub-app.pub-refined .pub-category-filters button,
+.pub-app.pub-refined .pub-featured-filter {
+  padding: 11px 15px;
+  border: 1px solid transparent;
+  border-radius: 99px;
+  background: transparent;
+  color: #776c61;
+  font: 500 12px/1.4 "DM Sans", sans-serif;
+  letter-spacing: 0;
+  box-shadow: none;
+}
+.pub-app.pub-refined .pub-category-filters button:hover,
+.pub-app.pub-refined .pub-featured-filter:hover { background: #e8dfd3; color: #453d34; }
+.pub-app.pub-refined .pub-category-filters .pub-filter-active,
+.pub-app.pub-refined .pub-featured-filter.pub-filter-featured-active {
+  border-color: #3b4c3c;
+  background: #334a3b;
+  color: #fffaf0;
+}
+.pub-app.pub-refined .pub-featured-filter svg,
+.pub-app.pub-refined .pub-featured-tag svg { display: none; }
+.pub-app.pub-refined .pub-results-label { color: #84786b; font-size: 11px; letter-spacing: .04em; }
+.pub-app.pub-refined .pub-products-grid { gap: 50px 25px; }
+.pub-app.pub-refined .pub-product-card {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: none;
+}
+.pub-app.pub-refined .pub-product-card:hover {
+  border: 0;
+  box-shadow: none;
+  transform: none;
+}
+.pub-app.pub-refined .pub-card-image {
+  overflow: hidden;
+  aspect-ratio: 4/4.5;
+  border-radius: 8px;
+  background: #e7ded1;
+}
+.pub-app.pub-refined .pub-card-image img { object-fit: cover; transition: transform .45s ease; }
+.pub-app.pub-refined .pub-product-card:hover .pub-card-image img { transform: scale(1.035); }
+.pub-app.pub-refined .pub-featured-tag {
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 99px;
+  background: rgb(251 247 240 / 93%);
+  color: #72553e;
+  font: 600 10px/1.3 "DM Sans", sans-serif;
+  letter-spacing: .04em;
+}
+.pub-app.pub-refined .pub-card-meta { margin-top: 20px; }
+.pub-app.pub-refined .pub-card-meta > span:first-child {
+  color: #97765a;
+  font: 600 10px/1.4 "DM Sans", sans-serif;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.pub-app.pub-refined .pub-card-bottom { gap: 14px; margin-top: 7px; align-items: baseline; }
+.pub-app.pub-refined .pub-card-bottom h3 {
+  color: #302b25;
+  font: 500 clamp(26px, 2.6vw, 36px)/1.07 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: -.02em;
+}
+.pub-app.pub-refined .pub-card-bottom > span { color: #7d7266; font-size: 11px; }
+.pub-app.pub-refined .pub-card-material { color: #857a6e; font-size: 12px; line-height: 1.7; }
+.pub-app.pub-refined .pub-detail-section { max-width: 1500px; padding-top: 55px; }
+.pub-app.pub-refined .pub-detail-copy h1 {
+  color: var(--maison-ink);
+  font: 400 clamp(49px, 5vw, 80px)/.99 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: -.035em;
+}
+.pub-app.pub-refined .pub-detail-description { color: #6f675d; font-size: 14px; line-height: 1.85; }
+.pub-app.pub-refined .pub-detail-main-image,
+.pub-app.pub-refined .pub-gallery-thumbnails > button { border-radius: 9px; }
+.pub-app.pub-refined .pub-media-switch { background: #ece7de; border-color: #ddd4c6; border-radius: 99px; }
+.pub-app.pub-refined .pub-media-switch button { border-radius: 99px; }
+.pub-app.pub-refined .pub-media-switch button.active { background: var(--maison-forest); border-color: var(--maison-forest); }
+.pub-app.pub-refined .pub-primary-button,
+.pub-app.pub-refined .pub-enquiry-button {
+  border-radius: 99px;
+  background: var(--maison-forest);
+  border-color: var(--maison-forest);
+  color: #fff !important;
+}
+.pub-app.pub-refined .pub-primary-button:hover { background: #163927; border-color: #163927; }
+.pub-app.pub-refined .pub-reference-process {
+  max-width: none;
+  padding: 100px clamp(24px, 5vw, 78px);
+  background: #f7f5f1;
+}
+.pub-app.pub-refined .pub-reference-process-top,
+.pub-app.pub-refined .pub-reference-process-grid { max-width: 1340px; margin-inline: auto; }
+.pub-app.pub-refined .pub-reference-process-grid article {
+  border: 0;
+  border-top: 1px solid #d8cfc2;
+  border-radius: 0;
+  padding: 30px 0 0;
+  background: transparent;
+  box-shadow: none;
+}
+.pub-app.pub-refined .pub-reference-process-grid h3 {
+  color: var(--maison-ink);
+  font: 500 clamp(29px, 3vw, 41px)/1.05 "Cormorant Garamond", Georgia, serif;
+}
+.pub-app.pub-refined .pub-reference-process-grid svg { color: #96775e; }
+.pub-app.pub-refined .pub-reference-wide-feature { max-width: 1500px; border-radius: 12px; }
+.pub-app.pub-refined .pub-reference-wide-feature h2 {
+  font: 400 clamp(53px, 6vw, 95px)/.96 "Cormorant Garamond", Georgia, serif;
+}
+.pub-app.pub-refined .pub-story {
+  background: #294936;
+  border: 0;
+  color: #f4f0e7;
+}
+.pub-app.pub-refined .pub-story h2 {
+  color: #f4eee5;
+  font: 400 clamp(46px, 5vw, 76px)/.98 "Cormorant Garamond", Georgia, serif;
+}
+.pub-app.pub-refined .pub-story h2 em { color: #dbc2a4; }
+.pub-app.pub-refined .pub-story p { color: #d9e2d8; font: 400 14px/1.8 "DM Sans", sans-serif; }
+.pub-app.pub-refined .pub-story button { color: #f5eadd; border-color: #c5d0c4; }
+.pub-app.pub-refined .pub-footer { background: #213b2e; color: #f5f0e9; }
+.pub-app.pub-refined .pub-footer > div > p { color: #c9d6cb; }
+/* Staff portal retains its OS-style green identity and functional controls. */
+.admin-app.brutti-staff-redesign[data-active-tab] .admin-content {
+  background: transparent;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-os-section-title h2 {
+  letter-spacing: -.03em;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-gallery-card,
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-collection-v3 {
+  box-shadow: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] button:focus-visible,
+.pub-app.pub-refined button:focus-visible,
+.pub-app.pub-refined a:focus-visible,
+.pub-app.pub-refined input:focus-visible,
+.pub-app.pub-refined select:focus-visible {
+  outline: 2px solid #b58a62;
+  outline-offset: 3px;
+}
+@media (max-width: 1000px) {
+  .pub-app.pub-refined .pub-hero { height: 650px; min-height: 570px; }
+  .pub-app.pub-refined .pub-hero h1 { font-size: clamp(60px, 9vw, 100px); }
+  .pub-app.pub-refined .pub-reference-category-grid { gap: 10px; }
+  .pub-app.pub-refined .pub-values-strip { flex-wrap: wrap; }
+}
+@media (max-width: 800px) {
+  .pub-app.pub-refined .pub-header { min-height: 72px; }
+  .pub-app.pub-refined .pub-hero {
+    display: block;
+    width: calc(100% - 32px);
+    height: 660px;
+    min-height: 0;
+    margin: 20px auto 0;
+    padding: 0;
+    gap: 0;
+    border-radius: 18px;
+  }
+  .pub-app.pub-refined .pub-hero-visual {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+  }
+  .pub-app.pub-refined .pub-hero-copy {
+    padding: 48px clamp(25px, 7vw, 58px) 57px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .pub-app.pub-refined .pub-hero h1 { font-size: clamp(60px, 10vw, 87px); }
+  .pub-app.pub-refined .pub-hero-image-label { display: none; }
+  .pub-app.pub-refined .pub-reference-intro { padding: 76px 24px 28px; }
+  .pub-app.pub-refined .pub-reference-category-grid { padding-inline: 24px; }
+  .pub-app.pub-refined .pub-collection { padding-inline: 24px; }
+}
+@media (max-width: 580px) {
+  .pub-app.pub-refined .pub-header { padding: 0 19px; }
+  .pub-app.pub-refined .pub-wordmark .pub-official-logo { width: 113px; }
+  .pub-app.pub-refined .pub-wordmark > small { font-size: 7px; letter-spacing: .1em; }
+  .pub-app.pub-refined .pub-admin-link { padding: 9px 13px; font-size: 9px; letter-spacing: .06em; }
+  .pub-app.pub-refined .pub-hero { height: 590px; width: calc(100% - 24px); border-radius: 14px; margin-top: 12px; }
+  .pub-app.pub-refined .pub-hero-visual > img { object-position: 58% 50%; }
+  .pub-app.pub-refined .pub-hero-visual::after { background: linear-gradient(0deg, rgb(23 21 18 / 79%) 0%, rgb(23 21 18 / 32%) 57%, rgb(23 21 18 / 7%) 100%); }
+  .pub-app.pub-refined .pub-hero-copy { padding: 35px 22px 40px; }
+  .pub-app.pub-refined .pub-hero h1 { font-size: clamp(47px, 13vw, 66px); letter-spacing: -.045em; }
+  .pub-app.pub-refined .pub-hero-description { font-size: 12px; line-height: 1.68; margin-top: 16px; }
+  .pub-app.pub-refined .pub-hero .pub-eyebrow { font-size: 8px; letter-spacing: .18em; }
+  .pub-app.pub-refined .pub-hero .pub-primary-button { margin-top: 20px; min-height: 44px; padding: 11px 19px; font-size: 11px; }
+  .pub-app.pub-refined .pub-hero-number { top: 21px; right: 22px; font-size: 8px; }
+  .pub-app.pub-refined .pub-values-strip { padding: 17px 20px; gap: 10px; }
+  .pub-app.pub-refined .pub-values-strip > span { font-size: 9px; }
+  .pub-app.pub-refined .pub-values-strip .pub-strip-location { display: none; }
+  .pub-app.pub-refined .pub-reference-intro { padding: 63px 19px 25px; }
+  .pub-app.pub-refined .pub-reference-intro h2 { font-size: 51px; }
+  .pub-app.pub-refined .pub-reference-category-grid { padding: 0 17px; gap: 8px; }
+  .pub-app.pub-refined .pub-reference-category-caption strong { font-size: 26px; }
+  .pub-app.pub-refined .pub-collection { padding: 68px 19px 75px; }
+  .pub-app.pub-refined .pub-section-heading h2 { font-size: 55px; }
+  .pub-app.pub-refined .pub-products-grid { grid-template-columns: 1fr; gap: 38px; }
+  .pub-app.pub-refined .pub-card-image { aspect-ratio: 5/5; }
+  .pub-app.pub-refined .pub-card-bottom h3 { font-size: 32px; }
+  .pub-app.pub-refined .pub-reference-process { padding: 75px 19px; }
+  .pub-app.pub-refined .pub-reference-process h2 { font-size: 55px; }
+  .pub-app.pub-refined .pub-reference-wide-feature h2 { font-size: 62px; }
+  .pub-app.pub-refined .pub-story h2 { font-size: 52px; }
+  .pub-app.pub-refined .pub-detail-copy h1 { font-size: 55px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pub-app.pub-refined *,
+  .admin-app.brutti-staff-redesign[data-active-tab] * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
