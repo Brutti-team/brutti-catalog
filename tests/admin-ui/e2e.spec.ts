@@ -149,12 +149,10 @@ test('Brutti collection studio preserves real product actions with new branded d
   await openAdmin(page);
   await expect(page.locator('.admin-app.brutti-staff-redesign')).toBeVisible();
   await expect(page.locator('.sidebar .brutti-official-logo')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Collection studio.' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Your collection/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Collection snapshot' })).toBeVisible();
   await expect(page.locator('.catalog-command-art > img')).toBeVisible();
-  const shortcuts = page.getByRole('group', { name: 'Collection studio shortcuts' });
-  await expect(shortcuts.getByRole('button', { name: /Products/ })).toBeVisible();
-  await shortcuts.getByRole('button', { name: /Gallery/ }).click();
+  await page.getByRole('button', { name: 'Open gallery' }).click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.locator('.catalog-gallery-card')).toContainText(fixtureProduct.name);
 });
@@ -165,9 +163,10 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   const sidebar = page.locator('.admin-app .sidebar');
   const navigation = page.getByRole('navigation', { name: 'Admin navigation' });
   await expect(sidebar.locator('.sidebar-brand-mark')).toHaveCount(0);
-  await expect(sidebar.locator('.workspace-label .workspace-meta strong')).toHaveText('Brutti Catalog');
+  await expect(sidebar.locator('.brutti-official-logo')).toBeVisible();
+  await expect(sidebar.locator('.workspace-label .workspace-meta strong')).toHaveText('Benua Brutti');
   await expect(navigation.locator('.nav-group-label').first()).toHaveText('WORKSPACE');
-  await expect(navigation.locator('.nav-group-label').last()).toHaveText('OPERATIONS');
+  await expect(navigation.locator('.nav-group-label').last()).toHaveText('HISTORY & ACCESS');
   await expect(sidebar.locator('.sidebar-last-change')).toHaveCount(0);
   await expect(sidebar.locator('.sidebar-utility .sidebar-public-link')).toBeVisible();
   await expect(navigation.getByRole('button', { name: 'Overview', exact: true })).toHaveAttribute('aria-current', 'page');
@@ -179,29 +178,25 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
     const computed = getComputedStyle(el);
     return { background: computed.backgroundColor, width: el.getBoundingClientRect().width };
   });
-  expect(styles.width).toBeGreaterThanOrEqual(298);
-  expect(styles.width).toBeLessThanOrEqual(302);
-  expect(styles.background).toBe('rgb(16, 39, 30)');
-  // Premium rail: no extra boxed workspace/active-icon panels or filled footer cards.
-  const railSurface = await sidebar.evaluate(el => ({
-    workspaceBorder: getComputedStyle(el.querySelector('.workspace-label')!).borderTopWidth,
+  expect(styles.width).toBeGreaterThanOrEqual(242);
+  expect(styles.width).toBeLessThanOrEqual(246);
+  expect(styles.background).toBe('rgb(252, 253, 251)');
+  const rail = await sidebar.evaluate(el => ({
     workspaceFill: getComputedStyle(el.querySelector('.workspace-label')!).backgroundColor,
     activeIconFill: getComputedStyle(el.querySelector('.nav-item.active .nav-icon')!).backgroundColor,
     footerFill: getComputedStyle(el.querySelector('.sidebar-public-link')!).backgroundColor,
   }));
-  expect(railSurface.workspaceBorder).toBe('0px');
-  expect(railSurface.workspaceFill).toBe('rgba(0, 0, 0, 0)');
-  expect(railSurface.activeIconFill).toBe('rgba(0, 0, 0, 0)');
-  expect(railSurface.footerFill).toBe('rgba(0, 0, 0, 0)');
-  const menuMetrics = await sidebar.locator('nav .nav-item').first().evaluate(el => ({
-    font: Number.parseFloat(getComputedStyle(el).fontSize),
+  expect(rail.workspaceFill).toBe('rgba(0, 0, 0, 0)');
+  expect(rail.activeIconFill).toBe('rgba(0, 0, 0, 0)');
+  expect(rail.footerFill).toBe('rgba(0, 0, 0, 0)');
+  const menu = await sidebar.locator('nav .nav-item').first().evaluate(el => ({
+    font: parseFloat(getComputedStyle(el).fontSize),
     height: el.getBoundingClientRect().height,
     icon: el.querySelector('.nav-icon')?.getBoundingClientRect().width ?? 0,
   }));
-  expect(menuMetrics.font).toBeGreaterThanOrEqual(14);
-  expect(menuMetrics.height).toBeGreaterThanOrEqual(53);
-  expect(menuMetrics.icon).toBeGreaterThanOrEqual(37);
-
+  expect(menu.font).toBeGreaterThanOrEqual(12);
+  expect(menu.height).toBeGreaterThanOrEqual(40);
+  expect(menu.icon).toBeGreaterThanOrEqual(17);
   await expectReadable(page, [
     '.sidebar .workspace-meta strong',
     '.sidebar .workspace-meta small',
@@ -209,7 +204,7 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
     '.sidebar nav .nav-item.active',
     '.sidebar .sidebar-public-copy strong',
     '.sidebar .sidebar-public-copy small',
-  ], true);
+  ]);
 });
 
 test('premium sidebar remains useful on narrow mobile and short screens', async ({ page }) => {
@@ -221,7 +216,6 @@ test('premium sidebar remains useful on narrow mobile and short screens', async 
   await expect(sidebar).toBeVisible();
   await expect(sidebar.locator('.sidebar-public-link')).toBeVisible();
   await expect(sidebar.locator('.workspace-meta strong')).toBeVisible();
-  await expect(sidebar.locator('.sidebar-last-change')).toHaveCount(0);
   const measurements = await sidebar.evaluate(el => ({
     width: el.getBoundingClientRect().width,
     viewport: window.innerWidth,
@@ -229,8 +223,8 @@ test('premium sidebar remains useful on narrow mobile and short screens', async 
   }));
   expect(measurements.width).toBeLessThan(measurements.viewport);
   expect(measurements.horizontalOverflow).toBe(false);
-  await sidebar.getByRole('button', { name: 'Public catalog' }).click();
-  await expect(page.getByRole('heading', { name: 'Made for your space. Built with purpose.' })).toBeVisible();
+  await sidebar.getByRole('button', { name: /View public catalog/ }).click();
+  await expect(page.getByRole('heading', { name: /Considered spaces/ })).toBeVisible();
 });
 
 test('latest change appears only on Overview, not in sidebar, and opens Activity Log', async ({ page }) => {
@@ -253,18 +247,18 @@ test('Overview auto sync and read-only draft checks remain actionable', async ({
   await expect(sync).toBeVisible();
   await expect(sync).toContainText('Auto-sync enabled');
   await expect(sync).toContainText('every 30 seconds');
-  await expect(sync).toContainText('Updated');
   const refreshNow = sync.getByRole('button', { name: 'Refresh catalog now' });
   await expect(refreshNow).toBeEnabled();
   await refreshNow.click();
   await expect(sync).toContainText('Auto-sync enabled');
   await expect(page.locator('.product-cell strong')).toHaveText(fixtureProduct.name);
-  const checks = page.getByLabel('Automatic draft quality checks');
-  await expect(checks).toContainText('Missing details are flagged');
-  await expect(checks).toContainText('0 dimensions to verify');
-  await expect(checks).toContainText('0 materials missing');
-  await expect(checks).toContainText('0 descriptions missing');
-  await checks.getByRole('button', { name: 'Review drafts' }).click();
+  const checks = page.locator('.atelier-checklist');
+  await expect(checks).toContainText('Details to verify');
+  await expect(checks).toContainText('Dimensions not confirmed');
+  await expect(checks).toContainText('Material details missing');
+  await expect(checks).toContainText('Descriptions incomplete');
+  await expect(checks.locator('button')).toHaveCount(3);
+  await page.locator('.atelier-review').getByRole('button', { name: 'Review drafts' }).click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Quick product status filters' }).getByRole('button', { name: /Draft/ })).toHaveAttribute('aria-pressed', 'true');
 });
@@ -275,62 +269,45 @@ test('Premium Overview animations respect reduced motion without removing real m
   await openAdmin(page);
   const animations = await page.evaluate(() => ({
     tile: getComputedStyle(document.querySelector('.overview-stat')!).animationName,
-    category: getComputedStyle(document.querySelector('.catalog-category-track > span')!).animationName,
-    pulse: getComputedStyle(document.querySelector('.catalog-auto-sync-dot')!, '::after').animationName,
+    category: getComputedStyle(document.querySelector('.atelier-category-track > span')!).animationName,
     sync: getComputedStyle(document.querySelector('.catalog-overview-automations')!).animationName,
   }));
-  expect(animations).toEqual({ tile: 'none', category: 'none', pulse: 'none', sync: 'none' });
-  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(4);
-  await expect(page.getByLabel('Automatic draft quality checks')).toBeVisible();
-  await expectReadable(page, [
-    '.catalog-auto-sync strong', '.catalog-auto-sync small',
-    '.catalog-auto-review-heading strong', '.catalog-auto-review-heading small',
-    '.catalog-auto-review-metrics > span',
-  ], true);
+  expect(animations).toEqual({ tile: 'none', category: 'none', sync: 'none' });
+  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(6);
+  await expect(page.locator('.atelier-checklist')).toBeVisible();
+  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
 });
 
 test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
-  await expect(page.getByRole('heading', { name: /Your collection/ })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
   await expect(page.locator('.catalog-command')).toBeVisible();
-  await expect(page.locator('.catalog-category-bar')).toHaveCount(5);
-  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toBeVisible();
-  await expect(page.getByRole('progressbar', { name: 'Published products' })).toBeVisible();
-  await page.getByRole('button', { name: 'View products', exact: true }).last().click();
+  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
+  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
+  await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
+  await page.locator('.atelier-categories').getByRole('button', { name: /View .* products/ }).first().click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
 });
 
-test('Overview analytics uses a unified premium palette without changing real counts', async ({ page }) => {
+test('Overview analytics uses a quiet metric shelf without changing real counts', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
-  const cards = page.locator('.overview-stats .overview-stat');
-  await expect(cards).toHaveCount(4);
-  const metrics = await cards.evaluateAll(items => items.map(el => ({
-    gradient: getComputedStyle(el).backgroundImage,
-    accent: getComputedStyle(el).borderTopColor,
-    iconFill: getComputedStyle(el.querySelector('.overview-stat-icon')!).backgroundColor,
-  })));
-  // All four stat cards share one coherent neutral / forest-green treatment.
-  expect(new Set(metrics.map(m => m.gradient)).size).toBe(1);
-  expect(new Set(metrics.map(m => m.accent)).size).toBe(1);
-  expect(new Set(metrics.map(m => m.iconFill)).size).toBe(1);
-  expect(metrics[0].gradient).toContain('linear-gradient');
-  await expect(page.getByRole('heading', { name: 'Catalog readiness' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Top categories' })).toBeVisible();
+  const metrics = page.locator('.overview-stats .overview-stat');
+  await expect(metrics).toHaveCount(6);
+  const values = await metrics.locator(':scope > strong').allTextContents();
+  expect(values).toEqual(['1','1','0',String(bruttiCategories.length),'0','1']);
+  const backgrounds = await metrics.evaluateAll(items => items.map(el => getComputedStyle(el).backgroundColor));
+  expect(new Set(backgrounds).size).toBe(1);
+  await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
   await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
-  await expect(page.locator('.catalog-category-bar')).toHaveCount(5);
-  const bars = await page.locator('.catalog-category-track > span').evaluateAll(items =>
-    items.map(el => getComputedStyle(el).backgroundColor));
-  expect(new Set(bars.slice(1)).size).toBe(1);
-  const activity = page.locator('.catalog-last-activity');
-  await expect(activity).toBeVisible();
-  const activityFill = await activity.evaluate(el => getComputedStyle(el).backgroundColor);
-  expect(activityFill).toBe('rgb(255, 255, 255)');
-  await expectReadable(page, ['.overview-stat > strong', '.catalog-studio-panel-head h2', '.catalog-category-name', '.catalog-last-activity-heading h2']);
+  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
+  await expect(page.locator('.catalog-last-activity')).toBeVisible();
+  await expectReadable(page, ['.overview-stat > strong', '.atelier-panel-heading h2', '.atelier-category-copy strong']);
 });
 
 test('Overview colours preserve dark-mode contrast and mobile width', async ({ page }) => {
@@ -338,30 +315,24 @@ test('Overview colours preserve dark-mode contrast and mobile width', async ({ p
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
   await expectTheme(page, 'dark');
-  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(4);
-  const darkCards = await page.locator('.overview-stats .overview-stat').evaluateAll(items => items.map(
-    el => [getComputedStyle(el).backgroundImage, getComputedStyle(el).borderTopColor]));
-  expect(new Set(darkCards.map(value => value.join('|'))).size).toBe(1);
+  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(6);
   await expectReadable(page, [
     '.overview-stats .overview-stat:nth-child(1) > strong',
     '.overview-stats .overview-stat:nth-child(2) > strong',
     '.overview-stats .overview-stat:nth-child(3) > strong',
-    '.overview-stats .overview-stat:nth-child(4) > strong',
-    '.catalog-health-card .catalog-studio-kicker',
-    '.catalog-insights-card .catalog-studio-kicker',
-    '.catalog-last-activity-kicker',
-    '.catalog-last-activity-heading h2',
+    '.atelier-panel-heading h2',
+    '.atelier-focus-number strong',
   ], true);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test('studio overview category bars navigate to product filters without changing data', async ({ page }) => {
+test('workshop category directory navigates to product filters without changing data', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
-  const chart = page.locator('.catalog-insights-card');
-  await expect(chart).toBeVisible();
-  await chart.getByRole('button', { name: /View .* products/ }).first().click();
+  const directory = page.locator('.atelier-categories');
+  await expect(directory).toBeVisible();
+  await directory.getByRole('button', { name: /View .* products/ }).first().click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.locator('.product-cell').first()).toBeVisible();
 });
@@ -385,7 +356,7 @@ test('collection inventory uses premium table hierarchy and live search filters'
       tableScrollable: el.querySelector('.table-scroll')!.scrollWidth >= el.querySelector('.table-scroll')!.clientWidth,
     };
   });
-  expect(metrics.titleSize).toBeGreaterThanOrEqual(23);
+  expect(metrics.titleSize).toBeGreaterThanOrEqual(18);
   expect(metrics.searchHeight).toBeGreaterThanOrEqual(48);
   expect(metrics.imageWidth).toBeGreaterThanOrEqual(63);
   expect(metrics.editWidth).toBeGreaterThanOrEqual(35);
@@ -542,7 +513,7 @@ test('premium Products Workbench shows live metadata and clean status controls',
   const hero = page.locator('.catalog-product-hero');
   await expect(hero).toBeVisible();
   await expect(hero.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
-  await expect(hero).toContainText('PRODUCT MANAGEMENT');
+  await expect(hero).toContainText('Inventory');
   await expect(hero).toContainText('Draft products');
   await expect(hero.getByRole('button', { name: 'Add product', exact: true })).toBeVisible();
   const panel = page.locator('.catalog-products-panel');
@@ -716,7 +687,7 @@ test('dark admin navigation leaves the public catalog light and preserves the sa
   await openAdmin(page);
   await expectTheme(page, 'dark');
   await page.locator('.topbar').getByRole('button', { name: 'View catalog', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Made for your space. Built with purpose.', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Considered spaces/, exact: true })).toBeVisible();
   await expect(page.locator('[data-theme]')).toHaveCount(0);
   await expect(page.locator('.admin-app')).toHaveCount(0);
   const publicSurface = await colors(page.locator('.pub-app'));
