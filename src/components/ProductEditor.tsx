@@ -145,7 +145,7 @@ export default function ProductEditor({
         <div className="product-editor-intro">
           <div>
             <span className="product-editor-kicker">PRODUCT WORKSPACE</span>
-            <p>Build your listing with the essentials first. You can save it as a draft at any time.</p>
+            <p>Complete the essentials, then save a draft or prepare the product for publishing.</p>
           </div>
           <span className={`product-editor-state product-editor-state--${draft.status}`}>
             {draft.status === "published" ? "Published" : draft.status === "archived" ? "Archived" : "Draft"}
@@ -459,7 +459,7 @@ export default function ProductEditor({
                   </li>
                 ))}
               </ul>
-              <p>Drafts can be saved before every item is complete.</p>
+              <p>Drafts only need a name, SKU and category.</p>
             </section>
             <section className="editor-note">
               <span className="eyebrow">GOOD TO KNOW</span>
