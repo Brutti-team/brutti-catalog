@@ -725,11 +725,11 @@ test('product editor prioritizes essentials and photos, and explains publishing 
     return !!photos && !!specs && !!(photos.compareDocumentPosition(specs) & Node.DOCUMENT_POSITION_FOLLOWING);
   });
   expect(inOrder).toBe(true);
-  await dialog.getByRole('button', { name: '04 Publishing' }).click();
+  await dialog.getByRole('button', { name: /Publishing/ }).click();
   await expect(dialog.locator('#product-editor-publish')).toBeVisible();
   await page.setViewportSize({ width: 390, height: 780 });
   const columns = await dialog.locator('.editor-columns').evaluate(element => getComputedStyle(element).gridTemplateColumns);
-  expect(columns.trim().split(/\\s+/)).toHaveLength(1);
+  expect(columns.trim().split(/\s+/)).toHaveLength(1);
   await expect(dialog.getByRole('button', { name: 'Save draft' })).toBeVisible();
   await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await expect(dialog).toHaveCount(0);
