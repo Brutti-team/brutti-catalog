@@ -869,3 +869,88 @@
 .admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .atelier-kicker {
   color: #566f5d;
 }
+
+
+/* CI refinement: no horizontal overflow in short mobile navigation.
+   Direct children use the available inner width, with no old theme margins. */
+@media (max-width: 800px) {
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar {
+    overflow-x: hidden;
+    overscroll-behavior-x: contain;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand,
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .workspace-label,
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > nav,
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .sidebar-utility {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    box-sizing: border-box;
+    overflow-x: clip;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand {
+    display: flex;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar .workspace-label {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-item {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+/* Final dark-mode control surfaces: avoid any legacy bright card overrides. */
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] .sidebar nav .nav-item.active,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] .sidebar nav .nav-item.active:hover {
+  background: #30513d;
+  color: #f1f8ef;
+  border-color: #4a7257;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] .sidebar nav .nav-item.active .nav-icon,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] .sidebar nav .nav-item.active .nav-icon svg {
+  color: #e9f7eb;
+  background: transparent;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab] .sidebar nav .nav-item.active .nav-count {
+  background: #406b4d;
+  color: #f5faf2;
+  border-color: #5b7e61;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection.catalog-collection-v3,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection.table-panel {
+  background: #22392a !important;
+  border-color: #42604a !important;
+  color: #e8f0e6;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .panel-heading,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .table-toolbar,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .table-footer,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .catalog-collection-overview-meta {
+  background: #22392a;
+  border-color: #42604a;
+  color: #e1ecdf;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .catalog-collection-eyebrow,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .catalog-collection-results,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .panel-heading h2,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .panel-heading p,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .product-cell strong,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .product-cell small,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .price-cell {
+  color: #e5efe3;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .catalog-inventory-table tbody tr,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .catalog-inventory-table td {
+  background: #22392a;
+  border-color: #3b5844;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .table-scroll,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .table-scroll table {
+  background: #22392a;
+}
