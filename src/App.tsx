@@ -591,6 +591,11 @@ export default function App() {
                     Open gallery <Images size={16} aria-hidden="true" />
                   </button>
                 </div>
+                <div className="catalog-command-meta" aria-label="Current catalog totals">
+                  <span><strong>{loading ? "—" : data.products.length}</strong> Products</span>
+                  <span><strong>{loading ? "—" : data.categories.length}</strong> Categories</span>
+                  <span><strong>{loading ? "—" : draftCount}</strong> In review</span>
+                </div>
               </div>
               <div className="catalog-command-art" aria-label={heroProduct ? `Catalog photo: ${heroProduct.name}` : "Brutti kiosk design reference"}>
                 {heroProduct ? (
