@@ -95,9 +95,9 @@ test('Draft with unknown sizes persists; edit, upload, publish, public filters a
   expect(db.uploads()).toBe(1);
   await page.goto('/#/catalog');
   await expect(page.locator('.pub-product-card')).toHaveCount(1);
-  await page.getByPlaceholder('Search furniture, materials…').fill('no-match');
+  await page.getByPlaceholder('Search kiosks, counters, materials…').fill('no-match');
   await expect(page.locator('.pub-product-card')).toHaveCount(0);
-  await page.getByPlaceholder('Search furniture, materials…').fill('');
+  await page.getByPlaceholder('Search kiosks, counters, materials…').fill('');
   await page.locator('.pub-category-filters').getByRole('button', { name: 'Rentals', exact: true }).click();
   await expect(page.locator('.pub-product-card')).toHaveCount(0);
   await page.locator('.pub-category-filters').getByRole('button', { name: 'Racks & Shelves', exact: true }).click();
@@ -321,7 +321,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     expect(overlap, 'Admin breadcrumb and connection/actions must never overlap').toBe(false);
     await page.screenshot({ path: testInfo.outputPath('admin-test-fixtures.png'), fullPage: true });
     await page.goto('/#/catalog');
-    await expect(page.getByRole('heading', { name: 'Made for your space. Built with purpose.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Considered spaces. Crafted to belong.' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: testInfo.outputPath('public-empty-test-backend.png'), fullPage: true });
   });
