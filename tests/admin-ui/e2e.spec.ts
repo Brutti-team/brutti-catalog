@@ -525,12 +525,12 @@ test('premium Products Workbench shows live metadata and clean status controls',
   await expect(panel.getByRole('group', { name: 'Quick product status filters' })).toBeVisible();
   await expect(panel.getByLabel('Filter by category')).toBeVisible();
   await expect(panel.locator('select#status-filter')).toHaveCount(0);
-  await expect(panel.getByRole('status')).toContainText('matching');
+  await expect(panel.locator('.catalog-products-filter-summary')).toContainText('matching');
   await panel.getByRole('group', { name: 'Quick product status filters' })
     .getByRole('button', { name: /Draft/ }).click();
-  await expect(panel.getByRole('status')).toContainText('0 matching products');
-  await panel.getByRole('status').getByRole('button', { name: 'Clear filters' }).click();
-  await expect(panel.getByRole('status')).toContainText('1 matching product');
+  await expect(panel.locator('.catalog-products-filter-summary')).toContainText('0 matching products');
+  await panel.locator('.catalog-products-filter-summary').getByRole('button', { name: 'Clear filters' }).click();
+  await expect(panel.locator('.catalog-products-filter-summary')).toContainText('1 matching product');
 });
 
 test('Products exposes Bulk import photos above the filters and opens the ZIP picker', async ({ page }) => {
