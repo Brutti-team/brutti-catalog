@@ -750,9 +750,11 @@ export default function App() {
                       <h2 id="atelier-categories-heading">By category</h2>
                       <p>Explore inventory across your workshop collections.</p>
                     </div>
-                    <button type="button" className="atelier-inline-link" onClick={() => switchTab("categories")}>
-                      Manage <ArrowUpRight size={15} aria-hidden="true" />
-                    </button>
+                    {accountRole !== "editor" && (
+                      <button type="button" className="atelier-inline-link" onClick={() => switchTab("categories")}>
+                        Manage <ArrowUpRight size={15} aria-hidden="true" />
+                      </button>
+                    )}
                   </div>
                   <div className="atelier-category-list">
                     {categoryInsights.slice(0, 7).map((item, index) => (
