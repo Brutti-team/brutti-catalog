@@ -8,6 +8,8 @@ import {
   Eye,
   Save,
   LoaderCircle,
+  CheckCircle2,
+  Circle,
 } from "lucide-react";
 import type { Product, Category, ProductImage } from "../lib/types";
 import { uploadImage, validateProduct, cleanupAbandonedImages } from "../lib/catalog";
@@ -31,6 +33,7 @@ export default function ProductEditor({
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadLock = useRef(false);
   const uploadedImages = useRef(new Map<string, ProductImage>());
@@ -123,22 +126,49 @@ export default function ProductEditor({
     ];
     update("images", images);
   }
+  const publishChecks = [
+    { label: "Name, SKU & category", done: draft.name.trim().length >= 2 && !!draft.sku.trim() && !!draft.categoryId },
+    { label: "Cover photo", done: draft.images.length > 0 },
+    { label: "Description & materials", done: !!draft.description.trim() && !!draft.materials.trim() },
+    { label: "All dimensions", done: draft.width > 0 && draft.depth > 0 && draft.height > 0 },
+  ];
+  const readyCount = publishChecks.filter((item) => item.done).length;
+  const jumpTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   return (
     <Modal
       title={product.name ? "Edit product" : "Create product"}
       wide
+      className="product-editor-dialog"
       onClose={() => void requestClose()}
     >
-      <form onSubmit={submit} className="editor-form">
+      <form onSubmit={submit} className="editor-form product-editor-v2">
+        <div className="product-editor-intro">
+          <div>
+            <span className="product-editor-kicker">PRODUCT WORKSPACE</span>
+            <p>Complete the essentials, then save a draft or prepare the product for publishing.</p>
+          </div>
+          <span className={`product-editor-state product-editor-state--${draft.status}`}>
+            {draft.status === "published" ? "Published" : draft.status === "archived" ? "Archived" : "Draft"}
+          </span>
+        </div>
+        <nav className="product-editor-jump" aria-label="Jump to form section">
+          <button type="button" onClick={() => jumpTo("product-editor-basics")}>01 <span>Essentials</span></button>
+          <button type="button" onClick={() => jumpTo("product-editor-photos")}>02 <span>Photos</span></button>
+          <button type="button" onClick={() => jumpTo("product-editor-specs")}>03 <span>Specifications</span></button>
+          <button type="button" onClick={() => jumpTo("product-editor-publish")}>04 <span>Publishing</span></button>
+        </nav>
         <div className="editor-columns">
           <div className="editor-primary">
-            <section className="form-section">
-              <h3>Product details</h3>
-              <p className="muted">
-                Good furniture deserves a thoughtful introduction.
-              </p>
+            <section className="form-section product-editor-section" id="product-editor-basics">
+              <div className="product-editor-section-heading">
+                <span className="product-editor-step">01</span>
+                <div>
+                  <h3>The essentials</h3>
+                  <p>Name, product code and collection. All three are required.</p>
+                </div>
+              </div>
               <label>
-                Product name <span>*</span>
+                Product name <span aria-hidden="true">*</span>
                 <input
                   required
                   maxLength={120}
@@ -174,73 +204,15 @@ export default function ProductEditor({
                   </select>
                 </label>
               </div>
-              <label>
-                Description
-                <textarea
-                  rows={4}
-                  maxLength={10000}
-                  value={draft.description}
-                  placeholder="Tell the story, the details, and what makes it special."
-                  onChange={(e) => update("description", e.target.value)}
-                />
-              </label>
-              <label>
-                Materials
-                <input
-                  maxLength={2000}
-                  value={draft.materials}
-                  placeholder="e.g. Reclaimed timber, natural oil finish"
-                  onChange={(e) => update("materials", e.target.value)}
-                />
-              </label>
-              <div className="section-label">
-                Dimensions <span className="muted">in centimetres · 0 = unconfirmed draft</span>
-              </div>
-              <div className="field-trio">
-                {(["width", "depth", "height"] as const).map((key) => (
-                  <label key={key}>
-                    {key[0].toUpperCase() + key.slice(1)}
-                    <input
-                      aria-label={`${key} in centimetres`}
-                      type="number"
-                      min={0}
-                      max={99999.99}
-                      step="0.01"
-                      value={draft[key]}
-                      onChange={(e) => update(key, Number(e.target.value))}
-                    />
-                  </label>
-                ))}
-              </div>
-              <label>
-                {draft.priceBasis === 'starting-from' ? 'Starting price' : 'Price'} <span className="muted">optional · MYR</span>
-                <div className="price-input">
-                  <span>RM</span>
-                  <input
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={draft.price ?? ""}
-                    placeholder="Leave blank for price on enquiry"
-                    onChange={(e) =>
-                      update(
-                        "price",
-                        e.target.value === "" ? null : Number(e.target.value),
-                      )
-                    }
-                  />
-                </div>
-              </label>
             </section>
-            <section className="form-section">
-              <div className="section-title">
-                <h3>Product images</h3>
-                <span className="muted">{draft.images.length}/8</span>
+            <section className="form-section product-editor-section" id="product-editor-photos">
+              <div className="product-editor-section-heading">
+                <span className="product-editor-step">02</span>
+                <div>
+                  <h3>Photography <span className="product-editor-photo-count">{draft.images.length}/8</span></h3>
+                  <p>The first photo becomes your cover. Add at least one before publishing.</p>
+                </div>
               </div>
-              <p className="muted">
-                The first image is your cover. JPEG, PNG or WebP, up to 20 MB
-                each. Photos are optimized to WebP before upload, up to 5 MB.
-              </p>
               <input
                 ref={fileRef}
                 type="file"
@@ -252,9 +224,17 @@ export default function ProductEditor({
               />
               <button
                 type="button"
-                className="upload-zone"
-                disabled={uploading || busy}
+                className={`upload-zone ${dragging ? "is-dragging" : ""}`}
+                aria-label="Add product photos"
+                disabled={uploading || busy || draft.images.length >= 8}
                 onClick={() => fileRef.current?.click()}
+                onDragOver={(event) => { event.preventDefault(); if (!busy && !uploading) setDragging(true); }}
+                onDragLeave={(event) => { event.preventDefault(); setDragging(false); }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  setDragging(false);
+                  if (!busy && !uploading) void addImages(event.dataTransfer.files);
+                }}
               >
                 {uploading ? (
                   <LoaderCircle className="spin" />
@@ -262,9 +242,9 @@ export default function ProductEditor({
                   <ImagePlus size={27} />
                 )}
                 <strong>
-                  {uploading ? "Uploading images…" : "Click to add images"}
+                  {uploading ? "Uploading photos…" : draft.images.length >= 8 ? "Maximum 8 photos added" : "Add product photos"}
                 </strong>
-                <span>Choose multiple images from your device</span>
+                <span>Choose files or drag photos here · JPG, PNG, WebP</span>
               </button>
               <div className="image-editor-grid">
                 {draft.images.map((img, index) => (
@@ -327,10 +307,85 @@ export default function ProductEditor({
                 Uploaded photos are public assets. Avoid confidential images; unused uploads can be removed from Supabase Storage.
               </p>
             </section>
+            <section className="form-section product-editor-section" id="product-editor-specs">
+              <div className="product-editor-section-heading">
+                <span className="product-editor-step">03</span>
+                <div>
+                  <h3>Specifications</h3>
+                  <p>Complete descriptions and measurements when the piece is ready to publish.</p>
+                </div>
+              </div>
+              <label>
+                Description <span className="product-editor-publish-hint">Required to publish</span>
+                <textarea
+                  aria-label="Description"
+                  rows={4}
+                  maxLength={10000}
+                  value={draft.description}
+                  placeholder="Tell the story, the details, and what makes it special."
+                  onChange={(e) => update("description", e.target.value)}
+                />
+              </label>
+              <label>
+                Materials <span className="product-editor-publish-hint">Required to publish</span>
+                <input
+                  aria-label="Materials"
+                  maxLength={2000}
+                  value={draft.materials}
+                  placeholder="e.g. Reclaimed timber, natural oil finish"
+                  onChange={(e) => update("materials", e.target.value)}
+                />
+              </label>
+              <div className="section-label">
+                Dimensions <span className="muted">cm · required to publish</span>
+              </div>
+              <div className="field-trio">
+                {(["width", "depth", "height"] as const).map((key) => (
+                  <label key={key}>
+                    {key[0].toUpperCase() + key.slice(1)}
+                    <input
+                      aria-label={`${key} in centimetres`}
+                      type="number"
+                      min={0}
+                      max={99999.99}
+                      step="0.01"
+                      value={draft[key]}
+                      onChange={(e) => update(key, Number(e.target.value))}
+                    />
+                  </label>
+                ))}
+              </div>
+              <label>
+                {draft.priceBasis === 'starting-from' ? 'Starting price' : 'Price'} <span className="muted">optional · MYR</span>
+                <div className="price-input">
+                  <span>RM</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={draft.price ?? ""}
+                    placeholder="Leave blank for price on enquiry"
+                    onChange={(e) =>
+                      update(
+                        "price",
+                        e.target.value === "" ? null : Number(e.target.value),
+                      )
+                    }
+                  />
+                </div>
+              </label>
+            </section>
           </div>
-          <aside className="editor-side">
-            <section className="form-section">
-              <h3>Publishing</h3>
+          <aside className="editor-side product-editor-aside" id="product-editor-publish">
+            <div className="product-editor-aside-heading">
+              <span className="product-editor-step">04</span>
+              <div>
+                <h3>Publishing</h3>
+                <p>Control how this product appears in the catalogue.</p>
+              </div>
+            </div>
+            <section className="form-section product-editor-publish-fields">
+              <h3 className="product-editor-minor-heading">Visibility & availability</h3>
               <label>
                 Status
                 <select
@@ -363,23 +418,20 @@ export default function ProductEditor({
                   <option value="unavailable">Unavailable</option>
                 </select>
               </label>
-              <label>
-                Display order
-                <input
-                  type="number"
-                  min={0}
-                  max={1000000}
-                  step={1}
-                  value={draft.displayOrder ?? 0}
-                  disabled={!orderingEnabled}
-                  onChange={(e) => update('displayOrder', Number(e.target.value))}
-                />
-              </label>
-              <p className="tiny muted">
-                {orderingEnabled
-                  ? 'Lower numbers appear first in the curated collection. Featured products keep their place at the top.'
-                  : 'Display order is available after workspace setup.'}
-              </p>
+              {orderingEnabled && (
+                <label>
+                  Display order <span className="product-editor-publish-hint">Lower numbers appear first</span>
+                  <input
+                    aria-label="Display order"
+                    type="number"
+                    min={0}
+                    max={1000000}
+                    step={1}
+                    value={draft.displayOrder ?? 0}
+                    onChange={(e) => update("displayOrder", Number(e.target.value))}
+                  />
+                </label>
+              )}
               <label className="checkbox-field">
                 <input
                   type="checkbox"
@@ -392,13 +444,30 @@ export default function ProductEditor({
                 </span>
               </label>
             </section>
+            <section className="product-editor-readiness" aria-label="Publishing checklist">
+              <div className="product-editor-readiness-top">
+                <h3>Publishing checklist</h3>
+                <span>{readyCount} of {publishChecks.length}</span>
+              </div>
+              <div className="product-editor-readiness-track" role="progressbar"
+                aria-label="Publishing checklist completion" aria-valuenow={readyCount}
+                aria-valuemin={0} aria-valuemax={publishChecks.length}>
+                <span style={{ width: `${readyCount / publishChecks.length * 100}%` }} />
+              </div>
+              <ul>
+                {publishChecks.map((item) => (
+                  <li className={item.done ? "is-complete" : ""} key={item.label}>
+                    {item.done ? <CheckCircle2 size={15} aria-hidden="true" /> : <Circle size={15} aria-hidden="true" />}
+                    {item.label}
+                  </li>
+                ))}
+              </ul>
+              <p>Drafts only need a name, SKU and category.</p>
+            </section>
             <section className="editor-note">
-              <span className="eyebrow">A LITTLE GUIDANCE</span>
-              <h3>Ready for its close-up?</h3>
-              <p>
-                Add a clear cover image, a considered description, and accurate
-                dimensions before publishing.
-              </p>
+              <span className="eyebrow">GOOD TO KNOW</span>
+              <h3>Drafts stay private</h3>
+              <p>Save now and finish the listing later. Only published products appear in the public catalogue.</p>
             </section>
             <button
               type="button"
@@ -443,7 +512,7 @@ export default function ProductEditor({
         )}
         <footer className="editor-footer">
           <span className="tiny muted">
-            Connected workspace · changes saved to Supabase
+            Changes are saved when you select Save.
           </span>
           <div className="button-row">
             <button

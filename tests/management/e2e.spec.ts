@@ -73,7 +73,7 @@ test('Draft with unknown sizes persists; edit, upload, publish, public filters a
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('Product name').fill('Browser regression item');
   await dialog.getByLabel(/^SKU/).fill('TEST-CRUD-1');
-  await expect(dialog.getByLabel('Display order', { exact: true })).toBeDisabled();
+  await expect(dialog.getByLabel('Display order', { exact: true })).toHaveCount(0); // Not available until ordering capability is enabled.
   // Unknown dimensions remain zero: this must pass native form validation for Draft.
   await dialog.getByRole('button', { name: 'Save product', exact: true }).click();
   await expect(dialog).toHaveCount(0);
