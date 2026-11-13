@@ -438,7 +438,7 @@ export default function App() {
           </span>
         </div>
         <nav aria-label="Admin navigation">
-          <span className="nav-group-label">COLLECTION MANAGEMENT</span>
+          <span className="nav-group-label">WORKSPACE</span>
           {(
             [
               { id: "overview", text: "Overview", icon: LayoutDashboard },
@@ -460,7 +460,7 @@ export default function App() {
             </button>
           ))}
           {auth.isAdmin && (
-            <span className="nav-group-label nav-group-second">OPERATIONS</span>
+            <span className="nav-group-label nav-group-second">HISTORY & ACCESS</span>
           )}
           {accountsReady && accountRole === "super_admin" && (
             <button className={`nav-item ${tab === "users" ? "active" : ""}`}
@@ -481,7 +481,7 @@ export default function App() {
           <button type="button" className="sidebar-public-link" onClick={() => navigate("/catalog")}>
             <span className="sidebar-public-icon" aria-hidden="true"><Grid2X2 size={18} strokeWidth={1.9} /></span>
             <span className="sidebar-public-copy">
-              <strong>Public catalog</strong>
+              <strong>View public catalog</strong>
               <small>Customer view</small>
             </span>
             <ArrowUpRight size={16} className="sidebar-public-arrow" aria-hidden="true" />
@@ -670,7 +670,7 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="catalog-os-section-title"><div><span>OVERVIEW</span><h2>Collection at a glance</h2></div><p>Live numbers from your catalog</p></div>
+              <div className="catalog-os-section-title"><div><span>THE NUMBERS</span><h2>Collection snapshot</h2></div><p>Live inventory overview</p></div>
               <div className="stats-grid overview-stats">
                 {stats.map((s) => (
                   <button type="button" className="stat-card overview-stat" key={s.title} disabled={loading}
@@ -690,118 +690,89 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <div className="catalog-operations" aria-label="Catalog readiness">
-                <section className="catalog-health-card">
-                  <header className="catalog-studio-panel-head">
+              <div className="atelier-workbench" aria-label="Catalog workflow and category distribution">
+                <section className="atelier-review" aria-labelledby="atelier-review-heading">
+                  <div className="atelier-panel-heading">
                     <div>
-                      <span className="catalog-studio-kicker">PUBLISHING PIPELINE</span>
-                      <h2>Catalog readiness</h2>
-                      <p>Know exactly what is ready before it goes public.</p>
+                      <span className="atelier-kicker">PUBLISHING WORKFLOW</span>
+                      <h2 id="atelier-review-heading">Prepare your collection</h2>
+                      <p>What needs attention before a product becomes public.</p>
                     </div>
-                    <span className="catalog-readiness-chip"><CheckCircle2 size={14} aria-hidden="true" /> {withPhotos} photos ready</span>
-                  </header>
-                  <div className="catalog-status-summary" aria-label="Product publishing status">
-                    <div><span className="catalog-summary-dot is-draft" /><strong>{draftCount}</strong><small>Draft</small></div>
-                    <div><span className="catalog-summary-dot is-published" /><strong>{publishedCount}</strong><small>Published</small></div>
-                    <div><span className="catalog-summary-dot is-archived" /><strong>{archivedCount}</strong><small>Archived</small></div>
-                  </div>
-                  <div className="catalog-progress-row">
-                    <div><span>Product photos</span><strong>{withPhotos} / {data.products.length}</strong></div>
-                    <progress max={100} value={photoCoverage} aria-label="Products with photos" />
-                    <small>{photoCoverage}% of products have an image</small>
-                  </div>
-                  <div className="catalog-progress-row">
-                    <div><span>Published products</span><strong>{publishedCount} / {data.products.length}</strong></div>
-                    <progress max={100} value={liveCoverage} aria-label="Published products" />
-                    <small>{liveCoverage}% of the catalog is public</small>
-                  </div>
-                  <div className="catalog-auto-review" aria-label="Automatic draft quality checks">
-                    <div className="catalog-auto-review-heading">
-                      <span className="catalog-auto-review-icon"><Sparkles size={16} aria-hidden="true" /></span>
-                      <div>
-                        <strong>Automatic draft checks</strong>
-                        <small>Missing details are flagged, never filled in automatically.</small>
-                      </div>
-                    </div>
-                    <div className="catalog-auto-review-metrics">
-                      <span><strong>{reviewGaps.dimensions}</strong> dimensions to verify</span>
-                      <span><strong>{reviewGaps.materials}</strong> materials missing</span>
-                      <span><strong>{reviewGaps.descriptions}</strong> descriptions missing</span>
-                    </div>
-                    <button className="catalog-auto-review-action" type="button"
-                      onClick={() => { switchTab("products"); setStatus("draft"); }}>
-                      Review drafts <ArrowUpRight size={14} aria-hidden="true" />
+                    <button type="button" className="atelier-inline-link" onClick={() => { switchTab("products"); setStatus("draft"); }}>
+                      Review drafts <ArrowUpRight size={15} aria-hidden="true" />
                     </button>
                   </div>
-                </section>
-                <section className="catalog-status-overview-card">
-                  <header className="catalog-studio-panel-head">
-                    <div>
-                      <span className="catalog-studio-kicker">AT A GLANCE</span>
-                      <h2>Products by status</h2>
-                      <p>A clear view of what is live and what needs your attention.</p>
+                  <div className="atelier-progress-summary">
+                    <div className="atelier-focus-number">
+                      <strong>{loading ? "—" : draftCount}</strong>
+                      <span>Drafts awaiting review</span>
                     </div>
-                    <Package size={19} aria-hidden="true" />
-                  </header>
-                  <div className="catalog-status-visual">
-                    <div className="catalog-status-donut" role="img"
-                      aria-label={`${publishedCount} published, ${draftCount} draft, ${archivedCount} archived`}
-                      style={{ background: data.products.length
-                        ? `conic-gradient(#285f46 0 ${publishedCount / data.products.length * 100}%, #c49b61 ${publishedCount / data.products.length * 100}% ${(publishedCount + draftCount) / data.products.length * 100}%, #dbe3d8 ${(publishedCount + draftCount) / data.products.length * 100}% 100%)`
-                        : "#e1e7de" }}>
-                      <span className="catalog-status-donut-core">
-                        <strong>{loading ? "—" : data.products.length}</strong>
-                        <small>products</small>
-                      </span>
-                    </div>
-                    <div className="catalog-status-legend">
-                      {([
-                        { label: "Published", count: publishedCount, state: "published" },
-                        { label: "Drafts", count: draftCount, state: "draft" },
-                        { label: "Archived", count: archivedCount, state: "archived" },
-                      ] as const).map(item => (
-                        <button key={item.state} type="button" className="catalog-status-legend-item"
-                          onClick={() => { switchTab("products"); setStatus(item.state); }}>
-                          <span className={`catalog-status-dot is-${item.state}`} />
-                          <span>{item.label}</span>
-                          <strong>{item.count}</strong>
-                          <ArrowUpRight size={14} aria-hidden="true" />
-                        </button>
-                      ))}
+                    <div className="atelier-progress-list">
+                      <div className="atelier-progress-item">
+                        <div><span>Products with photos</span><strong>{withPhotos} / {data.products.length}</strong></div>
+                        <progress max={100} value={photoCoverage} aria-label="Products with photos" />
+                      </div>
+                      <div className="atelier-progress-item">
+                        <div><span>Published in catalog</span><strong>{publishedCount} / {data.products.length}</strong></div>
+                        <progress max={100} value={liveCoverage} aria-label="Published products" />
+                      </div>
                     </div>
                   </div>
+                  <div className="atelier-checklist" aria-label="Missing draft product information">
+                    <div className="atelier-checklist-heading">Details to verify</div>
+                    <button type="button" onClick={() => { switchTab("products"); setStatus("draft"); }}>
+                      <span>Dimensions not confirmed</span><strong>{reviewGaps.dimensions}</strong><ChevronRight size={15} aria-hidden="true" />
+                    </button>
+                    <button type="button" onClick={() => { switchTab("products"); setStatus("draft"); }}>
+                      <span>Material details missing</span><strong>{reviewGaps.materials}</strong><ChevronRight size={15} aria-hidden="true" />
+                    </button>
+                    <button type="button" onClick={() => { switchTab("products"); setStatus("draft"); }}>
+                      <span>Descriptions incomplete</span><strong>{reviewGaps.descriptions}</strong><ChevronRight size={15} aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="atelier-status-links" role="group" aria-label="Filter products by publishing status">
+                    {([
+                      { label: "Drafts", count: draftCount, state: "draft" },
+                      { label: "Published", count: publishedCount, state: "published" },
+                      { label: "Archived", count: archivedCount, state: "archived" },
+                    ] as const).map(item => (
+                      <button key={item.state} type="button" onClick={() => { switchTab("products"); setStatus(item.state); }}>
+                        <span className={`atelier-status-dot is-${item.state}`} aria-hidden="true" />
+                        {item.label}<strong>{item.count}</strong>
+                      </button>
+                    ))}
+                  </div>
                 </section>
-                <section className="catalog-insights-card">
-                  <header className="catalog-studio-panel-head">
+                <section className="atelier-categories" aria-labelledby="atelier-categories-heading">
+                  <div className="atelier-panel-heading">
                     <div>
-                      <span className="catalog-studio-kicker">COLLECTION BREAKDOWN</span>
-                      <h2>Top categories</h2>
-                      <p>Products grouped by category.</p>
+                      <span className="atelier-kicker">COLLECTION DIRECTORY</span>
+                      <h2 id="atelier-categories-heading">By category</h2>
+                      <p>Explore inventory across your workshop collections.</p>
                     </div>
-                    <button type="button" className="catalog-chart-action" onClick={() => switchTab("categories")}
-                      aria-label="Manage categories"><ArrowUpRight size={18} aria-hidden="true" /></button>
-                  </header>
-                  <div className="catalog-category-bars">
-                    {categoryInsights.slice(0, 6).map((item) => {
-                      const sample = data.products.find(product => product.categoryId === item.id && product.images.length > 0);
-                      return (
-                        <button type="button" className="catalog-category-bar" key={item.id}
-                          onClick={() => { switchTab("products"); setCategory(item.id); }}
-                          aria-label={`View ${item.name} products`}>
-                          <span className="catalog-category-visual">
-                            {sample ? <SafeImage src={sample.images[0]?.url} alt="" loading="lazy" /> : <Layers size={26} aria-hidden="true" />}
-                          </span>
-                          <span className="catalog-category-name">{item.name}</span>
-                          <span className="catalog-category-track"><span style={{ width: `${(item.count / maxCategoryCount) * 100}%` }} /></span>
-                          <strong>{item.count} products</strong>
-                        </button>
-                      );
-                    })}
-                    {!categoryInsights.length && <span className="catalog-empty-hint">No categories yet.</span>}
+                    <button type="button" className="atelier-inline-link" onClick={() => switchTab("categories")}>
+                      Manage <ArrowUpRight size={15} aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="atelier-category-list">
+                    {categoryInsights.slice(0, 7).map((item, index) => (
+                      <button type="button" className="atelier-category-row" key={item.id}
+                        onClick={() => { switchTab("products"); setCategory(item.id); }}
+                        aria-label={`View ${item.name}, ${item.count} products`}>
+                        <span className="atelier-category-number">{String(index + 1).padStart(2, "0")}</span>
+                        <span className="atelier-category-copy">
+                          <strong>{item.name}</strong>
+                          <span className="atelier-category-track"><span style={{ width: `${(item.count / maxCategoryCount) * 100}%` }} /></span>
+                        </span>
+                        <span className="atelier-category-quantity">{item.count}</span>
+                        <ArrowUpRight size={14} aria-hidden="true" />
+                      </button>
+                    ))}
+                    {!categoryInsights.length && <p className="catalog-empty-hint">No categories yet.</p>}
                   </div>
                 </section>
               </div>
-              <div className="catalog-studio-bottom">
+              <div className="catalog-studio-bottom atelier-bottom">
                 <section className="catalog-recent-card">
                   <header className="catalog-studio-panel-head">
                     <div>
