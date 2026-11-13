@@ -573,11 +573,11 @@ export default function App() {
             <AccountCenter view={tab} onProfileChanged={setAccountName} />
           ) : (<>
           {tab === "overview" ? (
-            <section className="catalog-command" aria-labelledby="catalog-overview-title">
+            <section className="catalog-command brutti-editorial-hero" aria-labelledby="catalog-overview-title">
               <div className="catalog-command-content">
-                <div className="catalog-command-eyebrow">Collection management</div>
+                <div className="catalog-command-eyebrow"><span className="brutti-editorial-rule" aria-hidden="true" /> BENUA BRUTTI / COLLECTION STUDIO</div>
                 <h1 id="catalog-overview-title">Catalog overview</h1>
-                <p>Manage products, photographs and publishing in one place.</p>
+                <p>A considered home for every piece — from workshop photography to the final published collection.</p>
                 <div className="catalog-command-actions">
                   <button type="button" className="catalog-hero-primary" disabled={loading || busy}
                     onClick={() => setEditor(newProduct(data.categories[0]?.id))}>
@@ -604,6 +604,7 @@ export default function App() {
                   <img src={import.meta.env.BASE_URL + "reference/kiosk.jpg"} alt="Benua Brutti kiosk showroom design reference" loading="lazy" />
                 )}
                 <span className="catalog-command-art-label">{heroProduct ? heroProduct.name : "BRUTTI / SHOWROOM INSPIRATION"}</span>
+                <span className="brutti-editorial-photo-index" aria-hidden="true">B / B&nbsp;&nbsp;—&nbsp;&nbsp;EST. SABAH</span>
               </div>
             </section>
           ) : tab === "products" ? (
@@ -774,21 +775,22 @@ export default function App() {
                   </div>
                 </section>
               </div>
-              <div className="catalog-studio-bottom atelier-bottom">
+              <div className="catalog-studio-bottom atelier-bottom brutti-editorial-bottom">
                 <section className="catalog-recent-card">
                   <header className="catalog-studio-panel-head">
                     <div>
-                      <span className="catalog-studio-kicker">LATEST ADDITIONS</span>
+                      <span className="catalog-studio-kicker">THE WORKSHOP EDIT / 01</span>
                       <h2>Recent products</h2>
-                      <p>What has been updated in your collection.</p>
+                      <p>Recent pieces and work in progress, directly from your catalog.</p>
                     </div>
                     <button type="button" className="catalog-chart-action" onClick={() => switchTab("products")}
                       aria-label="View all products"><ArrowUpRight size={18} aria-hidden="true" /></button>
                   </header>
                   <div className="catalog-recent-list">
-                    {recentProducts.map(product => (
+                    {recentProducts.map((product, index) => (
                       <button type="button" className="catalog-recent-item" key={product.id}
                         onClick={() => setEditor(product)} aria-label={`Open ${product.name}`}>
+                        <span className="brutti-recent-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                         <span className="catalog-recent-thumb">
                           <SafeImage src={product.images[0]?.url} alt="" loading="lazy" />
                         </span>
@@ -803,11 +805,39 @@ export default function App() {
                     {!recentProducts.length && <p className="catalog-empty-hint">No products added yet.</p>}
                   </div>
                 </section>
-                <LastChange
-                  authenticated={auth.isAdmin}
-                  refreshKey={data}
-                  onHistory={() => switchTab("activity")}
-                />
+                <div className="brutti-editorial-story">
+                  <section className="brutti-editorial-feature" aria-labelledby="brutti-editorial-feature-title">
+                    <div className="brutti-editorial-feature-heading">
+                      <span>THE COLLECTION / 02</span>
+                      <span>BUILT BY BRUTTI</span>
+                    </div>
+                    <button type="button" className="brutti-editorial-feature-art"
+                      aria-label={heroProduct ? `View ${heroProduct.name}` : "View catalog products"}
+                      onClick={() => { if (heroProduct) setEditor(heroProduct); else switchTab("products"); }}>
+                      {heroProduct ? (
+                        <SafeImage src={heroProduct.images[0]?.url} alt={heroProduct.images[0]?.alt || heroProduct.name} loading="lazy" />
+                      ) : (
+                        <img src={import.meta.env.BASE_URL + "reference/kiosk.jpg"} alt="Benua Brutti workshop furniture" loading="lazy" />
+                      )}
+                      <span className="brutti-editorial-feature-view"><ArrowUpRight size={18} aria-hidden="true" /></span>
+                    </button>
+                    <div className="brutti-editorial-feature-details">
+                      <div>
+                        <span>FROM THE CATALOG</span>
+                        <h3 id="brutti-editorial-feature-title">{heroProduct?.name || "The Brutti collection"}</h3>
+                        <p>{heroProduct ? (data.categories.find(item => item.id === heroProduct.categoryId)?.name || "Benua Brutti") : "Furniture, displays and spaces made with care."}</p>
+                      </div>
+                      <button type="button" onClick={() => { if (heroProduct) setEditor(heroProduct); else switchTab("products"); }}>
+                        Explore <ArrowUpRight size={15} aria-hidden="true" />
+                      </button>
+                    </div>
+                  </section>
+                  <LastChange
+                    authenticated={auth.isAdmin}
+                    refreshKey={data}
+                    onHistory={() => switchTab("activity")}
+                  />
+                </div>
               </div>
             </>
           )}

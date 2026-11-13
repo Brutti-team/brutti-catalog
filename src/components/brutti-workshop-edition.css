@@ -1169,3 +1169,667 @@
 .admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar input::placeholder {
   color: #d9e9d9;
 }
+
+
+/* BRUTTI / COLLECTION STUDIO — EDITORIAL ART DIRECTION (13 NOV 2026)
+   A restrained furniture-making identity. Real catalog imagery is the hero,
+   the staff workflow is primary, and the page follows the rhythm of an
+   editorial studio instead of generic uniform dashboard cards.
+   Added to the canonical last-loaded admin style; not another CSS import.
+*/
+
+/* Warm canvas and considered navigation */
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab],
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] > .admin-main {
+  background: #f7f6f2;
+  color: #21392b;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] > .sidebar,
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] > .sidebar.sidebar-open {
+  background: #f2f0e9;
+  color: #294333;
+  border-right: 1px solid #dddcd2;
+  box-shadow: inset 3px 0 0 #2d5a43;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .workspace-label {
+  margin-bottom: 26px;
+  border-color: #d4dbce;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .workspace-meta strong {
+  color: #1a3f2c;
+  font-size: 13px;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar nav .nav-item {
+  color: #455e4b;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar nav .nav-item.active {
+  background: #204c36;
+  color: #fff;
+  border-color: #204c36;
+  border-radius: 6px;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar nav .nav-item.active .nav-icon,
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar nav .nav-item.active .nav-icon svg {
+  color: #f2f7ee;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar nav .nav-item.active .nav-count {
+  background: #37684e;
+  color: #fff;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar nav .nav-item.active::before {
+  background: #ccb081;
+  width: 3px;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar nav .nav-item:hover:not(.active) {
+  background: #e3e9df;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .sidebar-utility {
+  border-top-color: #d4dbce;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .sidebar-public-link {
+  border-radius: 6px;
+  background: #214b35;
+  border: 1px solid #214b35;
+  padding: 10px 13px;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .sidebar-public-link:hover {
+  background: #163a29;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .sidebar-public-copy strong {
+  color: #fff;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .sidebar-public-copy small {
+  color: #c6dbc9;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .sidebar-public-arrow {
+  color: #d7e7d5;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .admin-content {
+  max-width: 1590px;
+  padding-top: 23px;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .topbar {
+  background: #fff;
+  border-color: #e2e4db;
+}
+
+/* Editorial cover with a real product photo, not a decorative gradient */
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab="overview"] .brutti-editorial-hero.catalog-command {
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  height: 336px;
+  min-height: 336px;
+  max-height: 336px;
+  margin-bottom: 14px;
+  border: 1px solid #21422e;
+  border-radius: 3px;
+  box-shadow: 0 13px 32px rgb(43 52 37 / 8%);
+  background: #1b3c2c;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab="overview"] .brutti-editorial-hero .catalog-command-content {
+  background: #1b3c2c;
+  justify-content: center;
+  padding: 26px clamp(25px, 3vw, 52px);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 15px;
+  color: #c3d4bf;
+  font: 700 10px/1.5 "DM Sans", sans-serif;
+  letter-spacing: 1.25px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-rule {
+  width: 24px;
+  height: 1px;
+  background: #d1b58b;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command h1,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero h1 {
+  font: 400 clamp(36px, 3.55vw, 57px)/1.06 Georgia, "Times New Roman", serif;
+  letter-spacing: -.04em;
+  color: #f7f2e9;
+  text-wrap: balance;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-content > p {
+  max-width: 410px;
+  margin: 14px 0 18px;
+  color: #d8e5d8;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-actions {
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-actions button {
+  min-height: 38px;
+  padding: 9px 12px;
+  border-radius: 4px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-hero-primary {
+  background: #f6f1e7;
+  color: #1b4630;
+  border-color: #f6f1e7;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-hero-primary:hover {
+  background: #dfe9d9;
+  color: #163e2a;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-hero-secondary {
+  background: #2b5640;
+  color: #f4f7ef;
+  border-color: #608069;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-hero-tertiary {
+  color: #e1e9dc;
+  background: transparent;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-meta {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-color: #4a6753;
+  gap: 14px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-meta span {
+  color: #c7d8c9;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-meta span strong {
+  color: #fff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-meta > span + span {
+  border-color: #50715a;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-art {
+  min-height: 0;
+  background: #8d8d78;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-art > img {
+  filter: saturate(.9) contrast(1.035);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-art-label {
+  bottom: 18px;
+  left: 20px;
+  right: 20px;
+  border-top: 1px solid #ffffff73;
+  padding-top: 12px;
+  color: #fff;
+  letter-spacing: .02em;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-photo-index {
+  position: absolute;
+  z-index: 5;
+  top: 20px;
+  right: 20px;
+  padding: 7px 9px;
+  border: 1px solid #ffffff80;
+  color: #fff;
+  background: #153b28a6;
+  font: 700 9px/1.4 "DM Sans", sans-serif;
+  letter-spacing: 1px;
+}
+
+/* Unequal, expressive figures without losing actionable real metrics */
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-os-section-title h2 {
+  font: 400 28px/1.15 Georgia, "Times New Roman", serif;
+  color: #23412e;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats {
+  margin-bottom: 26px;
+  border: 1px solid #e1e3d8;
+  border-radius: 3px;
+  background: #fff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats > .overview-stat:first-child {
+  background: #244b36;
+  border-color: #244b36;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats > .overview-stat:first-child > strong {
+  color: #fff;
+  font: 400 clamp(32px, 3vw, 45px)/1.02 Georgia, serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats > .overview-stat:first-child > div:first-child > span:first-child,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats > .overview-stat:first-child .overview-stat-bottom {
+  color: #e3ede0;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats > .overview-stat:nth-child(3) {
+  background: #f1eee6;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .overview-stats > .overview-stat:nth-child(n) {
+  border-radius: 0;
+  min-height: 110px;
+}
+
+/* Operational workbench: rich material contrast, still practical */
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-workbench {
+  gap: 16px;
+  margin-bottom: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .88fr);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-workbench > .atelier-review {
+  padding: 26px 29px 24px;
+  border: 1px solid #284e38;
+  border-radius: 3px;
+  background: #214732;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-workbench > .atelier-categories {
+  padding: 26px 28px 24px;
+  border: 1px solid #e0ded4;
+  border-radius: 3px;
+  background: #f0eee6;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-kicker {
+  color: #bfd0bc;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-panel-heading h2 {
+  color: #fff;
+  font: 400 30px/1.1 Georgia, serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-panel-heading p {
+  color: #d0dfd0;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-inline-link {
+  color: #f6f2e6;
+  border-color: #bfd0bc;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-focus-number {
+  background: #e3eadc;
+  color: #234934;
+  padding: 20px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-focus-number strong {
+  color: #20452f;
+  font: 400 57px/1 Georgia,serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-focus-number span {
+  color: #41684a;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-progress-item > div span,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-progress-item > div strong {
+  color: #e5f0e5;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-progress-item progress,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-progress-item progress::-webkit-progress-bar {
+  background: #476b53;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-progress-item progress::-webkit-progress-value {
+  background: #d1b489;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-progress-item progress::-moz-progress-bar {
+  background: #d1b489;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-checklist {
+  border-color: #4e7057;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-checklist-heading {
+  color: #e7f0e4;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-checklist button {
+  color: #d8e6d8;
+  border-color: #42654d;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-checklist button strong,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-checklist button svg {
+  color: #e1eddf;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-checklist button:hover {
+  color: #fff;
+  background: #315f43;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-status-links button {
+  background: #2a553d;
+  border-color: #5c7c63;
+  color: #edf4e9;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-review .atelier-status-links strong {
+  color: #fff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-categories .atelier-panel-heading h2 {
+  color: #254431;
+  font: 400 30px/1.1 Georgia,serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-categories .atelier-category-list {
+  border-color: #d7dacf;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-categories .atelier-category-row {
+  border-color: #d7dacf;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-categories .atelier-category-track {
+  background: #d7ded3;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-categories .atelier-category-track > span {
+  background: #5e8667;
+}
+
+/* Two-column editorial spread: live recent products + real photograph & audit */
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr);
+  align-items: stretch;
+  gap: 17px;
+  margin: 0 0 22px;
+  padding-bottom: 0;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom > .catalog-recent-card {
+  padding: 26px 29px 23px;
+  border: 1px solid #e1e0d6;
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgb(27 55 34 / 3%);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-studio-panel-head {
+  padding-bottom: 18px;
+  margin-bottom: 7px;
+  border-bottom: 1px solid #e5e9df;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-studio-kicker {
+  color: #54745d;
+  font: 700 9px/1.4 "DM Sans", sans-serif;
+  letter-spacing: 1.3px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-studio-panel-head h2 {
+  margin-top: 5px;
+  font: 400 32px/1.15 Georgia,serif;
+  color: #203b2a;
+  letter-spacing: -.025em;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-studio-panel-head p {
+  color: #697b6e;
+  margin-top: 8px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-item {
+  display: grid;
+  grid-template-columns: 22px 58px minmax(0,1fr) auto 16px;
+  align-items: center;
+  gap: 13px;
+  min-height: 86px;
+  padding: 12px 1px;
+  border-bottom: 1px solid #e6eae1;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-item:hover {
+  background: #f6f5f0;
+  box-shadow: none;
+  transform: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-recent-index {
+  color: #a2aa9f;
+  font: 600 10px/1 "DM Sans", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-thumb {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border: 1px solid #e1e7de;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-title strong {
+  color: #283f2f;
+  font-weight: 650;
+  font-size: 12px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-status {
+  font-size: 10px;
+  border-radius: 3px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-chart-action {
+  border-radius: 4px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 13px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature {
+  border: 1px solid #deded2;
+  border-radius: 3px;
+  padding: 15px;
+  background: #ebece3;
+  min-width: 0;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 9px;
+  align-items: center;
+  padding: 1px 2px 13px;
+  color: #446a4f;
+  font: 700 9px/1.4 "DM Sans", sans-serif;
+  letter-spacing: 1.1px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-heading > span:last-child {
+  color: #748578;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: clamp(190px, 18vw, 268px);
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 1px;
+  background: #ccd2c5;
+  cursor: pointer;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform .28s ease;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art:hover img {
+  transform: scale(1.045);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-view {
+  position: absolute;
+  z-index: 2;
+  bottom: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 2px;
+  background: #f6f5ec;
+  color: #1d4c32;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-details {
+  display: flex;
+  gap: 14px;
+  align-items: end;
+  justify-content: space-between;
+  padding: 18px 2px 5px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-details > div {
+  min-width: 0;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-details > div > span {
+  color: #54715a;
+  font: 700 9px/1.4 "DM Sans", sans-serif;
+  letter-spacing: 1px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-details h3 {
+  max-width: 440px;
+  margin: 5px 0;
+  color: #233e2c;
+  font: 400 clamp(19px, 1.7vw, 26px)/1.2 Georgia,serif;
+  letter-spacing: -.02em;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-details p {
+  color: #667b69;
+  font-size: 11px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-details button {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 5px;
+  min-height: 29px;
+  padding: 6px 2px;
+  border-bottom: 1px solid #557d60;
+  color: #28513a;
+  font-weight: 700;
+  font-size: 11px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 17px 20px 17px;
+  border: 1px solid #dfdfd6;
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity-heading {
+  margin-bottom: 8px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity-heading h2 {
+  color: #23432e;
+  font: 400 22px/1.2 Georgia,serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity-icon {
+  width: 28px;
+  height: 28px;
+  background: #ebf1e8;
+  border: 0;
+  border-radius: 3px;
+  color: #28583e;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity-action {
+  margin-top: 10px;
+  border-radius: 3px;
+}
+
+/* Responsive editorial spread and accessible dark theme */
+@media (max-width: 1320px) {
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero.catalog-command {
+    height: 310px;
+    min-height: 310px;
+    max-height: 310px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-content {
+    padding: 22px 28px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero h1 { font-size: 42px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-workbench {
+    grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+  }
+}
+@media (max-width: 1160px) {
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-workbench,
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art { height: 280px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(280px,.7fr);
+  }
+}
+@media (max-width: 800px) {
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero.catalog-command {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 190px;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-content {
+    grid-column: 1;
+    grid-row: 1;
+    height: auto;
+    padding: 29px 25px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-art {
+    grid-column: 1;
+    grid-row: 2;
+    height: 190px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero h1 { font-size: 42px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-story {
+    display: flex;
+    flex-direction: column;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art { height: 235px; }
+}
+@media (max-width: 530px) {
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-content { padding: 25px 19px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero h1 { font-size: 36px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-meta { gap: 6px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-hero .catalog-command-meta > span + span { padding-left: 7px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-workbench > .atelier-review,
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-workbench > .atelier-categories,
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom > .catalog-recent-card { padding: 22px 17px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-item {
+    grid-template-columns: 17px 49px minmax(0,1fr) auto;
+    gap: 8px;
+    min-height: 67px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-item > svg { display: none; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-thumb { width:49px; height:49px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-status { font-size:9px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art { height: 210px; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-details h3 { font-size: 21px; }
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-hero.catalog-command,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-hero .catalog-command-content {
+  background: #153522;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-hero h1,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-hero .catalog-command-content > p {
+  color: #f0f6ea;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .atelier-workbench > .atelier-review {
+  background: #1c3927;
+  border-color: #3d5e46;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .atelier-workbench > .atelier-categories,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-feature {
+  background: #283d2c;
+  border-color: #52664f;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-bottom > .catalog-recent-card,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity {
+  background: #243b2b;
+  border-color: #425e48;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-bottom .catalog-studio-panel-head h2,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-bottom .catalog-recent-title strong,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-feature-details h3,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-story .catalog-last-activity-heading h2,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .atelier-categories .atelier-panel-heading h2 {
+  color: #f1f6ed;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-feature-details p,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-feature-details > div > span,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-feature-heading,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .brutti-editorial-bottom .catalog-studio-panel-head p {
+  color: #d2e3d0;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .atelier-review .atelier-focus-number {
+  background: #35533a;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .atelier-review .atelier-focus-number strong,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .atelier-review .atelier-focus-number span {
+  color: #edf7e7;
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art img { transition:none; transform:none; }
+}
