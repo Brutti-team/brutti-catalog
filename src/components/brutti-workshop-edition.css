@@ -954,3 +954,33 @@
 .admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="overview"] .overview-collection .table-scroll table {
   background: #22392a;
 }
+
+
+/* The category surface must be dark whenever dark-mode headings are light. */
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-grid .category-card,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card {
+  background: #253c2d !important;
+  border-color: #465f4c !important;
+  color: #e8f2e6;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card-body {
+  background: #253c2d;
+  color: #e8f2e6;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card-body h2 {
+  color: #f0f7ed;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card-body p {
+  color: #cadccc;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card-body .category-count {
+  border-color: #56735b;
+  background: #385942;
+  color: #edf7e9;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card-actions .text-button {
+  color: #dcebdd;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card-actions .text-button:hover {
+  color: #fff;
+}
