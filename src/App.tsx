@@ -232,6 +232,7 @@ export default function App() {
     setStatus("all");
     setCategory("all");
     setMenu(null);
+    window.scrollTo(0, 0);
   };
   async function persist(p: Product) {
     const saved = await saveProduct(p);
@@ -810,8 +811,8 @@ export default function App() {
               </div>
             </>
           )}
-          {tab !== "categories" ? (
-            <section className={`table-panel catalog-collection-v3 ${tab === "overview" ? "overview-collection" : "catalog-products-panel"}`}>
+          {tab === "products" ? (
+            <section className="table-panel catalog-collection-v3 catalog-products-panel">
               <div className="panel-heading">
                 <div className="catalog-collection-heading-main">
                   <span className="catalog-collection-eyebrow">
@@ -1188,7 +1189,7 @@ export default function App() {
                 </span>
               </footer>
             </section>
-          ) : (
+          ) : tab === "categories" ? (
             <section className="category-grid">
               {loading ? (
                 <div className="skeleton" />
@@ -1267,7 +1268,7 @@ export default function App() {
                 </div>
               )}
             </section>
-          )}
+          ) : null}
           <footer className="workspace-footer">
             <span>© {new Date().getFullYear()} Benua Brutti Sdn. Bhd.</span>
             <span>Thoughtfully crafted in Sabah, Malaysia.</span>
