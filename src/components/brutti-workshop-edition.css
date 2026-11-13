@@ -855,3 +855,17 @@
     min-height: 34px;
   }
 }
+
+
+/* Legible navigation labels on white (WCAG AA target for normal text). */
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .workspace-meta small,
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .workspace-label .workspace-meta small,
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .sidebar-public-copy small {
+  color: #526b58;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .sidebar .nav-group-label {
+  color: #596f5d;
+}
+.admin-app.brutti-staff-redesign[data-theme="light"][data-active-tab] .atelier-kicker {
+  color: #566f5d;
+}
