@@ -705,6 +705,36 @@ test('dark admin navigation leaves the public catalog light and preserves the sa
   await expectTheme(page, 'dark');
 });
 
+test('product editor prioritizes essentials and photos, and explains publishing readiness on mobile', async ({ page }) => {
+  await backend(page, { savedTheme: 'light' });
+  await openAdmin(page);
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  await page.getByRole('button', { name: 'Add product', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Create product', exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('#product-editor-basics')).toBeVisible();
+  await expect(dialog.locator('#product-editor-photos')).toBeVisible();
+  await expect(dialog.locator('#product-editor-specs')).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Add product photos' })).toBeVisible();
+  await expect(dialog.getByRole('progressbar', { name: 'Publishing checklist completion' })).toHaveAttribute('aria-valuenow', '0');
+  await expect(dialog.getByRole('button', { name: 'Save draft' })).toBeVisible();
+  await expect(dialog.getByText('Display order', { exact: true })).toHaveCount(0);
+  const inOrder = await dialog.evaluate(element => {
+    const photos = element.querySelector('#product-editor-photos');
+    const specs = element.querySelector('#product-editor-specs');
+    return !!photos && !!specs && !!(photos.compareDocumentPosition(specs) & Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+  expect(inOrder).toBe(true);
+  await dialog.getByRole('button', { name: '04 Publishing' }).click();
+  await expect(dialog.locator('#product-editor-publish')).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 780 });
+  const columns = await dialog.locator('.editor-columns').evaluate(element => getComputedStyle(element).gridTemplateColumns);
+  expect(columns.trim().split(/\\s+/)).toHaveLength(1);
+  await expect(dialog.getByRole('button', { name: 'Save draft' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+});
+
 test('dark theme covers table, navigation, product and category forms, and account surfaces with readable text', async ({ page }) => {
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
