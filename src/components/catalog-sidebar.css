@@ -1,10 +1,10 @@
 /* Shared, authenticated Catalog Admin shell. */
 .admin-app[data-active-tab] {
-  --catalog-rail-width: 216px;
-  --catalog-header-height: 64px;
-  --catalog-gutter: clamp(24px, 3.6vw, 64px);
-  --catalog-paper: #faf8f3;
-  --catalog-rail: #f2efe8;
+  --catalog-rail-width: 192px;
+  --catalog-header-height: 60px;
+  --catalog-gutter: clamp(24px, 3.8vw, 72px);
+  --catalog-paper: #fbf9f5;
+  --catalog-rail: #f6f2eb;
   --catalog-ink: #292820;
   --catalog-muted: #6a6457;
   --catalog-line: #ded9ce;
@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: column;
   width: var(--catalog-rail-width);
-  padding: 24px 16px 12px;
+  padding: 20px 12px 12px;
   border-inline-end: 1px solid var(--catalog-line);
   background: var(--catalog-rail);
   color: var(--catalog-ink);
@@ -53,11 +53,11 @@
 .admin-app .sidebar > .brand {
   align-items: center;
   width: fit-content;
-  margin: 0 0 12px 12px;
+  margin: 0 0 10px 10px;
 }
 .admin-app .sidebar > .brand img {
   display: block;
-  width: 92px;
+  width: 96px;
   height: auto;
 }
 .admin-app[data-theme="dark"] .sidebar > .brand img {
@@ -69,7 +69,7 @@
   display: none;
 }
 .admin-app .workspace-label {
-  margin: 0 12px 24px;
+  margin: 0 10px 22px;
   line-height: 1.45;
 }
 .admin-app .workspace-meta strong,
@@ -93,16 +93,16 @@
   font-size: 12px;
 }
 .admin-app .nav-group-second {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 .admin-app .nav-item {
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 40px;
+  min-height: 38px;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 8px 10px;
   border-radius: 4px;
   text-align: left;
   color: var(--catalog-ink);
@@ -116,8 +116,10 @@
 .admin-app .sidebar-public-link:hover {
   background: var(--catalog-hover);
 }
+.admin-app .nav-item[aria-current="page"]:not(:hover) {
+  background: transparent;
+}
 .admin-app .nav-item[aria-current="page"] {
-  background: var(--catalog-selection);
   color: var(--catalog-accent);
   font-weight: 600;
 }
@@ -289,7 +291,7 @@
 
 @media (min-width: 801px) and (max-width: 1050px) {
   .admin-app[data-active-tab] {
-    --catalog-rail-width: 192px;
+    --catalog-rail-width: 176px;
     --catalog-gutter: 24px;
   }
   .admin-app .profile-copy {

@@ -189,6 +189,10 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   expect(rail.width).toBeLessThan(240);
   expect(rail.footerFill).toBe('rgba(0, 0, 0, 0)');
   expect(rail.activeMark).not.toBe('rgba(0, 0, 0, 0)');
+  await page.mouse.move(0, 0);
+  const activeFill = await navigation.getByRole('button', { name: 'Products', exact: true })
+    .evaluate(el => getComputedStyle(el).backgroundColor);
+  expect(activeFill).toBe('rgba(0, 0, 0, 0)');
   expect(rail.rowHeight).toBeGreaterThanOrEqual(36);
   expect(rail.rowHeight).toBeLessThanOrEqual(44);
   await expectReadable(page, [
@@ -262,8 +266,9 @@ test('Overview auto sync and read-only draft checks remain actionable', async ({
   await expect(checks).toContainText('Dimensions not confirmed');
   await expect(checks).toContainText('Material details missing');
   await expect(checks).toContainText('Descriptions incomplete');
-  await expect(checks.locator('button')).toHaveCount(3);
-  await page.getByRole('region', { name: 'Publishing workflow' }).getByRole('button', { name: 'Review drafts' }).click();
+  await expect(checks.getByRole('listitem')).toHaveCount(3);
+  await expect(checks.getByRole('button')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Review drafts', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Quick product status filters' }).getByRole('button', { name: /Draft/ })).toHaveAttribute('aria-pressed', 'true');
 });
@@ -275,14 +280,14 @@ test('Overview metrics and category shortcuts stay usable with reduced motion', 
   const metrics = page.getByRole('region', { name: 'Collection snapshot' });
   const categories = page.getByRole('region', { name: 'By category' });
   const buttons = metrics.getByRole('button');
-  await expect(buttons).toHaveCount(6);
+  await expect(buttons).toHaveCount(5);
   const animations = await buttons.evaluateAll(items => items.map(item => getComputedStyle(item).animationName));
-  expect(animations).toEqual(Array(6).fill('none'));
+  expect(animations.every(name => name === 'none')).toBe(true);
   await expect(page.getByRole('list', { name: 'Details to verify' })).toBeVisible();
   await expect(categories.getByRole('button', { name: /^View .* products$/ })).toHaveCount(Math.min(7, bruttiCategories.length));
 });
 
-test('Overview uses a single catalog photograph and keeps coverage and edit actions', async ({ page }) => {
+test('Overview pairs the collection photograph with the metrics and opens the real product editor', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
   await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
@@ -291,8 +296,13 @@ test('Overview uses a single catalog photograph and keeps coverage and edit acti
   const feature = page.getByRole('button', { name: `Edit ${fixtureProduct.name}`, exact: true });
   await expect(feature.locator('img')).toBeVisible();
   await expect(feature).toContainText(fixtureProduct.name);
-  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
-  await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
+  const metrics = page.getByRole('region', { name: 'Collection snapshot' });
+  await expect(metrics.locator('.overview-photo-count')).toHaveText('1 with photos');
+  await expect(metrics.getByRole('button', { name: 'Published, view published' })).toHaveAccessibleDescription('1');
+  const summary = await metrics.boundingBox();
+  const photograph = await feature.boundingBox();
+  expect(photograph!.x).toBeGreaterThanOrEqual(summary!.x + summary!.width);
+  expect(photograph!.y).toBeLessThan(summary!.y + summary!.height);
   await feature.click();
   await expect(page.getByRole('dialog').getByLabel('Product name')).toHaveValue(fixtureProduct.name);
 });
@@ -302,14 +312,14 @@ test('Overview uses transparent, unequal metrics and a flat workspace without ch
   await openAdmin(page);
   const metrics = page.getByRole('region', { name: 'Collection snapshot' });
   const values = await metrics.locator('.overview-metric-value').allTextContents();
-  expect(values).toEqual(['1', '0', '1', '0', '1', String(bruttiCategories.length)]);
+  expect(values).toEqual(['1', '0', '1', '0', String(bruttiCategories.length)]);
   const treatments = await page.locator('.overview-metric, .overview-workflow, .overview-categories').evaluateAll(items =>
     items.map(item => {
       const style = getComputedStyle(item);
       return [style.backgroundColor, style.boxShadow, style.borderLeftWidth, style.borderRightWidth];
     })
   );
-  expect(treatments).toHaveLength(8);
+  expect(treatments).toHaveLength(7);
   expect(treatments.every(([fill, shadow, left, right]) => fill === 'rgba(0, 0, 0, 0)' && shadow === 'none' && left === '0px' && right === '0px')).toBe(true);
   const widths = await metrics.locator('.overview-metric').evaluateAll(items => items.map(item => Math.round(item.getBoundingClientRect().width)));
   expect(new Set(widths).size).toBeGreaterThan(1);
@@ -325,6 +335,7 @@ test('Overview preserves dark-mode contrast and fits a mobile viewport', async (
   const title = page.getByRole('heading', { name: 'Catalog overview' });
   await expect(title).toBeInViewport();
   await expect(page.getByRole('button', { name: 'Add product', exact: true })).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Review drafts', exact: true })).toBeInViewport();
   await expectReadable(page, ['.overview-metric-value', '.overview-section-heading h2', '.overview-category-name'], true);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
