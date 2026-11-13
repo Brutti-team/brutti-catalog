@@ -798,6 +798,20 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
       });
       expect(escaped, `${theme} header controls must fit their header`).toEqual([]);
       await expect(page.getByRole('button', { name: 'Open my profile', exact: true })).toBeVisible();
+      if (viewport.width > 800) {
+        const sidebarBounds = await page.locator('.admin-app .sidebar').evaluate(sidebar => {
+          const rail = sidebar.getBoundingClientRect();
+          const nav = sidebar.querySelector('nav')!.getBoundingClientRect();
+          const firstItem = sidebar.querySelector('nav .nav-item')!.getBoundingClientRect();
+          const workspace = sidebar.querySelector('.workspace-label')!.getBoundingClientRect();
+          return { railLeft: rail.left, navLeft: nav.left, navRight: nav.right, itemLeft: firstItem.left, workspaceLeft: workspace.left, railRight: rail.right };
+        });
+        expect(sidebarBounds.railLeft).toBeGreaterThanOrEqual(0);
+        expect(sidebarBounds.navLeft).toBeGreaterThanOrEqual(sidebarBounds.railLeft);
+        expect(sidebarBounds.itemLeft).toBeGreaterThanOrEqual(sidebarBounds.railLeft);
+        expect(sidebarBounds.workspaceLeft).toBeGreaterThanOrEqual(sidebarBounds.railLeft);
+        expect(sidebarBounds.navRight).toBeLessThanOrEqual(sidebarBounds.railRight);
+      }
       const screenshot = testInfo.outputPath(`admin-test-fixtures-${theme}-${viewport.width}x${viewport.height}.png`);
       await page.screenshot({ path: screenshot, fullPage: true });
       await testInfo.attach(`admin fixture ${theme} ${viewport.width}x${viewport.height}`, { path: screenshot, contentType: 'image/png' });
