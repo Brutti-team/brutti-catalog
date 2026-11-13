@@ -420,10 +420,14 @@
 .admin-app.brutti-staff-redesign[data-active-tab] .admin-content {
   background: transparent;
 }
+.admin-app.brutti-staff-redesign[data-active-tab] .catalog-os-section-title h2 {
+  letter-spacing: -.03em;
+}
 .admin-app.brutti-staff-redesign[data-active-tab] .catalog-gallery-card,
 .admin-app.brutti-staff-redesign[data-active-tab] .catalog-collection-v3 {
   box-shadow: none;
 }
+.admin-app.brutti-staff-redesign[data-active-tab] button:focus-visible,
 .pub-app.pub-refined button:focus-visible,
 .pub-app.pub-refined a:focus-visible,
 .pub-app.pub-refined input:focus-visible,

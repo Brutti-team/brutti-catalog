@@ -1,0 +1,349 @@
+/* Brutti Catalog — Wood Atelier sidebar v2
+   Visible presentation refresh only: existing menu items, permissions, routes and data remain untouched.
+   Loaded last in main.tsx to override legacy rail variations safely. */
+
+.admin-app[data-active-tab] {
+  --catalog-nav-width: 278px;
+  --atelier-cream: #f8f2e6;
+  --atelier-gold: #d7ac70;
+  --atelier-sage: #b9cfc1;
+  --atelier-forest: #102d23;
+}
+
+/* Fixed, dark-timber navigation canvas. */
+.admin-app[data-active-tab] .sidebar,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar {
+  position: fixed;
+  isolation: isolate;
+  width: var(--catalog-nav-width);
+  padding: 14px 14px 15px;
+  color: var(--atelier-cream);
+  background:
+    radial-gradient(ellipse 125% 40% at 5% -15%, rgba(117, 150, 100, .21), transparent 82%),
+    linear-gradient(170deg, #142f25 0%, #0d271e 43%, #081d17 100%);
+  border-right: 1px solid rgba(219, 181, 121, .20);
+  box-shadow: 5px 0 24px rgba(10, 31, 18, .13);
+  overflow: hidden;
+}
+.admin-app[data-active-tab] .sidebar::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  left: -45%;
+  right: -30%;
+  bottom: -7%;
+  height: 38%;
+  opacity: .7;
+  background: repeating-radial-gradient(
+    ellipse 112% 83% at 19% 115%,
+    transparent 0 17px,
+    rgba(203, 151, 93, .12) 18px,
+    transparent 20px 34px
+  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 72%);
+  mask-image: linear-gradient(to bottom, transparent, #000 72%);
+}
+.admin-app[data-active-tab] .sidebar::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: 1px;
+  top: 15px;
+  bottom: 15px;
+  right: 0;
+  background: linear-gradient(to bottom, transparent, rgba(221, 180, 117, .38), transparent);
+  pointer-events: none;
+}
+.admin-app[data-active-tab] .sidebar > * { position: relative; z-index: 1; }
+
+/* Brutti mark lives inside a recognisable premium timber-plaque header. */
+.admin-app[data-active-tab] .sidebar > .brand {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 116px;
+  height: 116px;
+  margin: 0 0 16px;
+  padding: 14px 17px 15px;
+  border: 1px solid rgba(228, 184, 125, .27);
+  border-radius: 17px;
+  background:
+    linear-gradient(95deg, rgba(6, 31, 23, .17) 0%, rgba(6, 31, 23, .62) 100%),
+    repeating-linear-gradient(177deg, transparent 0 10px, rgba(230, 184, 117, .06) 11px, transparent 12px 21px),
+    linear-gradient(120deg, #37513b, #18382c 58%, #102b21);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .09), 0 10px 24px rgba(1, 15, 8, .12);
+  overflow: hidden;
+}
+.admin-app[data-active-tab] .sidebar > .brand::after {
+  content: "C A T A L O G   S T U D I O";
+  display: block;
+  position: absolute;
+  left: 19px;
+  bottom: 15px;
+  font: 700 9px/1 "DM Sans", sans-serif;
+  letter-spacing: .075em;
+  color: #e9c799;
+  opacity: .93;
+}
+.admin-app[data-active-tab] .sidebar > .brand .brutti-official-logo,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar > .brand .brutti-official-logo {
+  display: block;
+  flex: none;
+  width: 130px;
+  max-width: 130px;
+  height: 60px;
+  max-height: 60px;
+  margin: 0;
+  object-fit: contain;
+  object-position: left center;
+  filter: grayscale(1) brightness(0) invert(1);
+  opacity: 1;
+}
+
+/* Catalog workspace — warm border with a cleaner two-line label. */
+.admin-app[data-active-tab] .sidebar .workspace-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 11px;
+  min-height: 70px;
+  margin: 0 0 19px;
+  padding: 10px 10px;
+  border: 1px solid rgba(224, 240, 215, .13);
+  border-radius: 13px;
+  background: linear-gradient(112deg, rgba(229, 248, 225, .08), rgba(229, 248, 225, .025));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-symbol {
+  display: grid;
+  place-items: center;
+  flex: 0 0 41px;
+  width: 41px;
+  height: 41px;
+  border: 1px solid rgba(213, 234, 209, .12);
+  border-radius: 12px;
+  color: #e8f0da;
+  background: rgba(184, 215, 186, .13);
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-symbol svg {
+  width: 20px; height: 20px;
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-meta { gap: 5px; }
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-meta strong {
+  color: #fffef7;
+  font-size: 14px;
+  font-weight: 790;
+  letter-spacing: -.025em;
+}
+.admin-app[data-active-tab] .sidebar .workspace-label .workspace-meta small {
+  color: #b8cfbf;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Section labels are visually distinct but preserve the original menu order. */
+.admin-app[data-active-tab] .sidebar nav {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 0 15px;
+  scrollbar-width: none;
+}
+.admin-app[data-active-tab] .sidebar nav::-webkit-scrollbar { display: none; }
+.admin-app[data-active-tab] .sidebar .nav-group-label {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 12px 11px;
+  color: #d3bd98;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 1.65px;
+}
+.admin-app[data-active-tab] .sidebar .nav-group-label::after {
+  display: block;
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  margin-left: 12px;
+  background: linear-gradient(to right, rgba(208, 175, 121, .27), transparent);
+}
+.admin-app[data-active-tab] .sidebar .nav-group-second { padding-top: 25px; }
+
+/* More visible navigation transformation: cream active tab against forest canvas. */
+.admin-app[data-active-tab] .sidebar nav .nav-item,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 49px;
+  flex: 0 0 auto;
+  margin: 2px 0;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  box-shadow: none;
+  color: #c6d9cb;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  color: #bed7c2;
+  background: rgba(236, 249, 232, .045);
+}
+.admin-app[data-active-tab] .sidebar nav .nav-icon > svg { width: 19px; height: 19px; }
+.admin-app[data-active-tab] .sidebar nav .nav-item:hover:not(.active) {
+  color: #fff;
+  border-color: rgba(232, 242, 225, .11);
+  background: rgba(235, 249, 228, .09);
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item:hover:not(.active) .nav-icon {
+  background: rgba(245, 253, 235, .09);
+  color: #fff8e8;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active {
+  color: #213b2c;
+  border-color: rgba(246, 236, 213, .93);
+  background: linear-gradient(115deg, #f7f0e2, #e9e8d8);
+  box-shadow: 0 7px 17px rgba(0, 10, 5, .15), inset 0 1px 0 rgba(255,255,255,.8);
+  font-weight: 790;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  left: 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: #c79758;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active .nav-icon,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-item.active .nav-icon {
+  color: #28533b;
+  background: rgba(25, 73, 49, .10);
+  border: 0;
+  border-radius: 10px;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-count,
+.admin-app[data-active-tab][data-theme="dark"] .sidebar nav .nav-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 31px;
+  height: 26px;
+  margin-left: auto;
+  padding: 4px 7px;
+  border: 1px solid rgba(235, 247, 227, .10);
+  border-radius: 8px;
+  background: rgba(234, 249, 232, .12);
+  color: #fbf5e8;
+  font-size: 11.5px;
+  font-weight: 760;
+}
+.admin-app[data-active-tab] .sidebar nav .nav-item.active .nav-count {
+  color: #28533b;
+  border-color: rgba(43, 85, 58, .12);
+  background: rgba(36, 83, 57, .11);
+}
+
+/* Bottom customer link becomes a warm walnut/gold tile, clearly actionable. */
+.admin-app[data-active-tab] .sidebar .sidebar-utility {
+  flex: 0 0 auto;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(221, 186, 128, .21);
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 72px;
+  gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid rgba(235, 198, 139, .48);
+  border-radius: 13px;
+  background:
+    linear-gradient(100deg, rgba(43, 34, 21, .10), rgba(26, 43, 29, .41)),
+    repeating-linear-gradient(177deg, transparent 0 10px, rgba(255, 225, 182, .09) 11px, transparent 12px 21px),
+    linear-gradient(112deg, #826343 0%, #4b4631 58%, #2a4837 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 242, 218, .18), 0 7px 16px rgba(0, 14, 7, .13);
+  color: #fffaf1;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-link:hover {
+  border-color: #edd09d;
+  background:
+    repeating-linear-gradient(177deg, transparent 0 10px, rgba(255, 225, 182, .11) 11px, transparent 12px 21px),
+    linear-gradient(112deg, #98724c, #42583e);
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-icon {
+  flex: 0 0 36px;
+  width: 36px; height: 36px;
+  color: #ffdfac;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-copy strong {
+  color: #fffdf3; font-size: 13.5px; font-weight: 770;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-copy small {
+  color: #f1e3cb; font-size: 11px; font-weight: 500;
+}
+.admin-app[data-active-tab] .sidebar .sidebar-public-arrow { color: #ffe0a5; }
+
+.admin-app[data-active-tab] .sidebar nav .nav-item:focus-visible,
+.admin-app[data-active-tab] .sidebar .sidebar-public-link:focus-visible,
+.admin-app[data-active-tab] .sidebar > .brand:focus-visible {
+  outline: 2px solid #ebc58e;
+  outline-offset: 3px;
+}
+@media (min-width: 801px) {
+  .admin-app[data-active-tab] .admin-main {
+    margin-left: var(--catalog-nav-width);
+  }
+}
+@media (max-width: 800px) {
+  .admin-app[data-active-tab] .sidebar,
+  .admin-app[data-active-tab][data-theme="dark"] .sidebar {
+    width: min(278px, 90vw);
+    padding: 12px 13px 13px;
+  }
+  .admin-app[data-active-tab] .sidebar > .brand {
+    min-height: 98px;
+    height: 98px;
+    padding-top: 9px;
+  }
+  .admin-app[data-active-tab] .sidebar > .brand::after { bottom: 12px; }
+}
+@media (max-height: 690px) {
+  .admin-app[data-active-tab] .sidebar > .brand { height: 88px; min-height: 88px; margin-bottom: 8px; padding-top: 5px; }
+  .admin-app[data-active-tab] .sidebar .workspace-label { min-height: 53px; margin-bottom: 9px; padding: 6px 8px; }
+  .admin-app[data-active-tab] .sidebar .nav-group-second { padding-top: 12px; }
+  .admin-app[data-active-tab] .sidebar nav .nav-item { min-height: 42px; padding-top: 3px; padding-bottom: 3px; }
+  .admin-app[data-active-tab] .sidebar .sidebar-public-link { min-height: 53px; padding: 6px 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app[data-active-tab] .sidebar nav .nav-item,
+  .admin-app[data-active-tab] .sidebar .sidebar-public-link {
+    transition: none;
+  }
+}

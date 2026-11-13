@@ -1,0 +1,319 @@
+/* Brutti Catalog | Quiet SaaS Overview
+   One disciplined neutral surface system with Brutti green as the sole brand accent.
+   Draft / published / archived retain small, accessible semantic indicators.
+   Scoped to Admin Overview. Functionality and motion live in separate modules. */
+
+.admin-app .overview-stats .overview-stat,
+.admin-app .overview-stats .overview-stat:first-child,
+.admin-app .overview-stats .overview-stat:nth-child(2),
+.admin-app .overview-stats .overview-stat:nth-child(3),
+.admin-app .overview-stats .overview-stat:nth-child(4) {
+  --stat-tone: #3a7054;
+  --stat-icon-bg: #edf3ee;
+  --stat-text: var(--admin-text);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--admin-border);
+  border-top: 2px solid #91af9a;
+  border-radius: 15px;
+  background: linear-gradient(155deg, #ffffff 0%, #fafcf9 100%);
+  box-shadow: 0 3px 12px rgb(30 54 37 / 4%);
+  color: var(--admin-text);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+.admin-app .overview-stats .overview-stat::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -39px;
+  bottom: -58px;
+  width: 100px;
+  height: 100px;
+  border: 1px solid rgb(70 113 83 / 6%);
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none;
+}
+.admin-app .overview-stats .overview-stat:hover {
+  border-color: #a8c0ac;
+  box-shadow: 0 9px 27px rgb(23 59 34 / 8%);
+}
+.admin-app .overview-stats .overview-stat > div:first-child > span:first-child {
+  color: var(--admin-muted);
+  font-weight: 710;
+  font-size: 12px;
+}
+.admin-app .overview-stats .overview-stat .overview-stat-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: #3a7054;
+  background: #edf3ee;
+  border: 1px solid #dce8df;
+  border-radius: 10px;
+}
+.admin-app .overview-stats .overview-stat .overview-stat-icon svg {
+  width: 19px;
+  height: 19px;
+}
+.admin-app .overview-stats .overview-stat > strong {
+  color: var(--admin-text);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .overview-stats .overview-stat > p {
+  color: var(--admin-muted);
+  opacity: 1;
+  font-weight: 480;
+}
+
+/* Publishing and breakdown share the same card treatment, not competing colors. */
+.admin-app .catalog-health-card,
+.admin-app .catalog-insights-card {
+  border: 1px solid var(--admin-border);
+  border-top: 2px solid #91af9a;
+  background: var(--admin-surface);
+}
+.admin-app .catalog-health-card .catalog-studio-kicker,
+.admin-app .catalog-insights-card .catalog-studio-kicker {
+  color: var(--admin-accent);
+}
+.admin-app .catalog-readiness-chip {
+  color: var(--admin-success-text);
+  background: var(--admin-success-bg);
+  border-color: var(--admin-success-border);
+  font-size: 11px;
+}
+.admin-app .catalog-health-card .catalog-status-summary {
+  gap: 0;
+  padding: 6px;
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+}
+.admin-app .catalog-health-card .catalog-status-summary > div,
+.admin-app .catalog-health-card .catalog-status-summary > div:nth-child(2),
+.admin-app .catalog-health-card .catalog-status-summary > div:nth-child(3) {
+  min-height: 41px;
+  padding: 7px 5px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--admin-text);
+  gap: 6px;
+}
+.admin-app .catalog-health-card .catalog-status-summary strong {
+  color: var(--admin-text);
+}
+.admin-app .catalog-health-card .catalog-status-summary small {
+  color: var(--admin-muted);
+}
+.admin-app .catalog-health-card .catalog-progress-row > div span {
+  font-size: 12px;
+  font-weight: 680;
+  color: var(--admin-text);
+}
+.admin-app .catalog-health-card .catalog-progress-row > div strong { font-size: 12px; }
+.admin-app .catalog-health-card .catalog-progress-row progress {
+  overflow: hidden;
+  width: 100%;
+  height: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--admin-surface-soft);
+  accent-color: #4a8666;
+}
+.admin-app .catalog-health-card .catalog-progress-row progress::-webkit-progress-bar {
+  background: var(--admin-surface-soft);
+  border-radius: 12px;
+}
+.admin-app .catalog-health-card .catalog-progress-row progress::-webkit-progress-value {
+  border-radius: 12px;
+  background: #4a8666;
+}
+.admin-app .catalog-health-card .catalog-progress-row progress::-moz-progress-bar {
+  border-radius: 12px;
+  background: #4a8666;
+}
+.admin-app .catalog-health-card .catalog-progress-row + .catalog-progress-row progress {
+  accent-color: #84978a;
+}
+.admin-app .catalog-health-card .catalog-progress-row + .catalog-progress-row progress::-webkit-progress-value {
+  background: #84978a;
+}
+.admin-app .catalog-health-card .catalog-progress-row + .catalog-progress-row progress::-moz-progress-bar {
+  background: #84978a;
+}
+.admin-app .catalog-insights-card .catalog-chart-action {
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+  color: var(--admin-accent);
+}
+.admin-app .catalog-insights-card .catalog-chart-action:hover {
+  background: var(--admin-selected);
+}
+.admin-app .catalog-insights-card .catalog-category-bar {
+  gap: 13px;
+  padding: 6px 9px;
+  min-height: 43px;
+  border-radius: 9px;
+  transition: background-color 150ms ease;
+}
+.admin-app .catalog-insights-card .catalog-category-bar:hover { background: var(--admin-surface-hover); }
+.admin-app .catalog-insights-card .catalog-category-name { font-weight: 670; }
+.admin-app .catalog-insights-card .catalog-category-track {
+  height: 8px;
+  background: var(--admin-surface-soft);
+  border-radius: 20px;
+}
+.admin-app .catalog-insights-card .catalog-category-track > span,
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(1) .catalog-category-track > span,
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(2) .catalog-category-track > span,
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(3) .catalog-category-track > span,
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(4) .catalog-category-track > span,
+.admin-app .catalog-insights-card .catalog-category-bar:nth-child(5) .catalog-category-track > span {
+  background: #709984;
+  border-radius: 20px;
+}
+.admin-app .catalog-insights-card .catalog-category-bar:first-child .catalog-category-track > span {
+  background: #3d795a;
+}
+.admin-app .catalog-insights-card .catalog-category-bar strong {
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 790;
+}
+
+/* Activity stays calm and legible. */
+.admin-app .catalog-last-activity {
+  border: 1px solid var(--admin-border);
+  border-left: 3px solid #789b82;
+  background: var(--admin-surface);
+  box-shadow: 0 6px 18px rgb(27 52 36 / 4%);
+}
+.admin-app .catalog-last-activity-icon {
+  color: var(--admin-accent);
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+}
+.admin-app .catalog-last-activity-kicker { color: var(--admin-muted); }
+.admin-app .catalog-last-activity-heading h2,
+.admin-app .catalog-last-activity-details > strong,
+.admin-app .catalog-last-activity-resource { color: var(--admin-text); }
+.admin-app .catalog-last-activity-details,
+.admin-app .catalog-last-activity-placeholder { border-color: var(--admin-border); }
+.admin-app .catalog-last-activity-meta { color: var(--admin-muted); }
+.admin-app .catalog-last-activity-action {
+  color: var(--admin-accent);
+  background: var(--admin-surface-soft);
+  border-color: var(--admin-border);
+}
+.admin-app .catalog-last-activity-action:hover {
+  color: var(--admin-accent);
+  background: var(--admin-selected);
+  border-color: var(--admin-focus);
+}
+
+/* Dark mode: a unified charcoal-forest canvas with no competing colored tiles. */
+.admin-app[data-theme="dark"] .overview-stats .overview-stat,
+.admin-app[data-theme="dark"] .overview-stats .overview-stat:first-child,
+.admin-app[data-theme="dark"] .overview-stats .overview-stat:nth-child(2),
+.admin-app[data-theme="dark"] .overview-stats .overview-stat:nth-child(3),
+.admin-app[data-theme="dark"] .overview-stats .overview-stat:nth-child(4) {
+  --stat-tone: #96baa0;
+  --stat-icon-bg: #2c4437;
+  --stat-text: #e8eee8;
+  background: linear-gradient(155deg, #26372d 0%, #233329 100%);
+  border-color: #405448;
+  border-top-color: #70977b;
+}
+.admin-app[data-theme="dark"] .overview-stats .overview-stat::after { border-color: rgb(164 198 166 / 7%); }
+.admin-app[data-theme="dark"] .overview-stats .overview-stat:hover { border-color: #638c6c; }
+.admin-app[data-theme="dark"] .overview-stats .overview-stat .overview-stat-icon {
+  color: #c4dfc9;
+  background: #32493a;
+  border-color: #425e4b;
+}
+.admin-app[data-theme="dark"] .overview-stats .overview-stat > strong {
+  color: #f0f5ef;
+}
+.admin-app[data-theme="dark"] .overview-stats .overview-stat > div:first-child > span:first-child,
+.admin-app[data-theme="dark"] .overview-stats .overview-stat > p {
+  color: #c6d3c8;
+}
+.admin-app[data-theme="dark"] .catalog-health-card,
+.admin-app[data-theme="dark"] .catalog-insights-card {
+  background: #202e26;
+  border-color: #3a5041;
+  border-top-color: #62866e;
+}
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-studio-kicker,
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-studio-kicker { color: #b0cfb4; }
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-status-summary {
+  background: #283a2f;
+  border-color: #405347;
+}
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-status-summary > div,
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-status-summary > div:nth-child(2),
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-status-summary > div:nth-child(3) {
+  background: transparent;
+  color: #edf5ec;
+}
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-status-summary strong { color: #edf5ec; }
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-status-summary small { color: #c3d1c6; }
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-progress-row progress,
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-progress-row progress::-webkit-progress-bar {
+  background: #314438;
+}
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-progress-row progress::-webkit-progress-value { background: #6caa85; }
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-progress-row progress::-moz-progress-bar { background: #6caa85; }
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-progress-row + .catalog-progress-row progress::-webkit-progress-value { background: #839b8b; }
+.admin-app[data-theme="dark"] .catalog-health-card .catalog-progress-row + .catalog-progress-row progress::-moz-progress-bar { background: #839b8b; }
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-track { background: #34473b; }
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-track > span,
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-bar:nth-child(1) .catalog-category-track > span,
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-bar:nth-child(2) .catalog-category-track > span,
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-bar:nth-child(3) .catalog-category-track > span,
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-bar:nth-child(4) .catalog-category-track > span,
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-bar:nth-child(5) .catalog-category-track > span {
+  background: #729c83;
+}
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-bar:first-child .catalog-category-track > span { background: #a2cbb0; }
+.admin-app[data-theme="dark"] .catalog-insights-card .catalog-category-bar:hover { background: #2b4034; }
+.admin-app[data-theme="dark"] .catalog-last-activity {
+  background: #23342a;
+  border-color: #405749;
+  border-left-color: #87ab90;
+}
+.admin-app[data-theme="dark"] .catalog-last-activity-icon {
+  color: #c7dfc9;
+  background: #304839;
+  border-color: #46614b;
+}
+.admin-app[data-theme="dark"] .catalog-last-activity-kicker,
+.admin-app[data-theme="dark"] .catalog-last-activity-meta { color: #c1d0c4; }
+.admin-app[data-theme="dark"] .catalog-last-activity-heading h2,
+.admin-app[data-theme="dark"] .catalog-last-activity-details > strong,
+.admin-app[data-theme="dark"] .catalog-last-activity-resource { color: #f0f6f0; }
+.admin-app[data-theme="dark"] .catalog-last-activity-details,
+.admin-app[data-theme="dark"] .catalog-last-activity-placeholder { border-color: #43594a; }
+.admin-app[data-theme="dark"] .catalog-last-activity-action {
+  color: #e5f4e8;
+  background: #304738;
+  border-color: #4a6350;
+}
+.admin-app[data-theme="dark"] .catalog-last-activity-action:hover { background: #395540; }
+
+@media (max-width: 600px) {
+  .admin-app .overview-stats .overview-stat { padding: 13px 14px; }
+  .admin-app .overview-stats .overview-stat .overview-stat-icon { width: 29px; height: 29px; }
+  .admin-app .catalog-health-card .catalog-status-summary { padding: 6px; }
+  .admin-app .catalog-health-card .catalog-status-summary > div { min-height: 37px; gap: 4px; padding: 6px 3px; }
+  .admin-app .catalog-insights-card .catalog-category-bar { gap: 8px; padding-inline: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app .overview-stats .overview-stat,
+  .admin-app .catalog-insights-card .catalog-category-bar { transition: none; }
+  .admin-app .overview-stats .overview-stat:hover { transform: none; }
+}
