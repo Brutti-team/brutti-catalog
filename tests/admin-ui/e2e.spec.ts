@@ -717,7 +717,7 @@ test('product editor prioritizes essentials and photos, and explains publishing 
   await expect(dialog.locator('#product-editor-specs')).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'Add product photos' })).toBeVisible();
   await expect(dialog.getByRole('progressbar', { name: 'Publishing checklist completion' })).toHaveAttribute('aria-valuenow', '0');
-  await expect(dialog.getByRole('button', { name: 'Save draft' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Save product' })).toBeVisible();
   await expect(dialog.getByText('Display order', { exact: true })).toHaveCount(0);
   const inOrder = await dialog.evaluate(element => {
     const photos = element.querySelector('#product-editor-photos');
@@ -730,7 +730,7 @@ test('product editor prioritizes essentials and photos, and explains publishing 
   await page.setViewportSize({ width: 390, height: 780 });
   const columns = await dialog.locator('.editor-columns').evaluate(element => getComputedStyle(element).gridTemplateColumns);
   expect(columns.trim().split(/\s+/)).toHaveLength(1);
-  await expect(dialog.getByRole('button', { name: 'Save draft' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Save product' })).toBeVisible();
   await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await expect(dialog).toHaveCount(0);
 });
