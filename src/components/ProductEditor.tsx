@@ -318,6 +318,7 @@ export default function ProductEditor({
               <label>
                 Description <span className="product-editor-publish-hint">Required to publish</span>
                 <textarea
+                  aria-label="Description"
                   rows={4}
                   maxLength={10000}
                   value={draft.description}
@@ -328,6 +329,7 @@ export default function ProductEditor({
               <label>
                 Materials <span className="product-editor-publish-hint">Required to publish</span>
                 <input
+                  aria-label="Materials"
                   maxLength={2000}
                   value={draft.materials}
                   placeholder="e.g. Reclaimed timber, natural oil finish"
@@ -420,6 +422,7 @@ export default function ProductEditor({
                 <label>
                   Display order <span className="product-editor-publish-hint">Lower numbers appear first</span>
                   <input
+                    aria-label="Display order"
                     type="number"
                     min={0}
                     max={1000000}
@@ -530,7 +533,7 @@ export default function ProductEditor({
               ) : (
                 <Save size={16} />
               )}{" "}
-              {busy ? "Saving…" : draft.status === "published" ? "Publish product" : draft.status === "draft" ? "Save draft" : "Save product"}
+              {busy ? "Saving…" : "Save product"}
             </button>
           </div>
         </footer>
