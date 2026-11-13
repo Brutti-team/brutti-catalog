@@ -79,6 +79,7 @@ test('Draft with unknown sizes persists; edit, upload, publish, public filters a
   await expect(dialog).toHaveCount(0);
   expect(db.records()[0]).toMatchObject({ status: 'draft', width: 0, depth: 0, height: 0 });
   expect(db.records()[0]).not.toHaveProperty('display_order');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Browser regression item', exact: true }).click();
   await dialog.getByLabel('Product name').fill('Browser regression item edited');
   await dialog.getByLabel('Description', { exact: true }).fill('Test-only product description.');
@@ -103,6 +104,7 @@ test('Draft with unknown sizes persists; edit, upload, publish, public filters a
   await page.locator('.pub-category-filters').getByRole('button', { name: 'Racks & Shelves', exact: true }).click();
   await expect(page.locator('.pub-product-card')).toHaveCount(1);
   await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'More actions for Browser regression item edited' }).click();
   await page.getByRole('button', { name: 'Archive', exact: true }).click();
   await expect.poll(() => db.records()[0].status).toBe('archived');
@@ -121,6 +123,7 @@ test('pending uploads preserve staff removals and alt-text edits and reject over
   let release!: () => void;
   db.holdUploads(new Promise<void>(resolve => { release = resolve; }));
   await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Upload regression fixture', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.locator('input[type=file]').setInputFiles({ name: 'new-test-photo.png', mimeType: 'image/png', buffer: pixel });
@@ -171,6 +174,7 @@ test('staff display order persists and curated public sorting keeps featured pro
   const db = await backend(page, [fixture(10, 'Featured high order', { featured: true, display_order: 90 }),
     fixture(11, 'Lower order', { display_order: 10 }), fixture(12, 'Higher order', { display_order: 20 })], { ordering: true });
   await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Higher order', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('Display order', { exact: true }).fill('5');
@@ -187,6 +191,7 @@ test('removing a shared photo waits for its final product reference before Stora
   const db = await backend(page, [fixture(20, 'Shared photo owner A', { status: 'draft' }),
     fixture(21, 'Shared photo owner B', { status: 'draft' })], { imageCleanup: true });
   await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Shared photo owner A', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('button', { name: 'Remove image 1', exact: true }).click();
@@ -204,6 +209,7 @@ test('removing a shared photo waits for its final product reference before Stora
 test('an expired authorization during deletion leaves the product visible and reports no false success', async ({ page }) => {
   const db = await backend(page, [fixture(30, 'Protected delete fixture', { status: 'draft' })], { denyDelete: true });
   await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   page.once('dialog', prompt => prompt.accept());
   await page.getByRole('button', { name: 'More actions for Protected delete fixture' }).click();
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
@@ -215,6 +221,7 @@ test('an expired authorization during deletion leaves the product visible and re
 test('a completed product save reports remaining photos when Storage cleanup fails', async ({ page }) => {
   const db = await backend(page, [fixture(40, 'Cleanup warning fixture', { status: 'draft' })], { imageCleanup: true, storageFailure: true });
   await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Cleanup warning fixture', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('button', { name: 'Remove image 1', exact: true }).click();

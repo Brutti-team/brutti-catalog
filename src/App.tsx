@@ -232,6 +232,7 @@ export default function App() {
     setStatus("all");
     setCategory("all");
     setMenu(null);
+    window.scrollTo(0, 0);
   };
   async function persist(p: Product) {
     const saved = await saveProduct(p);
@@ -810,31 +811,21 @@ export default function App() {
               </div>
             </>
           )}
-          {tab !== "categories" ? (
-            <section className={`table-panel catalog-collection-v3 ${tab === "overview" ? "overview-collection" : "catalog-products-panel"}`}>
+          {tab === "products" ? (
+            <section className="table-panel catalog-collection-v3 catalog-products-panel">
               <div className="panel-heading">
                 <div className="catalog-collection-heading-main">
                   <span className="catalog-collection-eyebrow">
                     PRODUCT INVENTORY
                   </span>
                   <h2>
-                    {tab === "overview" ? "The collection" : "All products"}{" "}
+                    All products{" "}
                     <span className="catalog-collection-count">{data.products.length}</span>
                   </h2>
                   <p>
-                    {tab === "overview"
-                      ? "Recently updated products in your workspace."
-                      : "All your products in one place."}
+                    All your products in one place.
                   </p>
                 </div>
-                {tab === "overview" && (
-                  <button
-                    className="text-button"
-                    onClick={() => switchTab("products")}
-                  >
-                    View all products <ArrowRight size={15} />
-                  </button>
-                )}
                 {tab === "products" && (
                   <button type="button" className="button secondary catalog-import-trigger"
                     aria-label="Bulk import photos"
@@ -891,17 +882,6 @@ export default function App() {
                   )}
                 </div>
                 <div className="filters">
-                  {tab === "overview" && (
-                    <>
-                      <label className="sr-only" htmlFor="status-filter">Filter by status</label>
-                      <select id="status-filter" value={status} onChange={(e) => setStatus(e.target.value)}>
-                        <option value="all">All statuses</option>
-                        <option value="published">Published</option>
-                        <option value="draft">Draft</option>
-                        <option value="archived">Archived</option>
-                      </select>
-                    </>
-                  )}
                   <label className="sr-only" htmlFor="category-filter">
                     Filter by category
                   </label>
@@ -932,22 +912,8 @@ export default function App() {
                   </label>
                 </div>
               </div>
-              {tab === "overview" && (
-                <div className="catalog-collection-overview-meta" aria-live="polite" aria-atomic="true">
-                  <span className="catalog-collection-results">
-                    <span className="catalog-collection-results-dot" aria-hidden="true" />
-                    Showing <strong>{Math.min(6, filtered.length)}</strong> of <strong>{filtered.length}</strong> matching products
-                  </span>
-                  {(search || status !== "all" || category !== "all") && (
-                    <button type="button" className="catalog-collection-reset" onClick={() => { setSearch(""); setStatus("all"); setCategory("all"); }}>
-                      <X size={14} aria-hidden="true" /> Clear filters
-                    </button>
-                  )}
-                  <span className="catalog-collection-help">Select a product to view or edit details</span>
-                </div>
-              )}
               {tab === "products" && (
-                <div className="catalog-products-filter-summary" role="status">
+                <div className="catalog-products-filter-summary" aria-live="polite">
                   <span><strong>{filtered.length}</strong> matching {filtered.length === 1 ? "product" : "products"}</span>
                   {(search || status !== "all" || category !== "all") && (
                     <button type="button" onClick={() => { setSearch(""); setStatus("all"); setCategory("all"); }}>
@@ -1000,9 +966,7 @@ export default function App() {
                             </td>
                           </tr>
                         ))
-                      : filtered
-                          .slice(0, tab === "overview" ? 6 : filtered.length)
-                          .map((p) => (
+                      : filtered.map((p) => (
                             <tr key={p.id} className="catalog-inventory-row">
                               <td>
                                 <button
@@ -1177,10 +1141,7 @@ export default function App() {
               <footer className="table-footer">
                 <span>
                   Showing{" "}
-                  {Math.min(
-                    filtered.length,
-                    tab === "overview" ? 6 : filtered.length,
-                  )}{" "}
+                  {filtered.length}{" "}
                   of {data.products.length} products
                 </span>
                 <span>
@@ -1188,7 +1149,7 @@ export default function App() {
                 </span>
               </footer>
             </section>
-          ) : (
+          ) : tab === "categories" ? (
             <section className="category-grid">
               {loading ? (
                 <div className="skeleton" />
@@ -1267,7 +1228,7 @@ export default function App() {
                 </div>
               )}
             </section>
-          )}
+          ) : null}
           <footer className="workspace-footer">
             <span>© {new Date().getFullYear()} Benua Brutti Sdn. Bhd.</span>
             <span>Thoughtfully crafted in Sabah, Malaysia.</span>

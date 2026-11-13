@@ -984,3 +984,188 @@
 .admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="categories"] .category-card-actions .text-button:hover {
   color: #fff;
 }
+
+
+/* 13 Nov — final layout discipline for the real staff overview.
+   Prevent the sidebar's legacy indentation/cropping and stop duplicated
+   full-inventory content from visually swallowing the short overview.
+   Sidebar stays fixed; responsive drawer controls are unaffected. */
+@media (min-width: 801px) {
+  .admin-app.brutti-staff-redesign[data-active-tab] > .sidebar,
+  .admin-app.brutti-staff-redesign[data-active-tab] > .sidebar.sidebar-open {
+    position: fixed;
+    inset: 0 auto 0 0;
+    left: 0;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: var(--catalog-nav-width);
+    min-width: var(--catalog-nav-width);
+    max-width: var(--catalog-nav-width);
+    margin: 0;
+    transform: none;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    padding: 20px 12px 16px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] > .sidebar > nav,
+  .admin-app.brutti-staff-redesign[data-active-tab] > .sidebar > .workspace-label,
+  .admin-app.brutti-staff-redesign[data-active-tab] > .sidebar > .sidebar-utility {
+    position: relative;
+    left: auto;
+    right: auto;
+    transform: none;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav {
+    padding: 5px 0 0;
+    overflow: visible;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-item {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 13px;
+    padding-right: 9px;
+    box-sizing: border-box;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar .workspace-label {
+    padding-left: 11px;
+    padding-right: 9px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar .nav-group-label {
+    margin-left: 0;
+    padding-left: 12px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] > .admin-main {
+    margin-left: var(--catalog-nav-width);
+    width: calc(100% - var(--catalog-nav-width));
+    min-width: 0;
+  }
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-item,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .workspace-label,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .sidebar-public-link {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .workspace-meta,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .sidebar-public-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .workspace-label > .workspace-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .workspace-label > .workspace-meta strong,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .workspace-label > .workspace-meta small {
+  display: block;
+  max-width: 100%;
+}
+/* Preserve reading space below the sticky header while scrolling. */
+.admin-app.brutti-staff-redesign[data-active-tab] .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .admin-content {
+  scroll-margin-top: 78px;
+  overflow-x: clip;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-bottom {
+  scroll-margin-top: 88px;
+  margin-bottom: 28px;
+  padding-bottom: 3px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-bottom > section,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-bottom .catalog-last-activity {
+  padding-top: 25px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-recent-list {
+  margin-top: 12px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-recent-item {
+  min-height: 69px;
+  border-bottom: 1px solid #e3eae3;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-recent-thumb {
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .catalog-recent-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"] .workspace-footer {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid #e1e8e0;
+}
+@media (max-width: 800px) {
+  .admin-app.brutti-staff-redesign[data-active-tab] .admin-main { width: 100%; margin-left: 0; }
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-bottom { gap: 25px; }
+}
+
+
+/* Product inventory now lives on the Products tab only. Match its child
+   surfaces to the dark theme; never leave white panels under pale text. */
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel.catalog-collection-v3,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel.table-panel {
+  background: #22392a !important;
+  border-color: #42604a !important;
+  color: #e8f0e6;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .panel-heading,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-footer,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-products-filter-summary,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-product-controls,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-scroll,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-scroll table {
+  background: #22392a;
+  color: #e8f0e6;
+  border-color: #42604a;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-collection-eyebrow,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .panel-heading h2,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .panel-heading p,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-products-filter-summary,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-footer,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .product-cell strong,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .product-cell small,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .price-cell,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-table-category {
+  color: #e5efe3;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-inventory-table tbody tr,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-inventory-table td,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-inventory-table thead th {
+  background: #22392a;
+  border-color: #3b5844;
+  color: #e5efe3;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-status-tabs .catalog-status-tab {
+  color: #dce9db;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar .search-input,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar select {
+  background: #293f30;
+  border-color: #4b6752;
+  color: #edf5e9;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar input,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar input::placeholder {
+  color: #d9e9d9;
+}
