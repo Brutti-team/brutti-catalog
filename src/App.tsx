@@ -27,7 +27,6 @@ import {
   LogOut,
   LoaderCircle,
   RefreshCw,
-  Sparkles,
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
