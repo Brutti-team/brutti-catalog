@@ -1117,3 +1117,55 @@
   .admin-app.brutti-staff-redesign[data-active-tab] .admin-main { width: 100%; margin-left: 0; }
   .admin-app.brutti-staff-redesign[data-active-tab="overview"] .atelier-bottom { gap: 25px; }
 }
+
+
+/* Product inventory now lives on the Products tab only. Match its child
+   surfaces to the dark theme; never leave white panels under pale text. */
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel.catalog-collection-v3,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel.table-panel {
+  background: #22392a !important;
+  border-color: #42604a !important;
+  color: #e8f0e6;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .panel-heading,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-footer,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-products-filter-summary,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-product-controls,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-scroll,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-scroll table {
+  background: #22392a;
+  color: #e8f0e6;
+  border-color: #42604a;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-collection-eyebrow,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .panel-heading h2,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .panel-heading p,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-products-filter-summary,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-footer,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .product-cell strong,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .product-cell small,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .price-cell,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-table-category {
+  color: #e5efe3;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-inventory-table tbody tr,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-inventory-table td,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-inventory-table thead th {
+  background: #22392a;
+  border-color: #3b5844;
+  color: #e5efe3;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .catalog-status-tabs .catalog-status-tab {
+  color: #dce9db;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar .search-input,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar select {
+  background: #293f30;
+  border-color: #4b6752;
+  color: #edf5e9;
+}
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar input,
+.admin-app.brutti-staff-redesign[data-theme="dark"][data-active-tab="products"] .catalog-products-panel .table-toolbar input::placeholder {
+  color: #d9e9d9;
+}
