@@ -93,7 +93,7 @@ async function backend(page: Page, options: FixtureOptions = {}) {
 async function openAdmin(page: Page) {
   await page.goto('/#/admin');
   await expect(page.locator('.profile-copy strong')).toHaveText(/.+/);
-  await expect(page.locator('.product-cell strong')).toHaveText(fixtureProduct.name);
+  await expect(page.locator('.catalog-recent-title strong')).toHaveText(fixtureProduct.name);
   await page.evaluate(() => document.fonts.ready);
 }
 
@@ -251,7 +251,7 @@ test('Overview auto sync and read-only draft checks remain actionable', async ({
   await expect(refreshNow).toBeEnabled();
   await refreshNow.click();
   await expect(sync).toContainText('Auto-sync enabled');
-  await expect(page.locator('.product-cell strong')).toHaveText(fixtureProduct.name);
+  await expect(page.locator('.catalog-recent-title strong')).toHaveText(fixtureProduct.name);
   const checks = page.locator('.atelier-checklist');
   await expect(checks).toContainText('Details to verify');
   await expect(checks).toContainText('Dimensions not confirmed');
@@ -340,11 +340,13 @@ test('workshop category directory navigates to product filters without changing 
 test('collection inventory uses premium table hierarchy and live search filters', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
-  const panel = page.locator('.overview-collection.catalog-collection-v3');
+  await expect(page.locator('.overview-collection')).toHaveCount(0);
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  const panel = page.locator('.catalog-products-panel.catalog-collection-v3');
   await expect(panel).toBeVisible();
   await expect(panel.locator('.catalog-collection-eyebrow')).toContainText('PRODUCT INVENTORY');
   await expect(panel.locator('.catalog-collection-count')).toHaveText('1');
-  await expect(panel.locator('.catalog-collection-overview-meta')).toContainText('Showing 1 of 1 matching products');
+  await expect(panel.locator('.catalog-products-filter-summary')).toContainText('1 matching product');
   await expect(panel.locator('.catalog-inventory-table tbody tr')).toHaveCount(1);
   const metrics = await panel.evaluate(el => {
     const rect = (selector: string) => el.querySelector(selector)!.getBoundingClientRect();
@@ -363,9 +365,9 @@ test('collection inventory uses premium table hierarchy and live search filters'
   expect(metrics.tableScrollable).toBe(true);
 
   await panel.getByLabel('Search products').fill('not-a-real-product-name');
-  await expect(panel.locator('.catalog-collection-overview-meta')).toContainText('Showing 0 of 0 matching products');
+  await expect(panel.locator('.catalog-products-filter-summary')).toContainText('0 matching products');
   await expect(panel.getByRole('heading', { name: 'No pieces found' })).toBeVisible();
-  await panel.locator('.catalog-collection-reset').click();
+  await panel.locator('.catalog-products-filter-summary button').click();
   await expect(panel.locator('.catalog-inventory-table tbody tr')).toHaveCount(1);
   await panel.getByRole('button', { name: `Edit ${fixtureProduct.name}`, exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'Edit product', exact: true })).toBeVisible();
@@ -375,17 +377,19 @@ test('collection inventory remains readable in dark mode and on mobile', async (
   await page.setViewportSize({ width: 390, height: 844 });
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
-  const panel = page.locator('.overview-collection.catalog-collection-v3');
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  const panel = page.locator('.catalog-products-panel.catalog-collection-v3');
   await expect(panel).toBeVisible();
   await expect(panel.locator('.table-toolbar .search-input')).toBeVisible();
-  await expect(panel.locator('.catalog-collection-overview-meta')).toBeVisible();
+  await expect(panel.locator('.catalog-products-filter-summary')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await expectReadable(page, [
-    '.overview-collection .catalog-collection-eyebrow',
-    '.overview-collection .panel-heading h2',
-    '.overview-collection .catalog-collection-results',
-    '.overview-collection .table-scroll .product-cell strong',
-    '.overview-collection .table-scroll .price-cell',
+    '.catalog-products-panel .catalog-collection-eyebrow',
+    '.catalog-products-panel .panel-heading h2',
+    '.catalog-products-panel .catalog-products-filter-summary',
+    '.catalog-products-panel .table-scroll .product-cell strong',
+    '.catalog-products-panel .table-scroll .price-cell',
   ], true);
 });
 
@@ -700,7 +704,8 @@ test('dark admin navigation leaves the public catalog light and preserves the sa
 test('dark theme covers table, navigation, product and category forms, and account surfaces with readable text', async ({ page }) => {
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
-  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.sidebar .nav-group-label', '.catalog-last-activity-placeholder', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.sidebar .nav-group-label', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
   const searchPlaceholder = await colors(page.getByLabel('Search products', { exact: true }), '::placeholder');
   expect(searchPlaceholder.contrast, `Search placeholder: ${JSON.stringify(searchPlaceholder)}`).toBeGreaterThanOrEqual(4.5);
   for (const selector of ['.theme-toggle svg', '.header-signout svg']) {
@@ -753,6 +758,8 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     await page.setViewportSize(viewport);
     await backend(page, { savedTheme: 'light', displayName: 'A long fixture display name for narrow screens' });
     await openAdmin(page);
+    if (viewport.width <= 800) await page.getByRole('button', { name: 'Open navigation' }).click();
+    await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
     for (const theme of ['light', 'dark'] as const) {
       if (theme === 'dark') await page.getByRole('button', { name: 'Switch to dark mode', exact: true }).click();
       await expectTheme(page, theme);
