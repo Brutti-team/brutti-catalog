@@ -913,7 +913,7 @@ export default function App() {
                 </div>
               </div>
               {tab === "products" && (
-                <div className="catalog-products-filter-summary" role="status">
+                <div className="catalog-products-filter-summary" aria-live="polite">
                   <span><strong>{filtered.length}</strong> matching {filtered.length === 1 ? "product" : "products"}</span>
                   {(search || status !== "all" || category !== "all") && (
                     <button type="button" onClick={() => { setSearch(""); setStatus("all"); setCategory("all"); }}>
