@@ -31,7 +31,7 @@ test.beforeEach(async ({ page }) => {
 test("catalog admin requires actual authentication and never shows unsecured demo", async ({ page }) => {
   await page.goto("/#/admin");
   await expect(page.getByRole("heading", { name: "Welcome back." })).toBeVisible();
-  await expect(page.getByLabel("Password")).toBeVisible();
+  await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
   await expect(page.getByText("Demo mode", { exact: false })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Reset demo" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Add product" })).toHaveCount(0);
@@ -65,7 +65,7 @@ test("invalid credentials never grant administrator access", async ({ page }) =>
 
 test("catalog public page never fabricates sample products", async ({ page }) => {
   await page.goto("/#/catalog");
-  await expect(page.getByRole("heading", { name: "Made for your space. Built with purpose." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Considered spaces/ })).toBeVisible();
   await expect(page.locator(".pub-products-grid .pub-product-card")).toHaveCount(0);
   await expect(page.getByText("Demo catalog", { exact: false })).toHaveCount(0);
 });
@@ -73,7 +73,7 @@ test("catalog public page never fabricates sample products", async ({ page }) =>
 test("mobile catalog preserves its design and does not overflow horizontally", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/catalog");
-  await expect(page.getByRole("heading", { name: "Made for your space. Built with purpose." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Considered spaces/ })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
@@ -104,7 +104,7 @@ test("reset email uses the same access card and does not disclose account existe
   await page.getByRole("button", { name: "Forgot password?" }).click();
   await expect(page.getByRole("status")).toContainText("If this account exists");
   expect(decodeURIComponent(redirect)).toContain("auth=recovery");
-  await expect(page.locator(".access-card")).toBeVisible();
+  await expect(page.locator(".catalog-login-auth-surface")).toBeVisible();
 });
 
 test("invite callback sets a verified user's password without granting admin membership", async ({ page }) => {
@@ -131,7 +131,7 @@ test("invite callback sets a verified user's password without granting admin mem
   expect(updates).toBe(0);
   await page.getByLabel("Confirm password", { exact: true }).fill("new-invite-password");
   await page.getByRole("button", { name: "Save password" }).click();
-  await expect(page.getByRole("heading", { name: "Admin access required" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Access restricted." })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add product" })).toHaveCount(0);
   expect(updates).toBe(1);
 });
