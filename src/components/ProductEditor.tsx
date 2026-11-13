@@ -209,7 +209,7 @@ export default function ProductEditor({
               <div className="product-editor-section-heading">
                 <span className="product-editor-step">02</span>
                 <div>
-                  <h3>Photography <span className="product-editor-photo-count">${draft.images.length}/8</span></h3>
+                  <h3>Photography <span className="product-editor-photo-count">{draft.images.length}/8</span></h3>
                   <p>The first photo becomes your cover. Add at least one before publishing.</p>
                 </div>
               </div>
@@ -460,6 +460,11 @@ export default function ProductEditor({
                 ))}
               </ul>
               <p>Drafts can be saved before every item is complete.</p>
+            </section>
+            <section className="editor-note">
+              <span className="eyebrow">GOOD TO KNOW</span>
+              <h3>Drafts stay private</h3>
+              <p>Save now and finish the listing later. Only published products appear in the public catalogue.</p>
             </section>
             <button
               type="button"
