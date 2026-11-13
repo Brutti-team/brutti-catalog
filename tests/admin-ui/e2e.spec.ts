@@ -180,7 +180,7 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   });
   expect(styles.width).toBeGreaterThanOrEqual(242);
   expect(styles.width).toBeLessThanOrEqual(246);
-  expect(styles.background).toBe('rgb(252, 253, 251)');
+  expect(styles.background).toBe('rgb(242, 240, 233)');
   const rail = await sidebar.evaluate(el => ({
     workspaceFill: getComputedStyle(el.querySelector('.workspace-label')!).backgroundColor,
     activeIconFill: getComputedStyle(el.querySelector('.nav-item.active .nav-icon')!).backgroundColor,
@@ -188,7 +188,7 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   }));
   expect(rail.workspaceFill).toBe('rgba(0, 0, 0, 0)');
   expect(rail.activeIconFill).toBe('rgba(0, 0, 0, 0)');
-  expect(rail.footerFill).toBe('rgba(0, 0, 0, 0)');
+  expect(rail.footerFill).toBe('rgb(33, 75, 53)');
   const menu = await sidebar.locator('nav .nav-item').first().evaluate(el => ({
     font: parseFloat(getComputedStyle(el).fontSize),
     height: el.getBoundingClientRect().height,
@@ -285,6 +285,10 @@ test('enterprise overview shows real catalog health and review actions', async (
   await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
   await expect(page.locator('.catalog-command')).toBeVisible();
+  const feature = page.locator('.brutti-editorial-feature');
+  await expect(feature).toBeVisible();
+  await expect(feature.locator('img')).toBeVisible();
+  await expect(feature).toContainText(fixtureProduct.name);
   await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
   await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
@@ -300,7 +304,7 @@ test('Overview analytics uses a quiet metric shelf without changing real counts'
   const values = await metrics.locator(':scope > strong').allTextContents();
   expect(values).toEqual(['1','1','0',String(bruttiCategories.length),'0','1']);
   const backgrounds = await metrics.evaluateAll(items => items.map(el => getComputedStyle(el).backgroundColor));
-  expect(new Set(backgrounds).size).toBe(1);
+  expect(new Set(backgrounds).size).toBeGreaterThan(1);
   await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
