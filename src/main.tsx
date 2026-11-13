@@ -23,6 +23,7 @@ import "./components/brutti-os-modern-2026.css";
 import "./components/brutti-unslop.css";
 import "./components/brutti-maison-editorial.css";
 import "./components/brutti-admin-overview-height-fix.css";
+import "./components/brutti-workshop-edition.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
