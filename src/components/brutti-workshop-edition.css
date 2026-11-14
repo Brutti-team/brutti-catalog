@@ -2106,3 +2106,93 @@
     transition: none;
   }
 }
+
+
+/* Restore the original forest-green Publishing Workflow panel — 14 Nov 2026 */
+/* Keep the newly approved sidebar unchanged. This only affects Overview's
+   "Prepare your collection" panel, for both light/dark preferences. */
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-workbench > section.atelier-review {
+  color: #f6f6ef;
+  background: #214732;
+  border: 1px solid #315840;
+  border-radius: 3px;
+  padding: 26px 29px 24px;
+  box-shadow: none;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-kicker {
+  color: #c5d5c0;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-panel-heading h2 {
+  color: #fffdf5;
+  font: 400 clamp(25px, 2.4vw, 30px)/1.13 Georgia, serif;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-panel-heading p {
+  color: #d2dfd1;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-inline-link {
+  color: #f6f3e9;
+  border-bottom-color: #bbd0bd;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-inline-link:hover {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-focus-number {
+  background: #e3eadc;
+  border-left: none;
+  color: #214732;
+  padding: 20px;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-focus-number strong {
+  color: #214732;
+  font: 400 clamp(46px, 4vw, 57px)/1 Georgia, serif;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-focus-number span {
+  color: #41684a;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-progress-item > div span,
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-progress-item > div strong {
+  color: #eaf2e8;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-progress-item progress,
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-progress-item progress::-webkit-progress-bar {
+  background: #476b53;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-progress-item progress::-webkit-progress-value,
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-progress-item progress::-moz-progress-bar {
+  background: #d1b489;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-checklist {
+  border-top-color: #4e7057;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-checklist-heading {
+  color: #e7f0e4;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-checklist button {
+  color: #dae8d9;
+  border-bottom-color: #42654d;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-checklist button strong,
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-checklist button svg {
+  color: #e7f1e3;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-checklist button:hover {
+  color: #fff;
+  background: #315f43;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-status-links button {
+  color: #f0f6eb;
+  background: #2a553d;
+  border-color: #5c7c63;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-status-links button:hover {
+  background: #36674b;
+}
+.admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-review .atelier-status-links strong {
+  color: #fff;
+}
+@media (max-width: 800px) {
+  .admin-app.brutti-staff-redesign[data-theme][data-active-tab="overview"] .atelier-workbench > section.atelier-review {
+    padding: 22px 19px;
+  }
+}
