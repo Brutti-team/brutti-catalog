@@ -164,9 +164,11 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
   const navigation = page.getByRole('navigation', { name: 'Admin navigation' });
   await expect(sidebar.locator('.sidebar-brand-mark')).toHaveCount(0);
   await expect(sidebar.locator('.brutti-official-logo')).toBeVisible();
-  await expect(sidebar.locator('.workspace-label .workspace-meta strong')).toHaveText('Benua Brutti');
-  await expect(navigation.locator('.nav-group-label').first()).toHaveText('WORKSPACE');
-  await expect(navigation.locator('.nav-group-label').last()).toHaveText('HISTORY & ACCESS');
+  // The already-published forest editorial sidebar intentionally hides
+  // duplicated workspace/group labels and displays the official logo instead.
+  await expect(sidebar.locator('.workspace-label')).toBeHidden();
+  await expect(navigation.locator('.nav-group-label').first()).toBeHidden();
+  await expect(sidebar.locator('.brutti-official-logo')).toBeVisible();
   await expect(sidebar.locator('.sidebar-last-change')).toHaveCount(0);
   await expect(sidebar.locator('.sidebar-utility .sidebar-public-link')).toBeVisible();
   await expect(navigation.getByRole('button', { name: 'Overview', exact: true })).toHaveAttribute('aria-current', 'page');
@@ -178,29 +180,26 @@ test('premium sidebar has clear workspace hierarchy and a pinned public-catalog 
     const computed = getComputedStyle(el);
     return { background: computed.backgroundColor, width: el.getBoundingClientRect().width };
   });
-  expect(styles.width).toBeGreaterThanOrEqual(242);
-  expect(styles.width).toBeLessThanOrEqual(246);
-  expect(styles.background).toBe('rgb(242, 240, 233)');
+  expect(styles.width).toBeGreaterThanOrEqual(278);
+  expect(styles.width).toBeLessThanOrEqual(282);
+  expect(styles.background).toBe('rgb(23, 59, 46)');
   const rail = await sidebar.evaluate(el => ({
-    workspaceFill: getComputedStyle(el.querySelector('.workspace-label')!).backgroundColor,
     activeIconFill: getComputedStyle(el.querySelector('.nav-item.active .nav-icon')!).backgroundColor,
     footerFill: getComputedStyle(el.querySelector('.sidebar-public-link')!).backgroundColor,
+    activeRadius: getComputedStyle(el.querySelector('.nav-item.active')!).borderRadius,
   }));
-  expect(rail.workspaceFill).toBe('rgba(0, 0, 0, 0)');
   expect(rail.activeIconFill).toBe('rgba(0, 0, 0, 0)');
-  expect(rail.footerFill).toBe('rgb(33, 75, 53)');
+  expect(rail.footerFill).toBe('rgba(0, 0, 0, 0)');
+  expect(rail.activeRadius).toBe('999px');
   const menu = await sidebar.locator('nav .nav-item').first().evaluate(el => ({
     font: parseFloat(getComputedStyle(el).fontSize),
     height: el.getBoundingClientRect().height,
     icon: el.querySelector('.nav-icon')?.getBoundingClientRect().width ?? 0,
   }));
-  expect(menu.font).toBeGreaterThanOrEqual(12);
-  expect(menu.height).toBeGreaterThanOrEqual(40);
+  expect(menu.font).toBeGreaterThanOrEqual(14);
+  expect(menu.height).toBeGreaterThanOrEqual(53);
   expect(menu.icon).toBeGreaterThanOrEqual(17);
   await expectReadable(page, [
-    '.sidebar .workspace-meta strong',
-    '.sidebar .workspace-meta small',
-    '.sidebar .nav-group-label',
     '.sidebar nav .nav-item.active',
     '.sidebar .sidebar-public-copy strong',
     '.sidebar .sidebar-public-copy small',
@@ -215,7 +214,7 @@ test('premium sidebar remains useful on narrow mobile and short screens', async 
   const sidebar = page.locator('.admin-app .sidebar');
   await expect(sidebar).toBeVisible();
   await expect(sidebar.locator('.sidebar-public-link')).toBeVisible();
-  await expect(sidebar.locator('.workspace-meta strong')).toBeVisible();
+  await expect(sidebar.locator('.brutti-official-logo')).toBeVisible();
   const measurements = await sidebar.evaluate(el => ({
     width: el.getBoundingClientRect().width,
     viewport: window.innerWidth,
@@ -783,7 +782,7 @@ test('dark theme covers table, navigation, product and category forms, and accou
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
-  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.sidebar .nav-group-label', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
+  await expectReadable(page, ['.profile-copy strong', '.profile-copy small', '.sidebar .nav-item.active', '.product-cell strong', '.product-cell small', 'thead th', '.price-cell', '.status-badge', '.panel-heading p', '.table-footer'], true);
   const searchPlaceholder = await colors(page.getByLabel('Search products', { exact: true }), '::placeholder');
   expect(searchPlaceholder.contrast, `Search placeholder: ${JSON.stringify(searchPlaceholder)}`).toBeGreaterThanOrEqual(4.5);
   for (const selector of ['.theme-toggle svg', '.header-signout svg']) {
