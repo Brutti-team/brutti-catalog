@@ -445,3 +445,76 @@ body:has(.product-model-stage.is-expanded), .modal:has(.product-model-stage.is-e
 .product-ai3d-setup-links a:focus-visible,
 .product-ai3d-setup-links button:focus-visible { outline: 2px solid var(--admin-focus); outline-offset: 3px; }
 .product-ai3d-setup-links button:disabled { opacity: .55; }
+
+
+/* Real 3D option without a privately hosted GPU. Unboxed editorial steps. */
+.product-ai3d-setup-title {
+  margin: 0 0 7px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -.015em;
+}
+.product-ai3d-demo-steps { margin: 17px 0 15px; }
+.product-ai3d-demo-step {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--admin-border);
+}
+.product-ai3d-demo-number {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--admin-border);
+  border-radius: 50%;
+  color: var(--admin-muted);
+  font-weight: 650;
+  font-size: 11px;
+}
+.product-ai3d-demo-step strong { font-size: 12px; font-weight: 700; }
+.product-ai3d-demo-step p {
+  margin: 5px 0 10px;
+  max-width: 65ch;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.product-ai3d-demo-step .product-ai3d-tip { font-size: 11px; margin: 8px 0 0; }
+.product-ai3d-image-link {
+  margin: 0 10px;
+  text-underline-offset: 3px;
+  font-size: 12px;
+  color: var(--admin-text);
+}
+.product-ai3d-demo-primary,
+.product-ai3d-demo-import {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border: 1px solid #335f46;
+  border-radius: 6px;
+  padding: 8px 13px;
+  background: #335f46;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 680;
+  text-decoration: none;
+  cursor: pointer;
+}
+.product-ai3d-demo-primary:hover,
+.product-ai3d-demo-import:hover { background: #294c39; color: #fff; }
+.product-ai3d-demo-primary:focus-visible,
+.product-ai3d-demo-import:focus-within { outline: 2px solid var(--admin-focus); outline-offset: 3px; }
+.product-ai3d-demo-import:has(input:disabled) { opacity: .5; pointer-events: none; }
+.product-ai3d-selfhost { padding-top: 12px; border-top: 1px solid var(--admin-border); }
+.product-ai3d-selfhost summary { cursor: pointer; font-size: 12px; font-weight: 640; }
+.product-ai3d-selfhost > p { color: var(--admin-muted); font-size: 12px; line-height: 1.55; }
+.product-ai3d-demo-step .product-ai3d-confirm { color: #335f46; }
+@media (max-width: 520px) {
+  .product-ai3d-demo-step { grid-template-columns: 19px minmax(0, 1fr); gap: 9px; }
+  .product-ai3d-demo-number { width: 19px; height: 19px; }
+  .product-ai3d-image-link { display: block; margin: 8px 0 0; }
+}
