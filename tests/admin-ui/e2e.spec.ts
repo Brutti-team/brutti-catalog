@@ -262,7 +262,7 @@ test('Overview auto sync and read-only draft checks remain actionable', async ({
   await expect(page.getByRole('group', { name: 'Quick product status filters' }).getByRole('button', { name: /Draft/ })).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('Premium Overview animations respect reduced motion without removing real metrics', async ({ page }) => {
+test('Glass Overview animations respect reduced motion and keep real metrics', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
@@ -272,117 +272,80 @@ test('Premium Overview animations respect reduced motion without removing real m
     sync: getComputedStyle(document.querySelector('.catalog-overview-automations')!).animationName,
   }));
   expect(animations).toEqual({ tile: 'none', category: 'none', sync: 'none' });
-  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(6);
+  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(5);
   await expect(page.locator('.atelier-checklist')).toBeVisible();
-  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
+  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(5, bruttiCategories.length));
 });
 
-test('enterprise overview shows real catalog health and review actions', async ({ page }) => {
+test('glass overview shows real catalog health and opens filtered inventory', async ({ page }) => {
   await backend(page);
   await openAdmin(page);
   await expect(page.getByRole('heading', { name: 'Catalog overview' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Catalog activity' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Categories', exact: true })).toBeVisible();
   await expect(page.locator('.catalog-command')).toBeVisible();
   const feature = page.locator('.brutti-editorial-feature');
   await expect(feature).toBeVisible();
   await expect(feature.locator('img')).toBeVisible();
   await expect(feature).toContainText(fixtureProduct.name);
-  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
-  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
-  await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
+  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(5, bruttiCategories.length));
+  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '1');
+  await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '1');
   await page.locator('.atelier-categories').getByRole('button', { name: /View .* products/ }).first().click();
   await expect(page.getByRole('heading', { name: 'Products', exact: true })).toBeVisible();
 });
 
-test('Overview analytics uses a quiet metric shelf without changing real counts', async ({ page }) => {
+test('five glass KPIs show actual counts, product photos and working date filter', async ({ page }) => {
   await backend(page, { savedTheme: 'light' });
   await openAdmin(page);
   const metrics = page.locator('.overview-stats .overview-stat');
-  await expect(metrics).toHaveCount(6);
-  const values = await metrics.locator(':scope > strong').allTextContents();
-  expect(values).toEqual(['1','1','0',String(bruttiCategories.length),'0','1']);
-  const shelf = await metrics.evaluateAll(items => items.map(el => ({
-    background: getComputedStyle(el).backgroundColor,
-    borderRight: getComputedStyle(el).borderRightWidth,
-    radius: getComputedStyle(el).borderTopLeftRadius,
+  await expect(metrics).toHaveCount(5);
+  expect(await metrics.locator(':scope > strong').allTextContents())
+    .toEqual(['1',String(bruttiCategories.length),'0','1','0']);
+  const styles = await metrics.evaluateAll(items => items.map(element => ({
+    radius: parseFloat(getComputedStyle(element).borderTopLeftRadius),
+    blur: getComputedStyle(element).backdropFilter,
   })));
-  expect(new Set(shelf.map(item => item.background)).size).toBe(1);
-  expect(shelf[0].borderRight).toBe('1px');
-  expect(shelf[shelf.length - 1].borderRight).toBe('0px');
-  expect(shelf.every(item => item.radius === '0px')).toBe(true);
-  await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
-  await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');
-  await expect(page.getByRole('progressbar', { name: 'Published products' })).toHaveAttribute('value', '100');
-  await expect(page.locator('.atelier-category-row')).toHaveCount(Math.min(7, bruttiCategories.length));
-  await expect(page.locator('.catalog-last-activity')).toBeVisible();
-  await expectReadable(page, ['.overview-stat > strong', '.atelier-panel-heading h2', '.atelier-category-copy strong']);
+  expect(styles.every(item => item.radius >= 14 && item.blur.includes('blur('))).toBe(true);
+  await expect(metrics.first().locator('img')).toBeVisible();
+  await expect(page.locator('.brutti-activity-chart svg')).toBeVisible();
+  await expect(page.locator('.brutti-category-row img').first()).toBeVisible();
+  await page.getByRole('combobox', { name: 'Activity time range' }).selectOption('7');
+  await expect(page.locator('.brutti-activity-summary')).toContainText('last updated in 7 days');
+  await page.getByRole('combobox', { name: 'Activity time range' }).selectOption('90');
+  await expect(page.locator('.brutti-activity-summary')).toContainText('last updated in 90 days');
+  await expectReadable(page, ['.brutti-glass-kpi > strong', '.brutti-glass-panel-title h2', '.brutti-category-name strong']);
 });
 
-for (const theme of ['light', 'dark'] as const) {
-  test(`Publishing Workflow uses readable curved glass (${theme})`, async ({ page }) => {
+for (const theme of ['light','dark'] as const) {
+  test('glass analytics preserves readable text and rounded cards (' + theme + ')', async ({ page }) => {
     await backend(page, { savedTheme: theme });
     await openAdmin(page);
-    const overview = page.locator('.atelier-workbench');
-    const workflow = overview.locator('.atelier-review');
-    const category = overview.locator('.atelier-categories');
-    // Workflow must use the same forest-green RGB as the branded sidebar,
-    // not the unrelated olive gradient that previously looked off-brand.
-    const matchingGreens = await page.evaluate(() => {
-      const workflowElement = document.querySelector('.atelier-review');
-      const sidebarElement = document.querySelector('.admin-app .sidebar');
-      if (!workflowElement || !sidebarElement) throw new Error('Brutti design surfaces missing');
-      return {
-        workflow: getComputedStyle(workflowElement).backgroundColor,
-        sidebar: getComputedStyle(sidebarElement).backgroundColor,
-      };
-    });
-    expect(matchingGreens.sidebar).toBe('rgb(23, 59, 46)');
-    expect(matchingGreens.workflow).toBe('rgba(23, 59, 46, 0.96)');
-    for (const panel of [workflow, category]) {
-      const appearance = await panel.evaluate(element => {
-        const s = getComputedStyle(element);
-        return { radius: parseFloat(s.borderTopLeftRadius), blur: s.backdropFilter,
-          fill: s.backgroundColor, border: s.borderTopWidth };
-      });
-      expect(appearance.radius).toBeGreaterThanOrEqual(17);
-      expect(appearance.blur).toContain('blur(');
-      expect(appearance.border).toBe('1px');
-    }
+    const surfaces = page.locator('.brutti-glass-panels > section');
+    await expect(surfaces).toHaveCount(2);
+    const appearance = await surfaces.evaluateAll(items => items.map(element => ({
+      radius: parseFloat(getComputedStyle(element).borderTopLeftRadius),
+      blur: getComputedStyle(element).backdropFilter,
+    })));
+    expect(appearance.every(item => item.radius >= 16 && item.blur.includes('blur('))).toBe(true);
+    await expect(page.getByRole('heading', { name: 'Catalog activity' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Categories', exact: true })).toBeVisible();
     await expectReadable(page, [
-      '.atelier-review .atelier-kicker',
-      '.atelier-review .atelier-panel-heading h2',
-      '.atelier-review .atelier-panel-heading p',
-      '.atelier-review .atelier-inline-link',
-      '.atelier-review .atelier-focus-number strong',
-      '.atelier-review .atelier-focus-number span',
-      '.atelier-review .atelier-progress-item > div span',
-      '.atelier-review .atelier-progress-item > div strong',
-      '.atelier-review .atelier-checklist-heading',
-      '.atelier-review .atelier-checklist button span',
-      '.atelier-review .atelier-checklist button strong',
-      '.atelier-review .atelier-status-links button',
-      '.atelier-review .atelier-status-links button strong',
-      '.atelier-categories .atelier-panel-heading h2',
-      '.atelier-categories .atelier-category-row strong',
+      '.brutti-glass-kpi > strong',
+      '.brutti-glass-panel-title h2',
+      '.brutti-category-name strong',
+      '.brutti-activity-big',
     ]);
   });
 }
 
-test('Overview colours preserve dark-mode contrast and mobile width', async ({ page }) => {
+test('mobile glass dashboard keeps its width and real stats in dark mode', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await backend(page, { savedTheme: 'dark' });
   await openAdmin(page);
   await expectTheme(page, 'dark');
-  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(6);
-  await expectReadable(page, [
-    '.overview-stats .overview-stat:nth-child(1) > strong',
-    '.overview-stats .overview-stat:nth-child(2) > strong',
-    '.overview-stats .overview-stat:nth-child(3) > strong',
-    '.atelier-panel-heading h2',
-    '.atelier-focus-number strong',
-  ], true);
+  await expect(page.locator('.overview-stats .overview-stat')).toHaveCount(5);
+  await expect(page.locator('.brutti-glass-panels > section')).toHaveCount(2);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });

@@ -58,6 +58,7 @@ import {
   requestPasswordReset,
 } from "./lib/catalog";
 import ProductEditor from "./components/ProductEditor";
+import CatalogOverviewStudio from "./components/CatalogOverviewStudio";
 import PublicCatalog from "./components/PublicCatalog";
 import Modal from "./components/Modal";
 import AccountCenter from "./components/AccountCenter";
@@ -346,60 +347,9 @@ export default function App() {
   const draftCount = data.products.filter((p) => p.status === "draft").length;
   const archivedCount = data.products.filter((p) => p.status === "archived").length;
   const withPhotos = data.products.filter((p) => p.images.length > 0).length;
-  const photoCoverage = data.products.length ? Math.round(withPhotos / data.products.length * 100) : 0;
-  const liveCoverage = data.products.length ? Math.round(publishedCount / data.products.length * 100) : 0;
-  // Read-only checks of real Draft data. Never change product status or invent specifications.
-  const draftsForReview = data.products.filter(p => p.status === "draft");
-  const reviewGaps = {
-    dimensions: draftsForReview.filter(p => ![p.width, p.depth, p.height].every(n => Number.isFinite(n) && n > 0)).length,
-    materials: draftsForReview.filter(p => !p.materials.trim()).length,
-    descriptions: draftsForReview.filter(p => !p.description.trim()).length,
-  };
   const lastSyncText = lastSyncedAt === null ? "Waiting for first sync" : `Updated ${new Intl.DateTimeFormat("en-MY", {
     timeZone: "Asia/Kuala_Lumpur", hour: "numeric", minute: "2-digit",
   }).format(new Date(lastSyncedAt))} MYT`;
-  const stats = [
-    {
-      title: "Total products",
-      value: data.products.length,
-      detail: "Products in this workspace",
-      icon: Package,
-    },
-    {
-      title: "Published",
-      value: data.products.filter((p) => p.status === "published").length,
-      detail: "Visible in your public catalog",
-      icon: CheckCircle2,
-    },
-    {
-      title: "Drafts",
-      value: data.products.filter((p) => p.status === "draft").length,
-      detail: "Waiting for final review",
-      icon: Pencil,
-    },
-    {
-      title: "Categories",
-      value: data.categories.length,
-      detail: "Collection groups",
-      icon: Layers,
-    },
-    {
-      title: "Archived",
-      value: archivedCount,
-      detail: "Stored away from public view",
-      icon: Archive,
-    },
-    {
-      title: "With photos",
-      value: withPhotos,
-      detail: "Products with images",
-      icon: Images,
-    },
-  ];
-  const categoryInsights = data.categories.map(item => ({
-    ...item, count: data.products.filter(product => product.categoryId === item.id).length,
-  })).sort((a, b) => b.count - a.count);
-  const maxCategoryCount = Math.max(1, ...categoryInsights.map(item => item.count));
   const heroProduct = data.products.find(product => product.images.length && /chair|sofa|bench|armchair/i.test(product.name))
     ?? data.products.find(product => product.images.length);
   const recentProducts = [...data.products].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 4);
@@ -672,110 +622,16 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="catalog-os-section-title"><div><span>THE NUMBERS</span><h2>Collection snapshot</h2></div><p>Live inventory overview</p></div>
-              <div className="stats-grid overview-stats">
-                {stats.map((s) => (
-                  <button type="button" className="stat-card overview-stat" key={s.title} disabled={loading}
-                    aria-label={`View ${s.title.toLowerCase()}`}
-                    onClick={() => {
-                      switchTab(s.title === "Categories" ? "categories" : "products");
-                      if (s.title === "Drafts") setStatus("draft");
-                      if (s.title === "Published") setStatus("published");
-                      if (s.title === "Archived") setStatus("archived");
-                    }}>
-                    <div>
-                      <span>{s.title}</span>
-                      <span className="overview-stat-icon"><s.icon size={19} aria-hidden="true" /></span>
-                    </div>
-                    <strong>{loading ? "—" : s.value}</strong>
-                    <span className="overview-stat-bottom"><span>{s.detail}</span><ArrowUpRight size={16} aria-hidden="true" /></span>
-                  </button>
-                ))}
-              </div>
-              <div className="atelier-workbench" aria-label="Catalog workflow and category distribution">
-                <section className="atelier-review" aria-labelledby="atelier-review-heading">
-                  <div className="atelier-panel-heading">
-                    <div>
-                      <span className="atelier-kicker">PUBLISHING WORKFLOW</span>
-                      <h2 id="atelier-review-heading">Prepare your collection</h2>
-                      <p>What needs attention before a product becomes public.</p>
-                    </div>
-                    <button type="button" className="atelier-inline-link" onClick={() => { switchTab("products"); setStatus("draft"); }}>
-                      Review drafts <ArrowUpRight size={15} aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="atelier-progress-summary">
-                    <div className="atelier-focus-number">
-                      <strong>{loading ? "—" : draftCount}</strong>
-                      <span>Drafts awaiting review</span>
-                    </div>
-                    <div className="atelier-progress-list">
-                      <div className="atelier-progress-item">
-                        <div><span>Products with photos</span><strong>{withPhotos} / {data.products.length}</strong></div>
-                        <progress max={100} value={photoCoverage} aria-label="Products with photos" />
-                      </div>
-                      <div className="atelier-progress-item">
-                        <div><span>Published in catalog</span><strong>{publishedCount} / {data.products.length}</strong></div>
-                        <progress max={100} value={liveCoverage} aria-label="Published products" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="atelier-checklist" aria-label="Missing draft product information">
-                    <div className="atelier-checklist-heading">Details to verify</div>
-                    <button type="button" onClick={() => { switchTab("products"); setStatus("draft"); }}>
-                      <span>Dimensions not confirmed</span><strong>{reviewGaps.dimensions}</strong><ChevronRight size={15} aria-hidden="true" />
-                    </button>
-                    <button type="button" onClick={() => { switchTab("products"); setStatus("draft"); }}>
-                      <span>Material details missing</span><strong>{reviewGaps.materials}</strong><ChevronRight size={15} aria-hidden="true" />
-                    </button>
-                    <button type="button" onClick={() => { switchTab("products"); setStatus("draft"); }}>
-                      <span>Descriptions incomplete</span><strong>{reviewGaps.descriptions}</strong><ChevronRight size={15} aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="atelier-status-links" role="group" aria-label="Filter products by publishing status">
-                    {([
-                      { label: "Drafts", count: draftCount, state: "draft" },
-                      { label: "Published", count: publishedCount, state: "published" },
-                      { label: "Archived", count: archivedCount, state: "archived" },
-                    ] as const).map(item => (
-                      <button key={item.state} type="button" onClick={() => { switchTab("products"); setStatus(item.state); }}>
-                        <span className={`atelier-status-dot is-${item.state}`} aria-hidden="true" />
-                        {item.label}<strong>{item.count}</strong>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-                <section className="atelier-categories" aria-labelledby="atelier-categories-heading">
-                  <div className="atelier-panel-heading">
-                    <div>
-                      <span className="atelier-kicker">COLLECTION DIRECTORY</span>
-                      <h2 id="atelier-categories-heading">By category</h2>
-                      <p>Explore inventory across your workshop collections.</p>
-                    </div>
-                    {accountRole !== "editor" && (
-                      <button type="button" className="atelier-inline-link" onClick={() => switchTab("categories")}>
-                        Manage <ArrowUpRight size={15} aria-hidden="true" />
-                      </button>
-                    )}
-                  </div>
-                  <div className="atelier-category-list">
-                    {categoryInsights.slice(0, 7).map((item, index) => (
-                      <button type="button" className="atelier-category-row" key={item.id}
-                        onClick={() => { switchTab("products"); setCategory(item.id); }}
-                        aria-label={`View ${item.name}, ${item.count} products`}>
-                        <span className="atelier-category-number">{String(index + 1).padStart(2, "0")}</span>
-                        <span className="atelier-category-copy">
-                          <strong>{item.name}</strong>
-                          <span className="atelier-category-track"><span style={{ width: `${(item.count / maxCategoryCount) * 100}%` }} /></span>
-                        </span>
-                        <span className="atelier-category-quantity">{item.count}</span>
-                        <ArrowUpRight size={14} aria-hidden="true" />
-                      </button>
-                    ))}
-                    {!categoryInsights.length && <p className="catalog-empty-hint">No categories yet.</p>}
-                  </div>
-                </section>
-              </div>
+              <CatalogOverviewStudio
+                products={data.products}
+                categories={data.categories}
+                loading={loading}
+                asOfMs={lastSyncedAt ?? 0}
+                canManageCategories={accountRole !== "editor"}
+                onOpenProducts={next => { switchTab("products"); setStatus(next); }}
+                onOpenCategory={id => { switchTab("products"); setCategory(id); }}
+                onManageCategories={() => switchTab(accountRole === "editor" ? "products" : "categories")}
+              />
               <div className="catalog-studio-bottom atelier-bottom brutti-editorial-bottom">
                 <section className="catalog-recent-card">
                   <header className="catalog-studio-panel-head">
