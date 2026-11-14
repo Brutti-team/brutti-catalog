@@ -71,13 +71,16 @@ Deno.serve(async (req: Request) => {
   const service = createClient(endpoint, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false }
   });
+  // Use the caller's JWT for catalog tables, preserving their existing RLS.
+  // The service client is limited to the private catalog_3d_jobs table.
   const userClient = createClient(endpoint, anonKey, {
+    global: { headers: { Authorization: "Bearer " + token } },
     auth: { autoRefreshToken: false, persistSession: false }
   });
   const { data: userResult, error: userError } = await userClient.auth.getUser(token);
   if (userError || !userResult.user) return failure("Session expired. Sign in again.", 401, origin);
   const userId = userResult.user.id;
-  const { data: member, error: memberError } = await service.from("catalog_admins")
+  const { data: member, error: memberError } = await userClient.from("catalog_admins")
     .select("user_id").eq("user_id", userId).maybeSingle();
   if (memberError || !member) return failure("Catalog staff permission is required.", 403, origin);
 
@@ -90,7 +93,7 @@ Deno.serve(async (req: Request) => {
   if (!body.productId || !uuidPattern.test(body.productId)) {
     return failure("Save the product before generating its 3D model.", 400, origin);
   }
-  const { data: product, error: productError } = await service.from("products")
+  const { data: product, error: productError } = await userClient.from("products")
     .select("id,name,images").eq("id", body.productId).maybeSingle();
   if (productError || !product) return failure("Save the product first, then reopen Edit Product.", 404, origin);
 
@@ -153,7 +156,7 @@ Deno.serve(async (req: Request) => {
     if (reserveError || !reserved) return failure("Another 3D task is already running for this product.", 409, origin);
 
     try {
-      const imageUrls = selected.map(photo => service.storage
+      const imageUrls = selected.map(photo => userClient.storage
         .from("product-images").getPublicUrl(photo!.storagePath!).data.publicUrl);
       const result = await fetch(api, {
         method: "POST",
