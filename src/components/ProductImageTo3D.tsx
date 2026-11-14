@@ -81,7 +81,7 @@ export default function ProductImageTo3D({
     } finally { setLoading(false); }
   }
 
-  async function useModel() {
+  async function importGeneratedModel() {
     if (!job || job.status !== "ready" || disabled || importing) return;
     setError("");
     setImporting(true);
@@ -146,7 +146,7 @@ export default function ProductImageTo3D({
                 <Check size={17} aria-hidden="true" />
                 <span>3D model generated. Preview it before publishing.</span>
                 <button type="button" className="button primary" disabled={disabled || importing}
-                  onClick={() => void useModel()}>{importing ? "Opening model…" : imported ? "Open model again" : "Preview generated 3D"}</button>
+                  onClick={() => void importGeneratedModel()}>{importing ? "Opening model…" : imported ? "Open model again" : "Preview generated 3D"}</button>
               </div>}
               {imported && <p className="product-ai3d-confirm">The generated model is loaded in the 3D viewer below. Click Save product to keep it.</p>}
               {!inProgress && (
