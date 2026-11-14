@@ -1,6 +1,21 @@
 # Real photo-to-3D for Brutti Catalog (without Meshy)
 
-Image-to-3D runs on an **optional self-hosted TRELLIS.2 GPU worker**. The product gallery and Supabase model storage remain unchanged.
+Image-to-3D supports two non-Meshy options. The product gallery and Supabase model storage remain unchanged.
+
+## Use it today without your own GPU: Microsoft TRELLIS.2 demo
+
+The public [Microsoft TRELLIS.2 Space on Hugging Face](https://huggingface.co/spaces/microsoft/TRELLIS.2) runs on Hugging Face ZeroGPU, subject to availability and per-account daily GPU quotas.
+
+1. Open a **saved** product in Catalog → Edit Product → Real 3D model.
+2. Select the already-saved reference photo and click **Download original product photo**.
+3. Click **Open Microsoft TRELLIS.2 demo**. In the external demo, upload that image, click **Generate**, and when ready **Extract GLB** and download its .glb file.
+4. Back in Catalog, click **Import generated GLB**. Preview the genuine textured 3D model and rotate to check the geometry.
+5. Click **Save Product** to persist the GLB. No 3D appears publicly until the product is actually saved and published.
+
+This is a **manual demo workflow**, not automatic inference from GitHub Pages. Photos are only sent to Hugging Face by the user when uploaded into its separate website. Free ZeroGPU quotas are not guaranteed, and Hugging Face may require sign-in, be temporarily busy, or have usage limits. Do not upload non-public/private customer images.
+
+## Optional: Automatic one-click generation on your own GPU worker
+
 
 1. Use the setup guide at [worker/open3d/README.md](../worker/open3d/README.md) on a Linux NVIDIA GPU machine (24 GB+ VRAM).
 2. Expose that service via secured HTTPS and store the service bearer token privately. Configure the matching token on both sides.
