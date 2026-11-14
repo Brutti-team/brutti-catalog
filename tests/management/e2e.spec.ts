@@ -488,11 +488,14 @@ test('existing product photos generate a real GLB through the authenticated serv
   const dialog = page.getByRole('dialog', { name: 'Edit product' });
   const section = dialog.getByRole('region', { name: 'Real 3D model', exact: true });
   await expect(section.getByRole('button', { name: 'Use photo 1 for 3D generation' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(section.getByRole('button', { name: 'Use photo 2 for 3D generation' })).toHaveAttribute('aria-pressed', 'false');
+  await section.getByRole('button', { name: 'Use photo 2 for 3D generation' }).click();
+  await expect(section.getByRole('button', { name: 'Use photo 1 for 3D generation' })).toHaveAttribute('aria-pressed', 'false');
   await expect(section.getByRole('button', { name: 'Use photo 2 for 3D generation' })).toHaveAttribute('aria-pressed', 'true');
   page.once('dialog', dialog => void dialog.accept());
   await section.getByRole('button', { name: 'Generate 3D from selected photos' }).click();
   await expect(section.getByRole('button', { name: 'Preview generated 3D' })).toBeVisible({ timeout: 20_000 });
-  expect(requests).toEqual([['front', 'side']]);
+  expect(requests).toEqual([['side']]);
   expect(db.storedModels.size).toBe(0);
   await section.getByRole('button', { name: 'Preview generated 3D' }).click();
   await expect(section.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 20_000 });
