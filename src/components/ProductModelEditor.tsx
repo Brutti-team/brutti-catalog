@@ -16,13 +16,14 @@ type Props = {
   model?: ProductModel | null;
   poster?: string;
   photos: readonly ProductImage[];
+  savedPhotoIds: readonly string[];
   modelEnabled: boolean;
   disabled: boolean;
   onChange: (change: ProductModelChange | undefined) => void;
   onPending: (pending: boolean, invalid?: boolean) => void;
 };
 
-export default function ProductModelEditor({ productName, productId, saved, status, model, poster, photos, modelEnabled, disabled, onChange, onPending }: Props) {
+export default function ProductModelEditor({ productName, productId, saved, status, model, poster, photos, savedPhotoIds, modelEnabled, disabled, onChange, onPending }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<readonly File[]>();
   const [fileName, setFileName] = useState('');
@@ -104,7 +105,7 @@ export default function ProductModelEditor({ productName, productId, saved, stat
         </div>
       </div>
       {modelEnabled ? (
-        <ProductImageTo3D productId={productId} productName={productName} photos={photos}
+        <ProductImageTo3D productId={productId} productName={productName} photos={photos} savedPhotoIds={savedPhotoIds}
           saved={saved} disabled={disabled} onGenerated={async file => {
             if (!(await selectFiles([file]))) throw new Error('Could not prepare the generated model.');
           }} />
