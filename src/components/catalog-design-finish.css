@@ -2,7 +2,7 @@
    One intentional visual layer over legacy iterations.
    Editorial structure, readable controls and fewer cards; no data or permission changes. */
 
-.admin-app.brutti-staff-redesign[data-active-tab] {
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme="light"] {
   --admin-bg: #f7f8f5;
   --admin-surface-soft: #f5f7f3;
   --admin-border: #dde6de;
