@@ -118,7 +118,7 @@ export default function ProductImageTo3D({
         "image/tiff": "tiff", "image/heic": "heic", "image/heif": "heif",
       };
       const extension = extensions[blob.type.toLowerCase()] ??
-        new URL(publicAssetUrl(sourcePhoto.url), window.location.href).pathname.match(/\\.(png|webp|jpe?g|avif|bmp|gif|tiff?|heic|heif)$/i)?.[1]?.toLowerCase() ??
+        new URL(publicAssetUrl(sourcePhoto.url), window.location.href).pathname.match(/\.(png|webp|jpe?g|avif|bmp|gif|tiff?|heic|heif)$/i)?.[1]?.toLowerCase() ??
         "image";
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
