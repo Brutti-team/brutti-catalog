@@ -472,10 +472,17 @@
   isolation: isolate;
   overflow: hidden;
   padding: clamp(22px, 2.5vw, 32px);
-  border: 1px solid rgba(210, 237, 219, .38);
+  border: 1px solid rgba(205, 230, 212, .35);
   border-radius: 22px;
-  background-color: rgba(26, 67, 45, .94);
-  background-image: linear-gradient(135deg, rgba(66, 114, 79, .22), rgba(12, 42, 27, .16));
+  /* Same #173B2E forest as the official Brutti Catalog sidebar.
+     Glass glaze uses the catalog's canonical --green (#28533F). */
+  background-color: rgba(23, 59, 46, .96);
+  background-image: linear-gradient(
+    135deg,
+    rgba(40, 83, 63, .18) 0%,
+    rgba(23, 59, 46, .06) 55%,
+    rgba(9, 36, 27, .12) 100%
+  );
   color: #f6faf5;
   opacity: 1;
   -webkit-backdrop-filter: blur(18px) saturate(135%);
