@@ -107,9 +107,9 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Edit product' });
-  const section = dialog.getByRole('region', { name: 'Interactive product view', exact: true });
-  await expect(section.getByRole('img', { name: 'Fixture photo' })).toBeVisible();
-  await section.getByText('Add a true 3D model (optional)').click();
+  const section = dialog.getByRole('region', { name: 'Real 3D model', exact: true });
+  await expect(section.getByText('Generate a real 3D model')).toBeVisible();
+  await section.getByText('Or upload an existing 3D model file').click();
   await expect(section.getByRole('button', { name: 'Choose model files' })).toBeVisible();
   await section.locator('input[type=file]').setInputFiles({ name: 'pyramid.obj', mimeType: 'text/plain', buffer: Buffer.from('v -1 0 -1\nv 1 0 -1\nv 1 0 1\nv -1 0 1\nv 0 2 0\nf 1 5 2\nf 2 5 3\nf 3 5 4\nf 4 5 1\nf 1 2 3 4\n') });
   await expect(section.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 15_000 });
@@ -143,7 +143,6 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.goto('/#/admin');
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
-  await section.getByText('View or replace the existing true 3D model').click();
   await dialog.getByRole('button', { name: 'Remove model' }).click();
   await dialog.getByRole('button', { name: 'Save product' }).click();
   await expect(dialog).toHaveCount(0);
@@ -152,7 +151,6 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.goto(`/#/catalog/product/${id}`);
   await expect(page.getByRole('heading', { name: product.name, exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Interactive 3D', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Interactive photo view', exact: true }).click();
   await expect(page.getByRole('img', { name: 'Fixture photo' })).toBeVisible();
 });
 
@@ -426,3 +424,86 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     await page.screenshot({ path: testInfo.outputPath('public-empty-test-backend.png'), fullPage: true });
   });
 }
+
+
+function minimalTriangleGlb(): Buffer {
+  const positions = Buffer.alloc(36);
+  for (const [index, value] of [0, 0, 0, 1, 0, 0, 0, 1, 0].entries()) positions.writeFloatLE(value, index * 4);
+  const gltf = {
+    asset: { version: '2.0' },
+    scene: 0,
+    scenes: [{ nodes: [0] }],
+    nodes: [{ mesh: 0 }],
+    meshes: [{ primitives: [{ attributes: { POSITION: 0 }, mode: 4 }] }],
+    buffers: [{ byteLength: positions.length }],
+    bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: positions.length, target: 34962 }],
+    accessors: [{ bufferView: 0, componentType: 5126, count: 3, type: 'VEC3', min: [0, 0, 0], max: [1, 1, 0] }],
+  };
+  const text = JSON.stringify(gltf);
+  const jsonChunk = Buffer.from(text.padEnd(Math.ceil(text.length / 4) * 4, ' '));
+  const result = Buffer.alloc(12 + 8 + jsonChunk.length + 8 + positions.length);
+  result.write('glTF', 0);
+  result.writeUInt32LE(2, 4);
+  result.writeUInt32LE(result.length, 8);
+  result.writeUInt32LE(jsonChunk.length, 12);
+  result.write('JSON', 16);
+  jsonChunk.copy(result, 20);
+  const binHeader = 20 + jsonChunk.length;
+  result.writeUInt32LE(positions.length, binHeader);
+  result.write('BIN\x00', binHeader + 4);
+  positions.copy(result, binHeader + 8);
+  return result;
+}
+
+test('existing product photos generate a real GLB through the authenticated service and save only after preview', async ({ page }) => {
+  const id = '90000000-0000-4000-8000-000000000208';
+  const product = {
+    id, name: 'Photo to 3D fixture', sku: 'TEST-PHOTO-3D', category_id: bruttiCategories[0].id,
+    description: 'Fixture product', materials: 'Fixture wood', width: 45, depth: 40, height: 50, price: null,
+    status: 'published', availability: 'available', featured: false,
+    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+    images: [
+      { id: 'front', alt: 'Front photo', url: endpoint + '/storage/v1/object/public/product-images/front.png', storagePath: 'front.png' },
+      { id: 'side', alt: 'Side photo', url: endpoint + '/storage/v1/object/public/product-images/side.png', storagePath: 'side.png' },
+    ],
+    model_path: null, model_name: null
+  };
+  const db = await backend(page, [product], { productModels: true });
+  const requests: string[][] = [];
+  const glb = minimalTriangleGlb();
+  await page.route(endpoint + '/functions/v1/catalog-image-to-3d', async route => {
+    const input = route.request().postDataJSON() as { action: string; imageIds?: string[] };
+    if (input.action === 'download') return route.fulfill({ status: 200, contentType: 'application/octet-stream', body: glb });
+    if (input.action === 'config') return route.fulfill({ status: 200, json: { configured: true, job: null } });
+    if (input.action === 'start') {
+      requests.push(input.imageIds || []);
+      return route.fulfill({ status: 200, json: { job: { id: 'test-generation', status: 'processing' } } });
+    }
+    if (input.action === 'status') return route.fulfill({ status: 200, json: { job: { id: 'test-generation', status: 'ready', progress: 100 } } });
+    return route.fulfill({ status: 400, json: { error: 'Invalid action' } });
+  });
+  await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  await page.getByRole('button', { name: 'Edit Photo to 3D fixture', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit product' });
+  const section = dialog.getByRole('region', { name: 'Real 3D model', exact: true });
+  await expect(section.getByRole('button', { name: 'Use photo 1 for 3D generation' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(section.getByRole('button', { name: 'Use photo 2 for 3D generation' })).toHaveAttribute('aria-pressed', 'true');
+  page.once('dialog', dialog => void dialog.accept());
+  await section.getByRole('button', { name: 'Generate 3D from selected photos' }).click();
+  await expect(section.getByRole('button', { name: 'Preview generated 3D' })).toBeVisible({ timeout: 20_000 });
+  expect(requests).toEqual([['front', 'side']]);
+  expect(db.storedModels.size).toBe(0);
+  await section.getByRole('button', { name: 'Preview generated 3D' }).click();
+  await expect(section.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 20_000 });
+  expect(db.storedModels.size).toBe(0);
+  await dialog.getByRole('button', { name: 'Save product' }).click();
+  await expect(dialog).toHaveCount(0);
+  expect(db.records()[0]).toMatchObject({
+    model_name: 'generated-model.glb',
+    model_path: expect.stringMatching(new RegExp('^' + id + '/.*\\.zip$')),
+  });
+  expect(db.storedModels.size).toBe(1);
+  await page.goto('/#/catalog/product/' + id);
+  await expect(page.getByRole('button', { name: 'Interactive 3D', exact: true })).toBeVisible();
+});

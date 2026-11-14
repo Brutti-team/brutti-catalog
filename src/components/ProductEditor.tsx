@@ -374,7 +374,7 @@ export default function ProductEditor({
                 Uploaded photos are public assets. Avoid confidential images; unused uploads can be removed from Supabase Storage.
               </p>
             </section>
-            <ProductModelEditor productName={draft.name || 'this product'} status={draft.status} model={product.model}
+            <ProductModelEditor productName={draft.name || 'this product'} productId={product.id} saved={isEditing} status={draft.status} model={product.model}
               photos={draft.images} modelEnabled={modelEditingEnabled} poster={cover?.url} disabled={busy}
               onChange={setModelChange} onPending={setModelLoading} />
             <section className="form-section product-editor-section" id="product-editor-specs">

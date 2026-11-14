@@ -25,6 +25,8 @@ it('shows existing product photo angles without requiring a 3D upload', () => {
 it('keeps image-based view available even when native model uploads are disabled', () => {
   const html = renderToStaticMarkup(createElement(ProductModelEditor, {
     productName: 'Test chair',
+    productId: '90000000-0000-4000-8000-000000000001',
+    saved: false,
     status: 'draft',
     photos,
     modelEnabled: false,
@@ -32,14 +34,16 @@ it('keeps image-based view available even when native model uploads are disabled
     onChange: () => {},
     onPending: () => {},
   }));
-  expect(html).toContain('Interactive product view');
-  expect(html).toContain('chair-front.webp');
+  expect(html).toContain('Real 3D model');
+  expect(html).toContain('3D model storage is not enabled');
   expect(html).not.toContain('Choose model files');
 });
 
 it('retains true 3D upload as an optional advanced control', () => {
   const html = renderToStaticMarkup(createElement(ProductModelEditor, {
     productName: 'Test chair',
+    productId: '90000000-0000-4000-8000-000000000001',
+    saved: false,
     status: 'published',
     photos,
     modelEnabled: true,
@@ -47,7 +51,8 @@ it('retains true 3D upload as an optional advanced control', () => {
     onChange: () => {},
     onPending: () => {},
   }));
-  expect(html).toContain('chair-front.webp');
-  expect(html).toContain('Add a true 3D model (optional)');
+  expect(html).toContain('Real 3D model');
+  expect(html).toContain('Save this product as a draft first');
+  expect(html).toContain('Or upload an existing 3D model file');
   expect(html).toContain('Choose model files');
 });
