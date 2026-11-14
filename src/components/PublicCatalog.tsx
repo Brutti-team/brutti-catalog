@@ -17,6 +17,7 @@ import { publicAssetUrl } from "../lib/assets";
 import { formatProductPrice } from "../lib/price";
 import { productIdFromHash } from "../lib/routes";
 import ShowroomSections from "./ShowroomSections";
+import ProductPhotoViewer from "./ProductPhotoViewer";
 import "./public.css";
 import "./brutti-3d.css";
 import "./public-reference.css";
@@ -110,6 +111,7 @@ export default function PublicCatalog({
       : published.find((item) => item.id === productId);
   const selectedModel = product?.model;
   const showingModel = viewMode === '3d' && Boolean(selectedModel);
+  const showingPhotoView = viewMode === '3d' && !selectedModel && Boolean(product?.images.length);
   const categoryName = (id: string) =>
     categories.find((item) => item.id === id)?.name || "Furniture";
   const filtered = useMemo(() => {
@@ -481,16 +483,20 @@ export default function PublicCatalog({
               <>
                 <div className="pub-product-detail">
                   <div className="pub-detail-gallery">
-                    {selectedModel && (
+                    {(selectedModel || product.images.length > 0) && (
                       <div className="pub-media-switch" role="group" aria-label="Product viewing mode">
-                        <button type="button" aria-pressed={showingModel} onClick={() => setViewMode("3d")}>Interactive 3D</button>
-                        <button type="button" aria-pressed={!showingModel} onClick={() => setViewMode("photos")}>Original photos</button>
+                        <button type="button" aria-pressed={viewMode === '3d'} onClick={() => setViewMode("3d")}>
+                          {selectedModel ? 'Interactive 3D' : 'Interactive photo view'}
+                        </button>
+                        <button type="button" aria-pressed={viewMode === 'photos'} onClick={() => setViewMode("photos")}>Original photos</button>
                       </div>
                     )}
                     {showingModel && selectedModel ? (
                       <Suspense fallback={<div className="product-model-stage"><p className="product-model-message" role="status">Loading 3D viewer…</p></div>}>
                         <ProductModelViewer model={selectedModel} productName={product.name} poster={product.images[0]?.url} />
                       </Suspense>
+                    ) : showingPhotoView ? (
+                      <ProductPhotoViewer images={product.images} productName={product.name} />
                     ) : (
                     <div className="pub-detail-main-image">
                       <FurnitureImage
