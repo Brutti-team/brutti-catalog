@@ -467,7 +467,7 @@
   .atelier-workbench { gap: clamp(16px, 2.25vw, 28px); }
 
 .admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
-  .atelier-workbench > .atelier-review {
+  .atelier-workbench > section.atelier-review {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -483,7 +483,7 @@
   box-shadow: 0 14px 36px rgba(18, 52, 33, .13), inset 0 1px 0 rgba(255,255,255,.14);
 }
 .admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
-  .atelier-workbench > .atelier-categories {
+  .atelier-workbench > section.atelier-categories {
   position: relative;
   overflow: hidden;
   padding: clamp(22px, 2.5vw, 32px);
@@ -635,7 +635,7 @@
 }
 @media (max-width: 680px) {
   .admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
-    .atelier-workbench > :is(.atelier-review, .atelier-categories) {
+    .atelier-workbench > section:is(.atelier-review, .atelier-categories) {
     border-radius: 17px;
     padding: 20px 17px;
   }
