@@ -507,8 +507,8 @@ body:has(.product-model-stage.is-expanded), .modal:has(.product-model-stage.is-e
 .product-ai3d-demo-primary:hover,
 .product-ai3d-demo-import:hover { background: #294c39; color: #fff; }
 .product-ai3d-demo-primary:focus-visible,
-.product-ai3d-demo-import:focus-within { outline: 2px solid var(--admin-focus); outline-offset: 3px; }
-.product-ai3d-demo-import:has(input:disabled) { opacity: .5; pointer-events: none; }
+.product-ai3d-demo-import:focus-visible { outline: 2px solid var(--admin-focus); outline-offset: 3px; }
+.product-ai3d-demo-import:disabled { opacity: .5; pointer-events: none; }
 .product-ai3d-selfhost { padding-top: 12px; border-top: 1px solid var(--admin-border); }
 .product-ai3d-selfhost summary { cursor: pointer; font-size: 12px; font-weight: 640; }
 .product-ai3d-selfhost > p { color: var(--admin-muted); font-size: 12px; line-height: 1.55; }
