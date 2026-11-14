@@ -1,7 +1,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { CatalogCapabilities, CatalogData, Category, Product, ProductImage } from "./types";
+import type { CatalogCapabilities, CatalogData, Category, Product, ProductImage, ProductModel } from "./types";
 import { optimizeImageForUpload } from "./image-optimization";
 import { subscribeCatalogRefresh } from "./catalog-refresh";
+import { modelUploadBytes } from "./model-formats";
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim() ?? "";
 const key = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY)?.trim() ?? "";
@@ -85,6 +86,8 @@ type ProductRow = {
   availability: Product["availability"];
   featured: boolean;
   images: ProductImage[];
+  model_path?: string | null;
+  model_name?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -109,6 +112,7 @@ function fromRow(row: ProductRow): Product {
     availability: row.availability,
     featured: row.featured,
     images: row.images ?? [],
+    ...(row.model_path && row.model_name ? { model: { path: row.model_path, name: row.model_name } } : {}),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -137,7 +141,7 @@ function toRow(product: Product, capabilities: CatalogCapabilities): ProductRow 
   };
 }
 
-async function loadCapabilities(db: SupabaseClient): Promise<CatalogCapabilities> {
+async function loadCatalogCapabilities(db: SupabaseClient): Promise<CatalogCapabilities> {
   // A reviewed additive proposal enables these features. Legacy projects remain usable.
   try {
     const { data, error } = await db.rpc('catalog_capabilities');
@@ -150,12 +154,20 @@ async function loadCapabilities(db: SupabaseClient): Promise<CatalogCapabilities
   return { ordering: false, imageCleanup: false, priceBasis: observedPriceBasis };
 }
 
+async function productModelsEnabled(db: SupabaseClient): Promise<boolean> {
+  try {
+    const { data, error } = await db.rpc('catalog_product_models_enabled');
+    return !error && data === true;
+  } catch { return false; }
+}
+
 export async function loadCatalog(): Promise<CatalogData> {
   const db = supabase();
-  const [products, categories, capabilities] = await Promise.all([
+  const [products, categories, capabilities, productModels] = await Promise.all([
     db.from("products").select("*").order("created_at", { ascending: false }),
     db.from("categories").select("*").order("name"),
-    loadCapabilities(db),
+    loadCatalogCapabilities(db),
+    productModelsEnabled(db),
   ]);
   if (products.error)
     throw backendError(products.error.message, "load products");
@@ -165,7 +177,7 @@ export async function loadCatalog(): Promise<CatalogData> {
   return {
     products: mapped,
     categories: categories.data as Category[],
-    capabilities: { ...capabilities, priceBasis: capabilities.priceBasis || observedPriceBasis },
+    capabilities: { ...capabilities, priceBasis: capabilities.priceBasis || observedPriceBasis, productModels },
   };
 }
 
@@ -249,7 +261,7 @@ export async function cleanupAbandonedImages(images: ProductImage[]): Promise<Ca
   const warning = { cleanupWarning: 'Some unused images may remain. Ask the workspace owner to review storage.' };
   try {
     await requireAdmin();
-    if (!(await loadCapabilities(supabase())).imageCleanup) return warning;
+    if (!(await loadCatalogCapabilities(supabase())).imageCleanup) return warning;
     const result = await cleanupImages(images, 'saved');
     return result.cleanupWarning ? warning : {};
   } catch { return warning; }
@@ -294,7 +306,22 @@ async function cleanupImages(images: ProductImage[], operation: 'saved' | 'delet
   return failed ? { cleanupWarning: `Product ${operation}; some unused images may remain.` } : {};
 }
 
-export async function saveProduct(product: Product): Promise<ProductSaveResult> {
+export type ProductModelChange = { package: File; name: string } | null;
+
+async function removeUnusedModel(db: SupabaseClient, modelPath: string): Promise<boolean> {
+  try {
+    const { data, error } = await db.storage.from('product-models').remove([modelPath]);
+    return !error && Boolean(data?.some(object => object.name === modelPath));
+  } catch { return false; }
+}
+
+export async function downloadProductModel(model: ProductModel, signal: AbortSignal): Promise<File> {
+  const { data, error } = await supabase().storage.from('product-models').download(model.path, {}, { signal, cache: 'no-store' });
+  if (error || !data) throw new Error('The model could not be opened. Try again or view the product photos.');
+  return new File([data], 'product-model.zip', { type: 'application/zip' });
+}
+
+export async function saveProduct(product: Product, modelChange?: ProductModelChange): Promise<ProductSaveResult> {
   validateProduct(product);
   const saved = {
     ...product,
@@ -306,37 +333,75 @@ export async function saveProduct(product: Product): Promise<ProductSaveResult> 
   };
   await requireAdmin();
   const db = supabase();
-  const capabilities = await loadCapabilities(db);
+  const capabilities = await loadCatalogCapabilities(db);
   let previous: ProductRow | null = null;
-  if (capabilities.imageCleanup) {
+  if (capabilities.imageCleanup || modelChange !== undefined) {
     const { data, error } = await db.from('products').select('*').eq('id', product.id).maybeSingle();
     if (error) throw backendError(error.message, 'check this product before saving');
     previous = data as ProductRow | null;
   }
-  const { data, error } = await db
-    .from("products")
-    .upsert(toRow(saved, capabilities))
-    .select("*")
-    .single();
-  if (error) throw backendError(error.message, "save this product");
-  if (!data) throw new Error('This product was not saved. Please sign in again and retry.');
-  const result = fromRow(data as ProductRow);
+  const row = toRow(saved, capabilities);
+  if (modelChange !== undefined) {
+    row.model_path = null;
+    row.model_name = null;
+  }
+  if (modelChange) {
+    if (!modelChange.package.size || modelChange.package.size > modelUploadBytes) throw new Error('Choose a model package up to 50 MB.');
+    row.model_path = `${product.id}/${crypto.randomUUID()}.zip`;
+    row.model_name = modelChange.name;
+    try {
+      const { error } = await db.storage.from('product-models').upload(row.model_path, modelChange.package, {
+        contentType: 'application/zip', cacheControl: '0', upsert: false,
+      });
+      if (error) throw backendError(error.message, 'upload this 3D model');
+    } catch (error) {
+      await removeUnusedModel(db, row.model_path);
+      throw error;
+    }
+  }
+  let result: Product;
+  try {
+    const table = db.from('products');
+    const update = previous && modelChange !== undefined ? table.update(row).eq('id', product.id) : null;
+    const query = update
+      ? previous?.model_path ? update.eq('model_path', previous.model_path) : update.is('model_path', null)
+      : table.upsert(row);
+    const response = query.select('*');
+    const { data, error } = await (update ? response.maybeSingle() : response.single());
+    if (error) throw backendError(error.message, 'save this product');
+    if (!data && update) throw new Error('The product model changed in another session. Reopen the product and try again.');
+    if (!data) throw new Error('This product was not saved. Please sign in again and retry.');
+    result = fromRow(data as ProductRow);
+  } catch (error) {
+    if (row.model_path) await removeUnusedModel(db, row.model_path);
+    throw error;
+  }
   const retained = new Set(result.images.map(storagePathForImage).filter(Boolean));
   const removed = (previous?.images ?? []).filter(image => {
     const path = storagePathForImage(image);
     return path ? !retained.has(path) : !result.images.some(current => current.url === image.url && current.storagePath === image.storagePath);
   });
-  return { ...result, ...(capabilities.imageCleanup ? await cleanupImages(removed, 'saved') : {}) };
+  const cleanup = capabilities.imageCleanup ? await cleanupImages(removed, 'saved') : {};
+  if (modelChange !== undefined && previous?.model_path && previous.model_path !== result.model?.path) {
+    if (!await removeUnusedModel(db, previous.model_path)) {
+      cleanup.cleanupWarning = [cleanup.cleanupWarning, 'Product saved; the old 3D file could not be removed from storage.'].filter(Boolean).join(' ');
+    }
+  }
+  return { ...result, ...cleanup };
 }
 
 export async function deleteProduct(id: string): Promise<CatalogMutationOutcome> {
   await requireAdmin();
   const db = supabase();
-  const capabilities = await loadCapabilities(db);
-  const { data, error } = await db.from("products").delete().eq("id", id).select('id,images').maybeSingle();
+  const [capabilities, productModels] = await Promise.all([loadCatalogCapabilities(db), productModelsEnabled(db)]);
+  const { data, error } = await db.from("products").delete().eq("id", id).select(productModels ? 'id,images,model_path' : 'id,images').maybeSingle<Pick<ProductRow, 'id' | 'images' | 'model_path'>>();
   if (error) throw backendError(error.message, "delete this product");
   if (!data) throw new Error('This product was not deleted. It may no longer exist, or your session may have expired. Please refresh and sign in again.');
-  return capabilities.imageCleanup ? cleanupImages(data.images ?? [], 'deleted') : {};
+  const cleanup = capabilities.imageCleanup ? await cleanupImages(data.images ?? [], 'deleted') : {};
+  if (data.model_path && !await removeUnusedModel(db, data.model_path)) {
+    cleanup.cleanupWarning = [cleanup.cleanupWarning, 'Product deleted; its 3D file could not be removed from storage.'].filter(Boolean).join(' ');
+  }
+  return cleanup;
 }
 
 export async function saveCategory(category: Category): Promise<Category> {

@@ -25,6 +25,8 @@ docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../migrations/202610130001_real_catalog_categories.sql"
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../migrations/202610140001_catalog_activity.sql"
 docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/catalog_rls.sql"
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/../migrations/20261114020349_catalog_product_models.sql"
+docker exec -i "$CATALOG_TEST_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 < "$SCRIPT_ROOT/catalog_models.sql"
 docker exec "$CATALOG_TEST_CONTAINER" createdb -U postgres -T postgres catalog_realtime_proposal_test
 docker exec "$CATALOG_TEST_CONTAINER" psql -U postgres -d catalog_realtime_proposal_test -v ON_ERROR_STOP=1 \
   -c 'create publication supabase_realtime for table public.products;'

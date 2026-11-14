@@ -1,5 +1,5 @@
 import SafeImage from "./SafeImage";
-import { useState, useRef, useEffect, type FormEvent } from "react";
+import { useState, useRef, useEffect, useCallback, type FormEvent } from "react";
 import {
   ImagePlus,
   ArrowLeft,
@@ -13,20 +13,23 @@ import {
   Upload,
 } from "lucide-react";
 import type { Product, Category, ProductImage } from "../lib/types";
-import { uploadImage, validateProduct, cleanupAbandonedImages } from "../lib/catalog";
+import { uploadImage, validateProduct, cleanupAbandonedImages, type ProductModelChange } from "../lib/catalog";
 import Modal from "./Modal";
+import ProductModelEditor from "./ProductModelEditor";
 import { formatProductPrice } from "../lib/price";
 export default function ProductEditor({
   product,
   categories,
   orderingEnabled = false,
+  modelEditingEnabled = false,
   onSave,
   onClose,
 }: {
   product: Product;
   categories: Category[];
   orderingEnabled?: boolean;
-  onSave: (p: Product) => Promise<Product | void>;
+  modelEditingEnabled?: boolean;
+  onSave: (p: Product, modelChange?: ProductModelChange) => Promise<Product | void>;
   onClose: (warning?: string) => void;
 }) {
   const [draft, setDraft] = useState<Product>(structuredClone(product));
@@ -35,6 +38,20 @@ export default function ProductEditor({
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [modelPending, setModelPending] = useState(false);
+  const [modelInvalid, setModelInvalid] = useState(false);
+  const [modelDirty, setModelDirty] = useState(false);
+  const modelChange = useRef<ProductModelChange | undefined>(undefined);
+  const modelLocked = useRef(false);
+  const setModelChange = useCallback((change: ProductModelChange | undefined) => {
+    modelChange.current = change;
+    setModelDirty(change !== undefined);
+  }, []);
+  const setModelLoading = useCallback((pending: boolean, invalid = false) => {
+    modelLocked.current = pending || invalid;
+    setModelPending(pending);
+    setModelInvalid(invalid);
+  }, []);
   const isEditing = Boolean(product.name);
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadLock = useRef(false);
@@ -57,12 +74,12 @@ export default function ProductEditor({
     setDraft((p) => ({ ...p, [key]: value }));
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (uploadLock.current || busy) return;
+    if (uploadLock.current || modelLocked.current || busy) return;
     setError("");
     try {
       validateProduct(draft);
       setBusy(true);
-      const saved = await onSave({ ...draft, updatedAt: new Date().toISOString() });
+      const saved = await onSave({ ...draft, updatedAt: new Date().toISOString() }, modelChange.current);
       const retained = new Set((saved?.images ?? draft.images).map(image => image.url));
       const abandoned = [...uploadedImages.current.values()].filter(image => !retained.has(image.url));
       const cleanup = await cleanupAbandonedImages(abandoned);
@@ -110,7 +127,7 @@ export default function ProductEditor({
   }
   async function requestClose() {
     if (busy || uploading || uploadLock.current || closing.current) return;
-    if (JSON.stringify(draft) !== JSON.stringify(product) && !window.confirm('Discard your unsaved product changes?')) return;
+    if ((modelDirty || modelLocked.current || JSON.stringify(draft) !== JSON.stringify(product)) && !window.confirm('Discard your unsaved product changes?')) return;
     closing.current = true;
     setBusy(true);
     const abandoned = [...uploadedImages.current.values()];
@@ -196,6 +213,7 @@ export default function ProductEditor({
             <span className="product-editor-jump-number" aria-hidden="true">03</span>
             <span>Specifications</span>
           </button>
+          {modelEditingEnabled && <button type="button" onClick={() => jumpTo("product-editor-model")}><span>3D model</span></button>}
           {isEditing && (
             <button type="button" onClick={() => jumpTo("product-editor-preview")}>
               <span>Preview</span>
@@ -356,6 +374,10 @@ export default function ProductEditor({
                 Uploaded photos are public assets. Avoid confidential images; unused uploads can be removed from Supabase Storage.
               </p>
             </section>
+            {modelEditingEnabled && (
+              <ProductModelEditor productName={product.name || 'this product'} status={draft.status} model={product.model}
+                poster={cover?.url} disabled={busy} onChange={setModelChange} onPending={setModelLoading} />
+            )}
             <section className="form-section product-editor-section" id="product-editor-specs">
               <div className="product-editor-section-heading">
                 <span className="product-editor-step">03</span>
@@ -564,7 +586,7 @@ export default function ProductEditor({
             </button>
             <button
               className="button primary"
-              disabled={busy || uploading}
+              disabled={busy || uploading || modelPending || modelInvalid}
               type="submit"
             >
               {busy ? (

@@ -44,6 +44,7 @@ import {
   loadCatalog,
   subscribeCatalog,
   saveProduct,
+  type ProductModelChange,
   deleteProduct,
   saveCategory,
   deleteCategory,
@@ -234,8 +235,8 @@ export default function App() {
     setMenu(null);
     window.scrollTo(0, 0);
   };
-  async function persist(p: Product) {
-    const saved = await saveProduct(p);
+  async function persist(p: Product, modelChange?: ProductModelChange) {
+    const saved = await saveProduct(p, modelChange);
     await refresh();
     setToast(saved.cleanupWarning || `${saved.name} saved`);
     return saved;
@@ -1075,6 +1076,7 @@ export default function App() {
                                             setEditor({
                                               ...structuredClone(p),
                                               id: crypto.randomUUID(),
+                                              model: undefined,
                                               name: `${p.name} (copy)`,
                                               sku: `${p.sku}-COPY`,
                                               status: "draft",
@@ -1281,6 +1283,7 @@ export default function App() {
           product={editor}
           categories={data.categories}
           orderingEnabled={data.capabilities?.ordering === true}
+          modelEditingEnabled={data.capabilities?.productModels === true}
           onSave={persist}
           onClose={(warning) => { setEditor(null); if (warning) setToast(warning); }}
         />

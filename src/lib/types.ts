@@ -6,6 +6,10 @@ export interface ProductImage {
   alt: string;
   storagePath?: string;
 }
+export interface ProductModel {
+  path: string;
+  name: string;
+}
 export interface Product {
   id: string;
   name: string;
@@ -25,6 +29,7 @@ export interface Product {
   availability: Availability;
   featured: boolean;
   images: ProductImage[];
+  model?: ProductModel | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -42,4 +47,5 @@ export interface CatalogCapabilities {
   ordering: boolean;
   imageCleanup: boolean;
   priceBasis: boolean;
+  productModels?: boolean;
 }

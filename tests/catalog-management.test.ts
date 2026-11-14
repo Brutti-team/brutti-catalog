@@ -43,7 +43,7 @@ beforeEach(() => {
   fake.getUser.mockResolvedValue({ data: { user: { id: 'admin' } }, error: null });
   fake.rpc.mockImplementation(async (name: string) => name === 'catalog_capabilities'
     ? { data: caps, error: caps ? null : { code: 'PGRST202', message: 'Not installed' } }
-    : { data: true, error: null });
+    : { data: name !== 'catalog_product_models_enabled', error: null });
   fake.remove.mockResolvedValue({ data: [{ name: 'admin/photo.webp' }], error: null });
   fake.upsert.mockImplementation((saved: Record<string, unknown>) => ({
     select: () => ({ single: async () => ({ data: saved, error: saveError }) }),
@@ -74,7 +74,7 @@ describe('catalog management compatibility and image cleanup', () => {
     const catalog = await import('../src/lib/catalog');
     const data = await catalog.loadCatalog();
     expect(data.products[0].displayOrder).toBe(7);
-    expect(data.capabilities).toEqual({ ordering: false, imageCleanup: false, priceBasis: false });
+    expect(data.capabilities).toEqual({ ordering: false, imageCleanup: false, priceBasis: false, productModels: false });
   });
 
   it('does not send uninstalled schema columns or delete images in legacy workspaces', async () => {

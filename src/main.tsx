@@ -25,6 +25,7 @@ import "./components/brutti-maison-editorial.css";
 import "./components/brutti-admin-overview-height-fix.css";
 import "./components/brutti-workshop-edition.css";
 import "./components/product-editor-refined.css";
+import "./components/product-model.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>

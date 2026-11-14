@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -16,12 +16,11 @@ import type { Category, Product } from "../lib/types";
 import { publicAssetUrl } from "../lib/assets";
 import { formatProductPrice } from "../lib/price";
 import { productIdFromHash } from "../lib/routes";
-import ProductModelViewer from "./ProductModelViewer";
 import ShowroomSections from "./ShowroomSections";
-import { modelForProduct } from "../lib/product-models";
 import "./public.css";
 import "./brutti-3d.css";
 import "./public-reference.css";
+const ProductModelViewer = lazy(() => import('./ProductModelViewer'));
 
 interface Props {
   products: Product[];
@@ -109,7 +108,8 @@ export default function PublicCatalog({
     productId === null
       ? undefined
       : published.find((item) => item.id === productId);
-  const selectedModel = product ? modelForProduct(product) : null;
+  const selectedModel = product?.model;
+  const showingModel = viewMode === '3d' && Boolean(selectedModel);
   const categoryName = (id: string) =>
     categories.find((item) => item.id === id)?.name || "Furniture";
   const filtered = useMemo(() => {
@@ -481,17 +481,16 @@ export default function PublicCatalog({
               <>
                 <div className="pub-product-detail">
                   <div className="pub-detail-gallery">
-                    <div className="pub-media-switch" role="group" aria-label="Product viewing mode">
-                      <button type="button" className={viewMode === "photos" ? "active" : ""}
-                        aria-pressed={viewMode === "photos"} onClick={() => setViewMode("photos")}>Original photos</button>
-                      <button type="button" className={viewMode === "3d" ? "active" : ""}
-                        aria-pressed={viewMode === "3d"} disabled={!selectedModel}
-                        title={!selectedModel ? "A verified 3D model is not yet available for this product" : "Explore this product in 3D"}
-                        onClick={() => setViewMode("3d")}>360° 3D {selectedModel ? "" : "· Coming soon"}</button>
-                    </div>
-                    {viewMode === "3d" && selectedModel ? (
-                      <ProductModelViewer model={selectedModel} productName={product.name}
-                        poster={product.images[0]?.url} />
+                    {selectedModel && (
+                      <div className="pub-media-switch" role="group" aria-label="Product viewing mode">
+                        <button type="button" aria-pressed={showingModel} onClick={() => setViewMode("3d")}>Interactive 3D</button>
+                        <button type="button" aria-pressed={!showingModel} onClick={() => setViewMode("photos")}>Original photos</button>
+                      </div>
+                    )}
+                    {showingModel && selectedModel ? (
+                      <Suspense fallback={<div className="product-model-stage"><p className="product-model-message" role="status">Loading 3D viewer…</p></div>}>
+                        <ProductModelViewer model={selectedModel} productName={product.name} poster={product.images[0]?.url} />
+                      </Suspense>
                     ) : (
                     <div className="pub-detail-main-image">
                       <FurnitureImage
@@ -511,7 +510,7 @@ export default function PublicCatalog({
                       )}
                     </div>
                     )}
-                    {viewMode !== "3d" && product.images.length > 1 && (
+                    {!showingModel && product.images.length > 1 && (
                       <div
                         className="pub-gallery-thumbnails"
                         aria-label="Product image gallery"
@@ -531,7 +530,6 @@ export default function PublicCatalog({
                         ))}
                       </div>
                     )}
-                    {!selectedModel && <p className="pub-model-availability">3D rotation is enabled only after an accurate model of this exact product has been approved. The original photos remain available to inspect.</p>}
                   </div>
                   <div className="pub-detail-copy">
                     <p className="pub-eyebrow">
