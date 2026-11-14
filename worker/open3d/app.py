@@ -5,6 +5,7 @@ GitHub Pages or Supabase Edge Functions (those do not run CUDA inference).
 """
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 import hmac
 import io
 import json
@@ -31,7 +32,23 @@ MAX_IMAGE_BYTES = 5 * 1024 * 1024
 MAX_GLB_BYTES = 48 * 1024 * 1024
 LOCK = threading.Lock()
 EXECUTOR = ThreadPoolExecutor(max_workers=1, thread_name_prefix="trellis")
-app = FastAPI(title="Brutti Catalog Open-Source 3D Worker", docs_url=None, redoc_url=None)
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    APP_DIR.mkdir(parents=True, exist_ok=True)
+    for status_file in APP_DIR.glob("*/status.json"):
+        try:
+            data = json.loads(status_file.read_text(encoding="utf-8"))
+            if data.get("status") in ("processing", "queued"):
+                save_status(status_file.parent, "failed", 0)
+        except (OSError, ValueError, KeyError):
+            pass
+    yield
+
+app = FastAPI(
+    title="Brutti Catalog Open-Source 3D Worker",
+    docs_url=None, redoc_url=None,
+    lifespan=lifespan,
+)
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -203,12 +220,6 @@ def status(job_id: str, authorization: str | None = Header(default=None)):
     verify(authorization)
     folder = job_directory(job_id)
     result = load_status(folder)
-    if result["status"] == "processing" and not (folder / "model.glb").exists() and not any(
-        task.get("job_dir") == folder for task in []  # no global task inspection across worker restarts
-    ):
-        # The processing status remains visible if a worker process restarted.
-        # An operator should restart or reset the job after checking GPU logs.
-        pass
     return {**result, "model_ready": result["status"] == "completed" and (folder / "model.glb").exists()}
 
 
