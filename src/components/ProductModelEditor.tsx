@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useRef, useState, type DragEvent } from 'react';
 import { Box, Upload, X } from 'lucide-react';
 import type { Product, ProductImage, ProductModel } from '../lib/types';
-import ProductPhotoViewer from './ProductPhotoViewer';
+import ProductImageTo3D from './ProductImageTo3D';
 import type { ProductModelChange } from '../lib/catalog';
 import { modelExtensions } from '../lib/model-formats';
 
@@ -10,6 +10,8 @@ const acceptedFiles = [...modelExtensions, 'zip', 'bin', 'mtl', 'png', 'jpg', 'j
 
 type Props = {
   productName: string;
+  productId: string;
+  saved: boolean;
   status: Product['status'];
   model?: ProductModel | null;
   poster?: string;
@@ -20,12 +22,12 @@ type Props = {
   onPending: (pending: boolean, invalid?: boolean) => void;
 };
 
-export default function ProductModelEditor({ productName, status, model, poster, photos, modelEnabled, disabled, onChange, onPending }: Props) {
+export default function ProductModelEditor({ productName, productId, saved, status, model, poster, photos, modelEnabled, disabled, onChange, onPending }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<readonly File[]>();
   const [fileName, setFileName] = useState('');
   const [removed, setRemoved] = useState(false);
-  const [peek, setPeek] = useState(false);
+  const [peek, setPeek] = useState(Boolean(model));
   const [error, setError] = useState('');
   const selecting = useRef(false);
   const draftChange = useRef<Exclude<ProductModelChange, null> | undefined>(undefined);
@@ -42,8 +44,8 @@ export default function ProductModelEditor({ productName, status, model, poster,
     onPending(preview === 'loading', preview === 'error');
   }, [onChange, onPending]);
 
-  async function selectFiles(selection: FileList | null) {
-    if (!selection?.length || disabled || selecting.current) return;
+  async function selectFiles(selection: FileList | readonly File[] | null): Promise<boolean> {
+    if (!selection?.length || disabled || selecting.current) return false;
     selecting.current = true;
     setPreparing(true);
     onPending(true);
@@ -57,9 +59,11 @@ export default function ProductModelEditor({ productName, status, model, poster,
       setFiles([file]);
       setFileName(name);
       setPeek(true);
+      return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'These model files could not be opened.');
       onPending(false, previewFailedRef.current);
+      return false;
     } finally {
       setPreparing(false);
       selecting.current = false;
@@ -95,17 +99,36 @@ export default function ProductModelEditor({ productName, status, model, poster,
       <div className="product-editor-section-heading">
         <span className="product-editor-step"><Box size={15} aria-hidden="true" /></span>
         <div>
-          <h3 id="product-model-heading">Interactive product view</h3>
-          <p>Your photos above appear here automatically, with no second upload. Customers can explore these same product photos when published.</p>
+          <h3 id="product-model-heading">Real 3D model</h3>
+          <p>Turn your existing product photos into a textured, rotatable 3D object. No fake photo tilt.</p>
         </div>
       </div>
-      <ProductPhotoViewer images={photos} productName={productName} />
+      {modelEnabled ? (
+        <ProductImageTo3D productId={productId} productName={productName} photos={photos}
+          saved={saved} disabled={disabled} onGenerated={async file => {
+            if (!(await selectFiles([file]))) throw new Error('Could not prepare the generated model.');
+          }} />
+      ) : <p className="product-model-option-note">3D model storage is not enabled for this catalog.</p>}
+      {label && (
+        <div className="product-model-file">
+          <Box size={17} aria-hidden="true" />
+          <span>{label}</span>
+          {!files && <button type="button" className="button secondary" onClick={() => setPeek(open => !open)} aria-expanded={peek}>{peek ? 'Hide 3D' : 'Preview 3D'}</button>}
+          <button type="button" className="icon-button" onClick={remove} disabled={disabled || preparing} aria-label={files ? 'Discard model selection' : 'Remove model'}><X size={17} aria-hidden="true" /></button>
+        </div>
+      )}
+      {peek && (files || shownModel) && (
+        <Suspense fallback={<p className="product-model-editor-loading" role="status">Loading 3D viewer…</p>}>
+          <ProductModelViewer files={files} model={shownModel ?? undefined} productName={productName} poster={poster}
+            onPreview={files ? onPreview : undefined} />
+        </Suspense>
+      )}
       {modelEnabled && (
         <details className="product-true-model">
-          <summary>{model ? 'View or replace the existing true 3D model' : 'Add a true 3D model (optional)'}</summary>
+          <summary>Or upload an existing 3D model file</summary>
           <p className="product-model-option-note">{status === 'published'
-            ? 'A saved 3D model appears for customers after saving.'
-            : 'A saved 3D model appears for customers after publishing.'} This is only needed for full 3D rotation of sides not shown in photos.</p>
+            ? 'After Save, the model appears for customers.'
+            : 'After publishing, the model appears for customers.'} GLB and other supported model formats can be uploaded directly.</p>
       <div className="product-model-upload" onDragOver={event => {
         if (event.dataTransfer.types.includes('Files')) event.preventDefault();
       }} onDrop={drop}>
@@ -123,20 +146,6 @@ export default function ProductModelEditor({ productName, status, model, poster,
       </details>
       {error && <p className="product-model-editor-error" role="alert">{error}</p>}
       {previewFailed && <p className="product-model-editor-error" role="status">Choose another model or discard this selection to save the product.</p>}
-      {label && (
-        <div className="product-model-file">
-          <Box size={17} aria-hidden="true" />
-          <span>{label}</span>
-          {!files && <button type="button" className="button secondary" onClick={() => setPeek(open => !open)} aria-expanded={peek}>{peek ? 'Hide 3D' : 'Preview 3D'}</button>}
-          <button type="button" className="icon-button" onClick={remove} disabled={disabled || preparing} aria-label={files ? 'Discard model selection' : 'Remove model'}><X size={17} aria-hidden="true" /></button>
-        </div>
-      )}
-      {peek && (files || shownModel) && (
-        <Suspense fallback={<p className="product-model-editor-loading" role="status">Loading 3D viewer…</p>}>
-          <ProductModelViewer files={files} model={shownModel ?? undefined} productName={productName} poster={poster}
-            onPreview={files ? onPreview : undefined} />
-        </Suspense>
-      )}
         </details>
       )}
     </section>
