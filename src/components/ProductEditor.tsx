@@ -375,7 +375,7 @@ export default function ProductEditor({
               </p>
             </section>
             <ProductModelEditor productName={draft.name || 'this product'} productId={product.id} saved={isEditing} status={draft.status} model={product.model}
-              photos={draft.images} modelEnabled={modelEditingEnabled} poster={cover?.url} disabled={busy}
+              photos={draft.images} savedPhotoIds={product.images.map(image => image.id)} modelEnabled={modelEditingEnabled} poster={cover?.url} disabled={busy}
               onChange={setModelChange} onPending={setModelLoading} />
             <section className="form-section product-editor-section" id="product-editor-specs">
               <div className="product-editor-section-heading">
