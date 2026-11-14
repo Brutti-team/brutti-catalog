@@ -6,13 +6,14 @@ const user = { id: '90000000-0000-4000-8000-000000000001', email: 'test-admin@ex
 const token = `e30.${Buffer.from(JSON.stringify({ sub: user.id, exp: 4102444800, role: 'authenticated' })).toString('base64url')}.test`;
 const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=', 'base64');
 
-async function backend(page: Page, initial: Record<string, unknown>[] = [], features: { ordering?: boolean; imageCleanup?: boolean; storageFailure?: boolean; denyDelete?: boolean } = {}) {
+async function backend(page: Page, initial: Record<string, unknown>[] = [], features: { ordering?: boolean; imageCleanup?: boolean; storageFailure?: boolean; denyDelete?: boolean; productModels?: boolean } = {}) {
   let products = initial;
   const categories = bruttiCategories.map(category => ({ ...category }));
   const removals: string[] = [];
   let productReads = 0;
   let uploadGate: Promise<void> | undefined;
   let uploadCount = 0;
+  const storedModels = new Map<string, Buffer>();
   await page.addInitScript(({ token, user }) => {
     localStorage.setItem('sb-catalog-browser-test-auth-token', JSON.stringify({ access_token: token, refresh_token: 'test-refresh', token_type: 'bearer', expires_at: 4102444800, expires_in: 3600, user }));
   }, { token, user });
@@ -25,28 +26,57 @@ async function backend(page: Page, initial: Record<string, unknown>[] = [], feat
     if (url.pathname.endsWith('/categories')) return json(categories);
     if (url.pathname.endsWith('/rpc/catalog_capabilities')) return json({ ordering: features.ordering === true, imageCleanup: features.imageCleanup === true,
       priceBasis: initial.some(row => Object.hasOwn(row, 'price_basis')) });
+    if (url.pathname.endsWith('/rpc/catalog_product_models_enabled')) return json(features.productModels === true);
     if (url.pathname.endsWith('/rpc/can_remove_catalog_image')) {
       const path = request.postDataJSON().p_storage_path;
       return json(!products.some(product => (product.images as { storagePath?: string; url: string }[]).some(image =>
         image.storagePath === path || image.url === `${endpoint}/storage/v1/object/public/product-images/${path}`)));
     }
     if (url.pathname.endsWith('/products')) {
+      if (request.method() === 'PATCH') {
+        const id = url.searchParams.get('id')?.replace('eq.', '');
+        const previous = products.find(product => product.id === id);
+        const guard = url.searchParams.get('model_path');
+        if (!previous || (guard === 'is.null' ? previous.model_path != null : guard?.slice(3) !== previous.model_path)) return json(null);
+        const saved = { ...previous, ...request.postDataJSON() };
+        products = products.map(product => product.id === id ? saved : product);
+        return json(saved);
+      }
       if (request.method() === 'POST') {
         const row = request.postDataJSON();
-        products = [...products.filter(p => p.id !== row.id), row];
-        return json(row);
+        const saved = { ...products.find(p => p.id === row.id), ...row };
+        products = [...products.filter(p => p.id !== row.id), saved];
+        return json(saved);
       }
       if (request.method() === 'DELETE') {
         const id = url.searchParams.get('id')?.replace('eq.', '');
         if (features.denyDelete) return json(null);
         const deleted = products.find(p => p.id === id);
         products = products.filter(p => p.id !== id);
-        return json(deleted ? { id: deleted.id, images: deleted.images } : null);
+        return json(deleted ? { id: deleted.id, images: deleted.images, model_path: deleted.model_path } : null);
       }
       productReads++;
       const id = url.searchParams.get('id')?.replace('eq.', '');
       if (id) return json(products.filter(p => p.id === id));
       return json(products);
+    }
+    if (url.pathname === '/storage/v1/object/product-models' && request.method() === 'DELETE') {
+      const paths = request.postDataJSON().prefixes as string[];
+      return json(paths.filter(path => storedModels.delete(path)).map(name => ({ name })));
+    }
+    const modelPath = url.pathname.split('/product-models/')[1];
+    if (url.pathname.startsWith('/storage/v1/object/') && modelPath) {
+      if (request.method() === 'POST') {
+        const data = request.postDataBuffer()!;
+        const header = data.indexOf('PK\x03\x04');
+        const end = data.lastIndexOf('PK\x05\x06');
+        if (header < 0 || end < header) return route.fulfill({ status: 400, json: { message: 'Invalid model package' } });
+        storedModels.set(modelPath, data.subarray(header, end + 22 + data.readUInt16LE(end + 20)));
+        return json({ Key: `product-models/${modelPath}` });
+      }
+      const model = storedModels.get(modelPath);
+      if (model) return route.fulfill({ status: 200, contentType: 'application/zip', body: model });
+      return route.fulfill({ status: 404, json: { message: 'Model not found' } });
     }
     if (url.pathname.includes('/storage/v1/object/public/')) return route.fulfill({ status: 200, contentType: 'image/png', body: pixel });
     if (url.pathname === '/storage/v1/object/product-images' && request.method() === 'DELETE') {
@@ -63,8 +93,56 @@ async function backend(page: Page, initial: Record<string, unknown>[] = [], feat
     return json({});
   });
   return { records: () => products, categories: () => categories, reads: () => productReads, removals: () => removals,
-    uploads: () => uploadCount, holdUploads: (gate: Promise<void>) => { uploadGate = gate; } };
+    uploads: () => uploadCount, storedModels, holdUploads: (gate: Promise<void>) => { uploadGate = gate; } };
 }
+
+test('a non-GLB model is previewed, saved and opened by customers, and can be removed', async ({ page }) => {
+  const id = '90000000-0000-4000-8000-000000000118';
+  const product = { id, name: 'Model browser fixture', sku: 'TEST-MODEL-1', category_id: bruttiCategories[0].id,
+    description: 'Fixture description', materials: 'Fixture materials', width: 50, depth: 60, height: 70, price: null,
+    status: 'published', availability: 'available', featured: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+    images: [{ id: 'first', alt: 'Fixture photo', url: `${endpoint}/storage/v1/object/public/product-images/first.png` }], model_path: null, model_name: null };
+  const db = await backend(page, [product], { productModels: true });
+  await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit product' });
+  const section = dialog.getByRole('region', { name: '3D model', exact: true });
+  await expect(section.getByRole('button', { name: 'Choose model files' })).toBeVisible();
+  await section.locator('input[type=file]').setInputFiles({ name: 'pyramid.obj', mimeType: 'text/plain', buffer: Buffer.from('v -1 0 -1\nv 1 0 -1\nv 1 0 1\nv -1 0 1\nv 0 2 0\nf 1 5 2\nf 2 5 3\nf 3 5 4\nf 4 5 1\nf 1 2 3 4\n') });
+  await expect(section.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 15_000 });
+  await expect(section.getByText('pyramid.obj', { exact: true })).toBeVisible();
+  expect(db.storedModels.size).toBe(0);
+  await dialog.getByRole('button', { name: 'Save product' }).click();
+  await expect(dialog).toHaveCount(0);
+  expect(db.records()[0]).toMatchObject({ model_name: 'pyramid.obj', model_path: expect.stringMatching(new RegExp(`^${id}/[^/]+\\.zip$`)) });
+  expect(db.storedModels.size).toBe(1);
+  await page.goto(`/#/catalog/product/${id}`);
+  await page.getByRole('button', { name: 'Interactive 3D', exact: true }).click();
+  const wireframe = page.getByRole('button', { name: 'Wireframe' });
+  await expect(wireframe).toBeEnabled({ timeout: 15_000 });
+  await wireframe.click();
+  await expect(wireframe).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Original photos' }).click();
+  await expect(page.getByRole('img', { name: 'Fixture photo' })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Interactive 3D', exact: true }).click();
+  await expect(wireframe).toBeEnabled({ timeout: 15_000 });
+  await expect(page.getByRole('button', { name: 'Fullscreen', exact: true })).toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Remove model' }).click();
+  await dialog.getByRole('button', { name: 'Save product' }).click();
+  await expect(dialog).toHaveCount(0);
+  expect(db.records()[0]).toMatchObject({ model_path: null, model_name: null });
+  expect(db.storedModels.size).toBe(0);
+  await page.goto(`/#/catalog/product/${id}`);
+  await expect(page.getByRole('heading', { name: product.name, exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Interactive 3D', exact: true })).toHaveCount(0);
+});
 
 test('Draft with unknown sizes persists; edit, upload, publish, public filters and archive use backend records', async ({ page }) => {
   const db = await backend(page);

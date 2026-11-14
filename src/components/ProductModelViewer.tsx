@@ -1,135 +1,135 @@
-import { useEffect, useRef, useState } from "react";
-import { Expand, Minus, Plus, RotateCcw } from "lucide-react";
-import { publicAssetUrl } from "../lib/assets";
-import { catalogModelUrl, type ProductModelAsset } from "../lib/product-models";
+import { useEffect, useRef, useState } from 'react';
+import { Box, Expand, Minimize, Minus, Plus, RotateCcw } from 'lucide-react';
+import { publicAssetUrl } from '../lib/assets';
+import { downloadProductModel } from '../lib/catalog';
+import type { ProductModel } from '../lib/types';
+import { createModelScene } from '../lib/model-scene';
+import { disposeModel, loadModel } from '../lib/model-loader';
 
-type ViewerElement = HTMLElement & {
-  getCameraOrbit?: () => { theta: number; phi: number; radius: number };
-  cameraOrbit?: string;
-  jumpCameraToGoal?: () => void;
-};
-
-let viewerLoader: Promise<void> | null = null;
-
-function ensureViewerLoaded(): Promise<void> {
-  if (window.customElements.get("model-viewer")) return Promise.resolve();
-  if (viewerLoader) return viewerLoader;
-  viewerLoader = new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script");
-    script.type = "module";
-    script.src = "https://cdn.jsdelivr.net/npm/@google/model-viewer@4.4.0/dist/model-viewer.min.js";
-    script.onload = () => {
-      window.customElements.whenDefined("model-viewer").then(() => resolve(), reject);
-    };
-    script.onerror = () => reject(new Error("Could not load the 3D viewer. Check your connection."));
-    document.head.appendChild(script);
-  }).catch((error: unknown) => {
-    viewerLoader = null;
-    throw error;
-  });
-  return viewerLoader;
-}
-
-interface Props {
-  model: ProductModelAsset;
+type Props = {
+  model?: ProductModel;
+  files?: readonly File[];
   productName: string;
   poster?: string;
-}
+  onPreview?: (state: 'loading' | 'ready' | 'error') => void;
+};
 
-export default function ProductModelViewer({ model, productName, poster }: Props) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const fullscreenRef = useRef<HTMLDivElement>(null);
-  const modelRef = useRef<ViewerElement | null>(null);
+export default function ProductModelViewer({ model, files, productName, poster, onPreview }: Props) {
+  const container = useRef<HTMLDivElement>(null);
+  const host = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<ReturnType<typeof createModelScene> | null>(null);
   const [ready, setReady] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
+  const [warning, setWarning] = useState('');
+  const [wireframe, setWireframe] = useState(false);
+  const [canWireframe, setCanWireframe] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [fallbackFullscreen, setFallbackFullscreen] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const modelPath = model?.path;
+  const modelName = model?.name;
 
   useEffect(() => {
-    let cancelled = false;
-    let element: ViewerElement | null = null;
+    const viewport = host.current;
+    if (!viewport) return;
+    const controller = new AbortController();
+    let view: ReturnType<typeof createModelScene> | undefined;
+    const signal = controller.signal;
     setReady(false);
-    setError("");
-
-    void ensureViewerLoaded().then(() => {
-      if (cancelled || !hostRef.current) return;
-      const viewer = document.createElement("model-viewer") as ViewerElement;
-      element = viewer;
-      modelRef.current = viewer;
-      viewer.setAttribute("src", catalogModelUrl(model.src));
-      viewer.setAttribute("alt", "Interactive verified 3D model of " + productName);
-      viewer.setAttribute("camera-controls", "");
-      viewer.setAttribute("interaction-prompt", "auto");
-      viewer.setAttribute("shadow-intensity", "0.8");
-      viewer.setAttribute("exposure", "1.05");
-      viewer.setAttribute("environment-image", "neutral");
-      viewer.setAttribute("loading", "eager");
-      if (poster) viewer.setAttribute("poster", publicAssetUrl(poster));
-      viewer.addEventListener("load", () => { if (!cancelled) setReady(true); });
-      viewer.addEventListener("error", () => {
-        if (!cancelled) setError("This product's 3D file could not be opened. View its original photos instead.");
-      });
-      for (const [index, hotspot] of (model.hotspots ?? []).entries()) {
-        const marker = document.createElement("button");
-        marker.className = "pub-model-hotspot";
-        marker.slot = "hotspot-" + (index + 1);
-        marker.setAttribute("data-position", hotspot.position);
-        marker.setAttribute("data-normal", hotspot.normal);
-        marker.setAttribute("aria-label", hotspot.label);
-        marker.textContent = String(index + 1);
-        const tooltip = document.createElement("span");
-        tooltip.textContent = hotspot.label;
-        marker.appendChild(tooltip);
-        viewer.appendChild(marker);
+    setError('');
+    setWarning('');
+    setWireframe(false);
+    setCanWireframe(false);
+    onPreview?.('loading');
+    async function load() {
+      try {
+        const selected = files ?? (modelPath && modelName ? [await downloadProductModel({ path: modelPath, name: modelName }, signal)] : []);
+        if (signal.aborted) return;
+        if (!selected.length) throw new Error('Choose a model file first.');
+        try {
+          view = createModelScene(viewport!, productName, () => {
+            if (signal.aborted) return;
+            setReady(false);
+            setError('The 3D canvas was interrupted. Try opening the model again.');
+            onPreview?.('error');
+          });
+        } catch { throw new Error('3D is unavailable on this device. Try a browser with WebGL 2.'); }
+        sceneRef.current = view;
+        const result = await loadModel(selected, view.renderer);
+        if (signal.aborted) { disposeModel(result.object); return; }
+        if (view.renderer.getContext().isContextLost()) {
+          disposeModel(result.object);
+          throw new Error('The 3D canvas was interrupted. Try opening the model again.');
+        }
+        try { setCanWireframe(view.show(result.object)); }
+        catch (cause) { disposeModel(result.object); throw cause; }
+        setWarning(result.warning);
+        setReady(true);
+        onPreview?.('ready');
+      } catch (cause) {
+        if (signal.aborted) return;
+        view?.dispose();
+        view = undefined;
+        sceneRef.current = null;
+        setError(cause instanceof Error ? cause.message : 'The 3D model could not be opened.');
+        onPreview?.('error');
       }
-      hostRef.current.appendChild(viewer);
-    }).catch((cause: unknown) => {
-      if (!cancelled) setError(cause instanceof Error ? cause.message : "Unable to display the 3D model.");
-    });
+    }
+    void load();
     return () => {
-      cancelled = true;
-      modelRef.current = null;
-      if (element?.parentElement) element.parentElement.removeChild(element);
+      controller.abort();
+      view?.dispose();
+      sceneRef.current = null;
     };
-  }, [model, productName, poster]);
+  }, [files, modelPath, modelName, productName, onPreview, retry]);
 
-  function zoom(factor: number) {
-    const viewer = modelRef.current;
-    const orbit = viewer?.getCameraOrbit?.();
-    if (!viewer || !orbit) return;
-    const radius = Math.max(0.1, Math.min(orbit.radius * factor, 100));
-    viewer.cameraOrbit = orbit.theta + "rad " + orbit.phi + "rad " + radius + "m";
-    viewer.jumpCameraToGoal?.();
-  }
-
-  function reset() {
-    const viewer = modelRef.current;
-    if (!viewer) return;
-    viewer.removeAttribute("camera-orbit");
-    viewer.setAttribute("camera-orbit", "auto auto auto");
-    viewer.jumpCameraToGoal?.();
-  }
+  useEffect(() => {
+    function sync() { setExpanded(document.fullscreenElement === container.current); }
+    function escape(event: KeyboardEvent) { if (event.key === 'Escape') setFallbackFullscreen(false); }
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      document.removeEventListener('keydown', escape);
+    };
+  }, []);
 
   async function fullscreen() {
-    const container = fullscreenRef.current;
+    if (fallbackFullscreen) { setFallbackFullscreen(false); return; }
+    if (document.fullscreenElement === container.current) { await document.exitFullscreen(); return; }
     try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await container?.requestFullscreen();
-    } catch {
-      setError("Fullscreen is unavailable in this browser.");
-    }
+      if (container.current?.requestFullscreen) await container.current.requestFullscreen();
+      else setFallbackFullscreen(true);
+    } catch { setFallbackFullscreen(true); }
   }
 
+  const isFullscreen = expanded || fallbackFullscreen;
   return (
-    <div className="pub-model-viewer" ref={fullscreenRef}>
-      <div ref={hostRef} className="pub-model-canvas" aria-label={"3D product model: " + productName} />
-      {!ready && !error && <p className="pub-model-loading" role="status">Preparing your 3D view…</p>}
-      {error && <p className="pub-model-error" role="alert">{error}</p>}
-      <div className="pub-model-actions" aria-label="3D model controls">
-        <button type="button" disabled={!ready} onClick={() => zoom(0.8)} aria-label="Zoom in"><Plus size={18} /></button>
-        <button type="button" disabled={!ready} onClick={() => zoom(1.25)} aria-label="Zoom out"><Minus size={18} /></button>
-        <button type="button" disabled={!ready} onClick={reset} aria-label="Reset 3D view"><RotateCcw size={18} /></button>
-        <button type="button" disabled={!ready} onClick={() => void fullscreen()} aria-label="Fullscreen 3D view"><Expand size={18} /></button>
+    <div>
+      <div className={`product-model-stage${fallbackFullscreen ? ' is-expanded' : ''}`} ref={container}>
+        {poster && !ready && <img src={publicAssetUrl(poster)} className="product-model-poster" alt="" />}
+        <div ref={host} className="product-model-canvas" />
+        {!ready && !error && <p className="product-model-message" role="status">Loading 3D model…</p>}
+        {error && <div className="product-model-message"><p role="alert">{error}</p><button type="button" onClick={() => setRetry(attempt => attempt + 1)}>Try again</button></div>}
+        {ready && (
+          <>
+            <p className="product-model-hint">Drag to rotate · Scroll or pinch to zoom</p>
+            <div className="product-model-actions" role="group" aria-label="3D model controls">
+              <button type="button" onClick={() => sceneRef.current?.zoom(1.25)} aria-label="Zoom out" title="Zoom out"><Minus size={16} /></button>
+              <button type="button" onClick={() => sceneRef.current?.zoom(.8)} aria-label="Zoom in" title="Zoom in"><Plus size={16} /></button>
+              <button type="button" onClick={() => sceneRef.current?.reset()} aria-label="Reset view" title="Reset view"><RotateCcw size={15} /><span>Reset view</span></button>
+              <button type="button" disabled={!canWireframe} aria-pressed={wireframe} aria-label="Wireframe" title="Wireframe" onClick={() => {
+                sceneRef.current?.wireframe(!wireframe);
+                setWireframe(!wireframe);
+              }}><Box size={16} /><span>Wireframe</span></button>
+              <button type="button" onClick={() => void fullscreen()} aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'} title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}>
+                {isFullscreen ? <Minimize size={16} /> : <Expand size={16} />}
+              </button>
+            </div>
+          </>
+        )}
       </div>
-      <p className="pub-model-hint">Drag to rotate · Scroll or pinch to zoom</p>
+      {warning && <p className="product-model-texture-note" role="status">{warning}</p>}
     </div>
   );
 }
