@@ -213,7 +213,7 @@ export default function ProductEditor({
             <span className="product-editor-jump-number" aria-hidden="true">03</span>
             <span>Specifications</span>
           </button>
-          {modelEditingEnabled && <button type="button" onClick={() => jumpTo("product-editor-model")}><span>3D model</span></button>}
+          <button type="button" onClick={() => jumpTo("product-editor-model")}><span>Interactive view</span></button>}
           {isEditing && (
             <button type="button" onClick={() => jumpTo("product-editor-preview")}>
               <span>Preview</span>
@@ -374,10 +374,9 @@ export default function ProductEditor({
                 Uploaded photos are public assets. Avoid confidential images; unused uploads can be removed from Supabase Storage.
               </p>
             </section>
-            {modelEditingEnabled && (
-              <ProductModelEditor productName={product.name || 'this product'} status={draft.status} model={product.model}
-                poster={cover?.url} disabled={busy} onChange={setModelChange} onPending={setModelLoading} />
-            )}
+            <ProductModelEditor productName={draft.name || 'this product'} status={draft.status} model={product.model}
+              photos={draft.images} modelEnabled={modelEditingEnabled} poster={cover?.url} disabled={busy}
+              onChange={setModelChange} onPending={setModelLoading} />
             <section className="form-section product-editor-section" id="product-editor-specs">
               <div className="product-editor-section-heading">
                 <span className="product-editor-step">03</span>
