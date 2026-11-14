@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AlertCircle, Check, LoaderCircle, WandSparkles } from "lucide-react";
 import SafeImage from "./SafeImage";
+import { publicAssetUrl } from "../lib/assets";
 import type { ProductImage } from "../lib/types";
 import { downloadGenerated3D, photo3DRequest, type Photo3DJob } from "../lib/photo-to-3d";
 
@@ -100,6 +101,45 @@ export default function ProductImageTo3D({
     } finally { setImporting(false); }
   }
 
+  const sourcePhoto = eligiblePhotos.find(photo => photo.id === selected[0]);
+  async function downloadSelectedPhoto() {
+    if (!sourcePhoto || disabled || loading) return;
+    setError("");
+    setLoading(true);
+    try {
+      const response = await fetch(publicAssetUrl(sourcePhoto.url));
+      if (!response.ok) throw new Error("Photo is not available.");
+      const blob = await response.blob();
+      if (!blob.type.startsWith("image/")) throw new Error("This file is not a product photo.");
+      const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : blob.type === "image/jpeg" ? "jpg" : "png";
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "brutti-product-reference." + extension;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 3000);
+    } catch {
+      setError("Unable to download this photo. Open the original photo link below and save it manually.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function importDemoModel(file: File | undefined) {
+    if (!file || disabled || importing) return;
+    setError("");
+    setImporting(true);
+    try {
+      if (!file.name.toLowerCase().endsWith(".glb")) throw new Error("Choose the GLB file you downloaded from the 3D demo.");
+      await onGenerated(file);
+      setImported(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to import the generated 3D model.");
+    } finally { setImporting(false); }
+  }
+
   const inProgress = job?.status === "creating" || job?.status === "processing";
   const ready = job?.status === "ready";
 
@@ -143,22 +183,66 @@ export default function ProductImageTo3D({
           {configured === null ? (
             <p className="product-ai3d-note"><LoaderCircle size={14} className="spin" /> Checking 3D generation service…</p>
           ) : !configured ? (
-            <div className="product-ai3d-setup" role="status">
-              <p className="product-ai3d-note"><AlertCircle size={15} /> Open-source GPU worker is not connected yet.</p>
-              <p className="product-ai3d-tip">No Meshy needed. Set up TRELLIS.2 on a Linux NVIDIA GPU host (24 GB+ VRAM), expose it through private HTTPS, then set <strong>BRUTTI_3D_WORKER_URL</strong> and <strong>BRUTTI_3D_WORKER_TOKEN</strong> in the Brutti Catalog Supabase Edge Function secrets.</p>
-              <div className="product-ai3d-setup-links">
-                <a href="https://github.com/Brutti-team/brutti-catalog/tree/main/worker/open3d" target="_blank" rel="noreferrer">1. GPU worker setup</a>
-                <a href="https://supabase.com/dashboard/project/lgdjoxafleqnbomtfzqt/functions/secrets" target="_blank" rel="noreferrer">2. Connect worker secrets</a>
-                <button type="button" disabled={loading} onClick={() => {
-                  setLoading(true);
-                  void photo3DRequest("config", productId).then(result => {
-                    setConfigured(result.configured === true);
-                    setJob(result.job ?? null);
-                    setError("");
-                  }).catch(cause => setError(cause instanceof Error ? cause.message : "Cannot recheck the connection."))
-                    .finally(() => setLoading(false));
-                }}>Recheck connection</button>
+            <div className="product-ai3d-setup" role="group" aria-label="Generate 3D without a GPU server">
+              <p className="product-ai3d-setup-title">Try real 3D without Meshy or your own GPU</p>
+              <p className="product-ai3d-tip">Microsoft hosts a TRELLIS.2 demo on Hugging Face. It can generate a real GLB using limited shared GPU time. Use your selected original photo, then import the result here to preview and save.</p>
+              <div className="product-ai3d-demo-steps">
+                <div className="product-ai3d-demo-step">
+                  <span className="product-ai3d-demo-number" aria-hidden="true">1</span>
+                  <div>
+                    <strong>Get the selected product photo</strong>
+                    <p>Use the image already saved in Photography; no need to upload it to Brutti again.</p>
+                    <button className="button secondary" type="button" disabled={!sourcePhoto || loading || disabled}
+                      onClick={() => void downloadSelectedPhoto()}>
+                      {loading ? "Preparing photo…" : "Download original product photo"}
+                    </button>
+                    {sourcePhoto && <a className="product-ai3d-image-link" href={publicAssetUrl(sourcePhoto.url)} target="_blank" rel="noreferrer">View original photo</a>}
+                  </div>
+                </div>
+                <div className="product-ai3d-demo-step">
+                  <span className="product-ai3d-demo-number" aria-hidden="true">2</span>
+                  <div>
+                    <strong>Generate a 3D model in the free demo</strong>
+                    <p>Open the Microsoft demo, provide this photo, select Generate, then Extract GLB and download it. The external service has daily quotas and may require sign-in.</p>
+                    <a className="product-ai3d-demo-primary" href="https://huggingface.co/spaces/microsoft/TRELLIS.2" target="_blank" rel="noopener noreferrer">Open Microsoft TRELLIS.2 demo</a>
+                    <p className="product-ai3d-tip">Your photo is sent to Hugging Face only when you upload it there. Do not submit confidential images.</p>
+                  </div>
+                </div>
+                <div className="product-ai3d-demo-step">
+                  <span className="product-ai3d-demo-number" aria-hidden="true">3</span>
+                  <div>
+                    <strong>Import the generated GLB</strong>
+                    <p>Bring the downloaded 3D file back into Brutti Catalog. Review the model below, then click Save Product.</p>
+                    <label className="product-ai3d-demo-import">
+                      {importing ? "Preparing 3D preview…" : "Import generated GLB"}
+                      <input type="file" accept=".glb,model/gltf-binary" disabled={disabled || importing} hidden
+                        onChange={event => {
+                          const file = event.currentTarget.files?.[0];
+                          event.currentTarget.value = "";
+                          void importDemoModel(file);
+                        }} />
+                    </label>
+                    {imported && <p className="product-ai3d-confirm" role="status">GLB loaded for preview. Rotate to inspect it, then Save Product.</p>}
+                  </div>
+                </div>
               </div>
+              <details className="product-ai3d-selfhost">
+                <summary>Set up automatic generation on your own GPU instead</summary>
+                <p>For one-click generation inside Catalog, connect a Linux NVIDIA GPU host (24 GB+ VRAM) using <strong>BRUTTI_3D_WORKER_URL</strong> and <strong>BRUTTI_3D_WORKER_TOKEN</strong> in Supabase secrets.</p>
+                <div className="product-ai3d-setup-links">
+                  <a href="https://github.com/Brutti-team/brutti-catalog/tree/main/worker/open3d" target="_blank" rel="noopener noreferrer">GPU setup guide</a>
+                  <a href="https://supabase.com/dashboard/project/lgdjoxafleqnbomtfzqt/functions/secrets" target="_blank" rel="noopener noreferrer">Supabase connection settings</a>
+                  <button type="button" disabled={loading} onClick={() => {
+                    setLoading(true);
+                    void photo3DRequest("config", productId).then(result => {
+                      setConfigured(result.configured === true);
+                      setJob(result.job ?? null);
+                      setError("");
+                    }).catch(cause => setError(cause instanceof Error ? cause.message : "Cannot recheck the connection."))
+                      .finally(() => setLoading(false));
+                  }}>Recheck connection</button>
+                </div>
+              </details>
             </div>
           ) : (
             <>
