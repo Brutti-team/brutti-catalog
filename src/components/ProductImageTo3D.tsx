@@ -18,7 +18,7 @@ export default function ProductImageTo3D({
   productId, productName, photos, savedPhotoIds, saved, disabled, onGenerated
 }: Props) {
   const [configured, setConfigured] = useState<boolean | null>(null);
-  const [selected, setSelected] = useState<string[]>(() => photos.filter(photo => savedPhotoIds.includes(photo.id)).slice(0, 4).map(photo => photo.id));
+  const [selected, setSelected] = useState<string[]>(() => photos.filter(photo => savedPhotoIds.includes(photo.id)).slice(0, 1).map(photo => photo.id));
   const savedIdsKey = savedPhotoIds.join(",");
   const eligibleIds = new Set(savedPhotoIds);
   const eligiblePhotos = photos.filter(photo => eligibleIds.has(photo.id));
@@ -33,8 +33,8 @@ export default function ProductImageTo3D({
     const validIds = new Set(savedIdsKey.split(",").filter(Boolean));
     const eligible = photos.filter(photo => validIds.has(photo.id));
     setSelected(current => {
-      const stillPresent = current.filter(id => validIds.has(id) && photos.some(photo => photo.id === id)).slice(0, 4);
-      const next = stillPresent.length ? stillPresent : eligible.slice(0, 4).map(photo => photo.id);
+      const stillPresent = current.filter(id => validIds.has(id) && photos.some(photo => photo.id === id)).slice(0, 1);
+      const next = stillPresent.length ? stillPresent : eligible.slice(0, 1).map(photo => photo.id);
       return next.length === current.length && next.every((id, index) => current[index] === id) ? current : next;
     });
   }, [photos, savedIdsKey]);
@@ -69,14 +69,13 @@ export default function ProductImageTo3D({
   }, [jobId, jobStatus, productId]);
 
   const toggle = (id: string) => {
-    setSelected(current => current.includes(id) ? current.filter(item => item !== id) :
-      current.length < 4 ? [...current, id] : current);
+    setSelected(current => current.includes(id) ? current : [id]);
     setImported(false);
   };
 
   async function generate() {
     if (disabled || loading || !selected.length || !configured || selected.some(id => !eligibleIds.has(id))) return;
-    if (!window.confirm("Generate a real 3D model from these product photos? This uses paid Meshy API credits. Continue?")) return;
+    if (!window.confirm("Generate a real 3D model using the connected open-source GPU worker? GPU hosting may have a cost. Continue?")) return;
     setError("");
     setImported(false);
     setLoading(true);
@@ -110,7 +109,7 @@ export default function ProductImageTo3D({
         <div>
           <span className="product-ai3d-eyebrow">PHOTO TO 3D</span>
           <h4>Generate a real 3D model</h4>
-          <p>Use the product photos already added above. No second upload. A mesh with depth and textures is generated for 360° viewing.</p>
+          <p>Choose an existing photo above and generate a true 3D mesh with the connected open-source GPU worker. No re-upload or fake tilt.</p>
         </div>
         <WandSparkles size={22} aria-hidden="true" />
       </div>
@@ -121,7 +120,7 @@ export default function ProductImageTo3D({
         <p className="product-ai3d-note">Add and save at least one clear product photo first.</p>
       ) : (
         <>
-          <p className="product-ai3d-label">Choose 1–4 photos of the same {productName || "product"} (front view first)</p>
+          <p className="product-ai3d-label">Choose one clear photo of {productName || "the product"} (front or three-quarter view)</p>
           {unsavedCount > 0 && <p className="product-ai3d-note" role="status">{unsavedCount} newly added photo(s) need Save Product before they can be used for 3D.</p>}
           {eligiblePhotos.length === 0 && <p className="product-ai3d-note">Save the product photos first, then reopen Edit Product to generate 3D.</p>}
           <div className="product-ai3d-photos" role="group" aria-label="Photos to use for real 3D">
@@ -140,16 +139,16 @@ export default function ProductImageTo3D({
               );
             })}
           </div>
-          <p className="product-ai3d-tip">More angles improve shape accuracy. AI estimates unseen sides, so review the result before saving. The original product photos stay unchanged.</p>
+          <p className="product-ai3d-tip">TRELLIS.2 uses one reference photo per generation. It estimates unseen sides, so check the shape and texture carefully before saving. Your original photos stay unchanged.</p>
           {configured === null ? (
             <p className="product-ai3d-note"><LoaderCircle size={14} className="spin" /> Checking 3D generation service…</p>
           ) : !configured ? (
             <div className="product-ai3d-setup" role="status">
-              <p className="product-ai3d-note"><AlertCircle size={15} /> 3D generation needs a Meshy API key before it can create real models.</p>
-              <p className="product-ai3d-tip">Admin setup: get an API key from Meshy, set a monthly credit limit, then add it as the <strong>MESHY_API_KEY</strong> secret in the Brutti Catalog Supabase project. Keep the key out of GitHub and messages.</p>
+              <p className="product-ai3d-note"><AlertCircle size={15} /> Open-source GPU worker is not connected yet.</p>
+              <p className="product-ai3d-tip">No Meshy needed. Set up TRELLIS.2 on a Linux NVIDIA GPU host (24 GB+ VRAM), expose it through private HTTPS, then set <strong>BRUTTI_3D_WORKER_URL</strong> and <strong>BRUTTI_3D_WORKER_TOKEN</strong> in the Brutti Catalog Supabase Edge Function secrets.</p>
               <div className="product-ai3d-setup-links">
-                <a href="https://www.meshy.ai/developers/keys" target="_blank" rel="noreferrer">1. Get Meshy API key</a>
-                <a href="https://supabase.com/dashboard/project/lgdjoxafleqnbomtfzqt/functions/secrets" target="_blank" rel="noreferrer">2. Add Supabase secret</a>
+                <a href="https://github.com/Brutti-team/brutti-catalog/tree/main/worker/open3d" target="_blank" rel="noreferrer">1. GPU worker setup</a>
+                <a href="https://supabase.com/dashboard/project/lgdjoxafleqnbomtfzqt/functions/secrets" target="_blank" rel="noreferrer">2. Connect worker secrets</a>
                 <button type="button" disabled={loading} onClick={() => {
                   setLoading(true);
                   void photo3DRequest("config", productId).then(result => {
@@ -165,7 +164,7 @@ export default function ProductImageTo3D({
             <>
               {inProgress && <div className="product-ai3d-progress" role="status">
                 <LoaderCircle size={16} className="spin" />
-                <span>Meshy is generating your real 3D model… {job?.progress !== undefined ? `${Math.round(job.progress)}%` : "Checking progress"}</span>
+                <span>Open-source GPU worker is building your 3D model… {job?.progress !== undefined ? `${Math.round(job.progress)}%` : "Checking progress"}</span>
               </div>}
               {job?.status === "failed" && <p className="product-ai3d-note" role="alert">{job.error || job.failureReason || "Generation failed. Try clearer photos."}</p>}
               {ready && <div className="product-ai3d-ready">
@@ -180,10 +179,10 @@ export default function ProductImageTo3D({
                   disabled={disabled || loading || importing || !selected.length}
                   onClick={() => void generate()}>
                   {loading ? <LoaderCircle size={16} className="spin" /> : <WandSparkles size={16} />}
-                  {loading ? "Starting generation…" : ready ? "Generate another 3D (uses credits)" : "Generate 3D from selected photos"}
+                  {loading ? "Starting generation…" : ready ? "Generate another 3D" : "Generate 3D from selected photos"}
                 </button>
               )}
-              <p className="product-ai3d-charge">A generation uses Meshy API credits only when you confirm the Generate action. No automatic paid jobs.</p>
+              <p className="product-ai3d-charge">No Meshy or Lovable credits. Generation uses the connected GPU and may incur hosting costs. Every job requires your confirmation.</p>
             </>
           )}
         </>
