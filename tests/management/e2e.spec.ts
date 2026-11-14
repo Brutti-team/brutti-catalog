@@ -148,6 +148,7 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.goto('/#/admin');
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
+  await dialog.getByRole('button', { name: /3D tools/ }).click();
   await dialog.getByRole('button', { name: 'Remove model' }).click();
   await dialog.getByRole('button', { name: 'Save product' }).click();
   await expect(dialog).toHaveCount(0);
