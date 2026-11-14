@@ -174,7 +174,7 @@ body:has(.product-model-stage.is-expanded), .modal:has(.product-model-stage.is-e
 }
 .product-photo-counter {
   position: absolute;
-  inset: 14px auto auto 14px;
+  inset: 14px 14px auto auto;
   z-index: 2;
   padding: 7px 9px;
   border: 1px solid #ded3c4;
@@ -214,7 +214,7 @@ body:has(.product-model-stage.is-expanded), .modal:has(.product-model-stage.is-e
 }
 .admin-app .product-photo-explainer { color: var(--admin-muted); }
 @media (max-width: 610px) {
-  .product-photo-counter { inset: 9px auto auto 9px; }
+  .product-photo-counter { inset: 9px 9px auto auto; }
   .product-photo-stage .product-model-actions { flex-wrap: wrap; max-width: calc(100% - 16px); }
   .product-photo-stage .product-model-hint { max-width: 48%; }
 }
