@@ -321,6 +321,45 @@ test('Overview analytics uses a quiet metric shelf without changing real counts'
   await expectReadable(page, ['.overview-stat > strong', '.atelier-panel-heading h2', '.atelier-category-copy strong']);
 });
 
+test('Publishing Workflow uses readable, curved glass in both themes', async ({ page }) => {
+  for (const theme of ['light', 'dark'] as const) {
+    await backend(page, { savedTheme: theme });
+    await openAdmin(page);
+    const overview = page.locator('.atelier-workbench');
+    const workflow = overview.locator('.atelier-review');
+    const category = overview.locator('.atelier-categories');
+    for (const panel of [workflow, category]) {
+      const appearance = await panel.evaluate(element => {
+        const s = getComputedStyle(element);
+        return { radius: parseFloat(s.borderTopLeftRadius), blur: s.backdropFilter,
+          fill: s.backgroundColor, border: s.borderTopWidth };
+      });
+      expect(appearance.radius).toBeGreaterThanOrEqual(17);
+      expect(appearance.blur).toContain('blur(');
+      expect(appearance.border).toBe('1px');
+    }
+    await expectReadable(page, [
+      '.atelier-review .atelier-kicker',
+      '.atelier-review .atelier-panel-heading h2',
+      '.atelier-review .atelier-panel-heading p',
+      '.atelier-review .atelier-inline-link',
+      '.atelier-review .atelier-focus-number strong',
+      '.atelier-review .atelier-focus-number span',
+      '.atelier-review .atelier-progress-item > div span',
+      '.atelier-review .atelier-progress-item > div strong',
+      '.atelier-review .atelier-checklist-heading',
+      '.atelier-review .atelier-checklist button span',
+      '.atelier-review .atelier-checklist button strong',
+      '.atelier-review .atelier-status-links button',
+      '.atelier-review .atelier-status-links button strong',
+      '.atelier-categories .atelier-panel-heading h2',
+      '.atelier-categories .atelier-category-row strong',
+    ]);
+    await page.reload();
+    await expect(page.locator('.atelier-review')).toBeVisible();
+  }
+});
+
 test('Overview colours preserve dark-mode contrast and mobile width', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await backend(page, { savedTheme: 'dark' });
