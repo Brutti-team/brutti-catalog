@@ -8,16 +8,21 @@ type Props = {
   productId: string;
   productName: string;
   photos: readonly ProductImage[];
+  savedPhotoIds: readonly string[];
   saved: boolean;
   disabled: boolean;
   onGenerated: (file: File) => Promise<void>;
 };
 
 export default function ProductImageTo3D({
-  productId, productName, photos, saved, disabled, onGenerated
+  productId, productName, photos, savedPhotoIds, saved, disabled, onGenerated
 }: Props) {
   const [configured, setConfigured] = useState<boolean | null>(null);
-  const [selected, setSelected] = useState<string[]>(() => photos.slice(0, 4).map(photo => photo.id));
+  const [selected, setSelected] = useState<string[]>(() => photos.filter(photo => savedPhotoIds.includes(photo.id)).slice(0, 4).map(photo => photo.id));
+  const savedIdsKey = savedPhotoIds.join(",");
+  const eligibleIds = new Set(savedPhotoIds);
+  const eligiblePhotos = photos.filter(photo => eligibleIds.has(photo.id));
+  const unsavedCount = photos.length - eligiblePhotos.length;
   const [job, setJob] = useState<Photo3DJob | null>(null);
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -25,12 +30,14 @@ export default function ProductImageTo3D({
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const ids = new Set(photos.map(photo => photo.id));
+    const validIds = new Set(savedIdsKey.split(",").filter(Boolean));
+    const eligible = photos.filter(photo => validIds.has(photo.id));
     setSelected(current => {
-      const stillPresent = current.filter(id => ids.has(id)).slice(0, 4);
-      return stillPresent.length ? stillPresent : photos.slice(0, 4).map(photo => photo.id);
+      const stillPresent = current.filter(id => validIds.has(id) && photos.some(photo => photo.id === id)).slice(0, 4);
+      const next = stillPresent.length ? stillPresent : eligible.slice(0, 4).map(photo => photo.id);
+      return next.length === current.length && next.every((id, index) => current[index] === id) ? current : next;
     });
-  }, [photos]);
+  }, [photos, savedIdsKey]);
 
   useEffect(() => {
     if (!saved) { setConfigured(null); return; }
@@ -68,7 +75,7 @@ export default function ProductImageTo3D({
   };
 
   async function generate() {
-    if (disabled || loading || !selected.length || !configured) return;
+    if (disabled || loading || !selected.length || !configured || selected.some(id => !eligibleIds.has(id))) return;
     if (!window.confirm("Generate a real 3D model from these product photos? This uses paid Meshy API credits. Continue?")) return;
     setError("");
     setImported(false);
@@ -115,14 +122,17 @@ export default function ProductImageTo3D({
       ) : (
         <>
           <p className="product-ai3d-label">Choose 1–4 photos of the same {productName || "product"} (front view first)</p>
+          {unsavedCount > 0 && <p className="product-ai3d-note" role="status">{unsavedCount} newly added photo(s) need Save Product before they can be used for 3D.</p>}
+          {eligiblePhotos.length === 0 && <p className="product-ai3d-note">Save the product photos first, then reopen Edit Product to generate 3D.</p>}
           <div className="product-ai3d-photos" role="group" aria-label="Photos to use for real 3D">
             {photos.map((photo, index) => {
-              const active = selected.includes(photo.id);
+              const savedPhoto = eligibleIds.has(photo.id);
+              const active = savedPhoto && selected.includes(photo.id);
               return (
                 <button key={photo.id} type="button" className={`product-ai3d-photo${active ? " is-selected" : ""}`}
-                  aria-label={`Use photo ${index + 1} for 3D generation`}
+                  aria-label={`Use photo ${index + 1} for 3D generation${savedPhoto ? "" : " (save photo first)"}`}
                   aria-pressed={active}
-                  disabled={disabled || loading || inProgress}
+                  disabled={disabled || loading || inProgress || !savedPhoto}
                   onClick={() => toggle(photo.id)}>
                   <SafeImage src={photo.url} alt={photo.alt || `Photo ${index + 1}`} />
                   {active && <span className="product-ai3d-check"><Check size={13} /></span>}
@@ -134,7 +144,23 @@ export default function ProductImageTo3D({
           {configured === null ? (
             <p className="product-ai3d-note"><LoaderCircle size={14} className="spin" /> Checking 3D generation service…</p>
           ) : !configured ? (
-            <p className="product-ai3d-note" role="status"><AlertCircle size={15} /> AI generation is not connected yet. An administrator must set the MESHY_API_KEY secret in Brutti Catalog Supabase.</p>
+            <div className="product-ai3d-setup" role="status">
+              <p className="product-ai3d-note"><AlertCircle size={15} /> 3D generation needs a Meshy API key before it can create real models.</p>
+              <p className="product-ai3d-tip">Admin setup: get an API key from Meshy, set a monthly credit limit, then add it as the <strong>MESHY_API_KEY</strong> secret in the Brutti Catalog Supabase project. Keep the key out of GitHub and messages.</p>
+              <div className="product-ai3d-setup-links">
+                <a href="https://www.meshy.ai/developers/keys" target="_blank" rel="noreferrer">1. Get Meshy API key</a>
+                <a href="https://supabase.com/dashboard/project/lgdjoxafleqnbomtfzqt/functions/secrets" target="_blank" rel="noreferrer">2. Add Supabase secret</a>
+                <button type="button" disabled={loading} onClick={() => {
+                  setLoading(true);
+                  void photo3DRequest("config", productId).then(result => {
+                    setConfigured(result.configured === true);
+                    setJob(result.job ?? null);
+                    setError("");
+                  }).catch(cause => setError(cause instanceof Error ? cause.message : "Cannot recheck the connection."))
+                    .finally(() => setLoading(false));
+                }}>Recheck connection</button>
+              </div>
+            </div>
           ) : (
             <>
               {inProgress && <div className="product-ai3d-progress" role="status">
