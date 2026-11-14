@@ -111,7 +111,7 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await expect(section.getByText('Generate a real 3D model')).toBeVisible();
   await section.getByText('Or upload an existing 3D model file').click();
   await expect(section.getByRole('button', { name: 'Choose model files' })).toBeVisible();
-  await section.locator('input[type=file]').setInputFiles({ name: 'pyramid.obj', mimeType: 'text/plain', buffer: Buffer.from('v -1 0 -1\nv 1 0 -1\nv 1 0 1\nv -1 0 1\nv 0 2 0\nf 1 5 2\nf 2 5 3\nf 3 5 4\nf 4 5 1\nf 1 2 3 4\n') });
+  await section.locator('input[type=file][multiple]').setInputFiles({ name: 'pyramid.obj', mimeType: 'text/plain', buffer: Buffer.from('v -1 0 -1\nv 1 0 -1\nv 1 0 1\nv -1 0 1\nv 0 2 0\nf 1 5 2\nf 2 5 3\nf 3 5 4\nf 4 5 1\nf 1 2 3 4\n') });
   await expect(section.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 15_000 });
   await expect(section.getByText('pyramid.obj', { exact: true })).toBeVisible();
   expect(db.storedModels.size).toBe(0);
@@ -509,4 +509,41 @@ test('existing product photos generate a real GLB through the authenticated serv
   expect(db.storedModels.size).toBe(1);
   await page.goto('/#/catalog/product/' + id);
   await expect(page.getByRole('button', { name: 'Interactive 3D', exact: true })).toBeVisible();
+});
+
+
+test('without a connected GPU, staff can use free TRELLIS demo and import a genuine GLB for preview', async ({ page }) => {
+  const id = '90000000-0000-4000-8000-000000000209';
+  const product = {
+    id, name: 'Community 3D demo fixture', sku: 'TEST-FREE-3D',
+    category_id: bruttiCategories[0].id, description: 'Fixture product',
+    materials: 'Wood', width: 70, depth: 30, height: 125, price: null,
+    status: 'published', availability: 'available', featured: false,
+    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+    images: [{ id: 'front', alt: 'Front photo', url: endpoint + '/storage/v1/object/public/product-images/front.png', storagePath: 'front.png' }],
+    model_path: null, model_name: null,
+  };
+  const db = await backend(page, [product], { productModels: true });
+  await page.route(endpoint + '/functions/v1/catalog-image-to-3d', route =>
+    route.fulfill({ status: 200, json: { configured: false, job: null } }));
+  await page.goto('/#/admin');
+  await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
+  await page.getByRole('button', { name: 'Edit Community 3D demo fixture', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit product' });
+  const region = dialog.getByRole('region', { name: 'Real 3D model', exact: true });
+  const offline = region.getByRole('group', { name: 'Generate 3D without a GPU server' });
+  await expect(offline.getByText('Try real 3D without Meshy or your own GPU')).toBeVisible();
+  await expect(offline.getByRole('button', { name: 'Download original product photo' })).toBeEnabled();
+  await expect(offline.getByRole('link', { name: 'Open Microsoft TRELLIS.2 demo' }))
+    .toHaveAttribute('href', 'https://huggingface.co/spaces/microsoft/TRELLIS.2');
+  expect(db.storedModels.size).toBe(0);
+  await offline.locator('input[type="file"]').setInputFiles({
+    name: 'from-demo.glb', mimeType: 'model/gltf-binary', buffer: minimalTriangleGlb(),
+  });
+  await expect(region.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 15_000 });
+  expect(db.storedModels.size).toBe(0);
+  await dialog.getByRole('button', { name: 'Save product' }).click();
+  await expect(dialog).toHaveCount(0);
+  expect(db.storedModels.size).toBe(1);
+  expect(db.records()[0]).toMatchObject({ model_name: 'from-demo.glb' });
 });

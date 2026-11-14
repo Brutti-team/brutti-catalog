@@ -118,10 +118,12 @@ def download_image(image_url: str) -> Image.Image:
     try:
         image = Image.open(io.BytesIO(data))
         image.verify()
-        image = Image.open(io.BytesIO(data)).convert("RGB")
-        if image.width * image.height > 32_000_000:
+        original = Image.open(io.BytesIO(data))
+        if original.width * original.height > 32_000_000:
             raise ValueError("Photo resolution is too large")
-        return image
+        # TRELLIS.2 accepts an alpha-masked foreground. Do not discard the
+        # alpha channel when staff upload a transparent product cutout.
+        return original.convert("RGBA" if "A" in original.getbands() else "RGB")
     except UnidentifiedImageError as error:
         raise ValueError("Unsupported photo format") from error
 
@@ -154,12 +156,15 @@ def generate_model(image: Image.Image, output: Path) -> None:
             attr_layout=mesh.layout,
             voxel_size=mesh.voxel_size,
             aabb=[[-0.5, -0.5, -0.5], [0.5, 0.5, 0.5]],
-            decimation_target=75_000,
+            decimation_target=150_000,
             texture_size=1024,
             remesh=True,
+            remesh_band=1,
+            remesh_project=0,
             verbose=False,
         )
-        glb.export(str(output))
+        # Keep embedded textures for Brutti's Three.js GLB viewer.
+        glb.export(str(output), extension_webp=True)
 
     with output.open("rb") as handle:
         if handle.read(4) != b"glTF":
