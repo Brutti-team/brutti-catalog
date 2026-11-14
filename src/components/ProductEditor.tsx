@@ -213,7 +213,7 @@ export default function ProductEditor({
             <span className="product-editor-jump-number" aria-hidden="true">03</span>
             <span>Specifications</span>
           </button>
-          <button type="button" onClick={() => jumpTo("product-editor-model")}><span>Interactive view</span></button>}
+          <button type="button" onClick={() => jumpTo("product-editor-model")}><span>Interactive view</span></button>
           {isEditing && (
             <button type="button" onClick={() => jumpTo("product-editor-preview")}>
               <span>Preview</span>
