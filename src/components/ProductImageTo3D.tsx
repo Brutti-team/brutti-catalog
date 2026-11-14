@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, LoaderCircle, WandSparkles } from "lucide-react";
 import SafeImage from "./SafeImage";
 import { publicAssetUrl } from "../lib/assets";
@@ -18,6 +18,7 @@ type Props = {
 export default function ProductImageTo3D({
   productId, productName, photos, savedPhotoIds, saved, disabled, onGenerated
 }: Props) {
+  const demoFileInput = useRef<HTMLInputElement>(null);
   const [configured, setConfigured] = useState<boolean | null>(null);
   const [selected, setSelected] = useState<string[]>(() => photos.filter(photo => savedPhotoIds.includes(photo.id)).slice(0, 1).map(photo => photo.id));
   const savedIdsKey = savedPhotoIds.join(",");
@@ -213,15 +214,19 @@ export default function ProductImageTo3D({
                   <div>
                     <strong>Import the generated GLB</strong>
                     <p>Bring the downloaded 3D file back into Brutti Catalog. Review the model below, then click Save Product.</p>
-                    <label className="product-ai3d-demo-import">
+                    <button type="button" className="product-ai3d-demo-import"
+                      disabled={disabled || importing}
+                      onClick={() => demoFileInput.current?.click()}>
                       {importing ? "Preparing 3D preview…" : "Import generated GLB"}
-                      <input type="file" accept=".glb,model/gltf-binary" disabled={disabled || importing} hidden
-                        onChange={event => {
-                          const file = event.currentTarget.files?.[0];
-                          event.currentTarget.value = "";
-                          void importDemoModel(file);
-                        }} />
-                    </label>
+                    </button>
+                    <input ref={demoFileInput} type="file" accept=".glb,model/gltf-binary"
+                      aria-label="Select generated GLB from TRELLIS demo"
+                      disabled={disabled || importing} hidden
+                      onChange={event => {
+                        const file = event.currentTarget.files?.[0];
+                        event.currentTarget.value = "";
+                        void importDemoModel(file);
+                      }} />
                     {imported && <p className="product-ai3d-confirm" role="status">GLB loaded for preview. Rotate to inspect it, then Save Product.</p>}
                   </div>
                 </div>
