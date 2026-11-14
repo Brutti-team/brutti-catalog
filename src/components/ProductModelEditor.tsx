@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useRef, useState, type DragEvent } from 'react';
 import { Box, Upload, X } from 'lucide-react';
-import type { Product, ProductModel } from '../lib/types';
+import type { Product, ProductImage, ProductModel } from '../lib/types';
+import ProductPhotoViewer from './ProductPhotoViewer';
 import type { ProductModelChange } from '../lib/catalog';
 import { modelExtensions } from '../lib/model-formats';
 
@@ -12,12 +13,14 @@ type Props = {
   status: Product['status'];
   model?: ProductModel | null;
   poster?: string;
+  photos: readonly ProductImage[];
+  modelEnabled: boolean;
   disabled: boolean;
   onChange: (change: ProductModelChange | undefined) => void;
   onPending: (pending: boolean, invalid?: boolean) => void;
 };
 
-export default function ProductModelEditor({ productName, status, model, poster, disabled, onChange, onPending }: Props) {
+export default function ProductModelEditor({ productName, status, model, poster, photos, modelEnabled, disabled, onChange, onPending }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<readonly File[]>();
   const [fileName, setFileName] = useState('');
@@ -92,12 +95,17 @@ export default function ProductModelEditor({ productName, status, model, poster,
       <div className="product-editor-section-heading">
         <span className="product-editor-step"><Box size={15} aria-hidden="true" /></span>
         <div>
-          <h3 id="product-model-heading">3D model</h3>
-          <p>{status === 'published'
-            ? 'The model becomes visible to customers when you save this published product.'
-            : 'Preview it here. The model becomes visible to customers when you publish this product.'}</p>
+          <h3 id="product-model-heading">Interactive product view</h3>
+          <p>Your photos above appear here automatically, with no second upload. Customers can explore these same product photos when published.</p>
         </div>
       </div>
+      <ProductPhotoViewer images={photos} productName={productName} />
+      {modelEnabled && (
+        <details className="product-true-model">
+          <summary>{model ? 'View or replace the existing true 3D model' : 'Add a true 3D model (optional)'}</summary>
+          <p className="product-model-option-note">{status === 'published'
+            ? 'A saved 3D model appears for customers after saving.'
+            : 'A saved 3D model appears for customers after publishing.'} This is only needed for full 3D rotation of sides not shown in photos.</p>
       <div className="product-model-upload" onDragOver={event => {
         if (event.dataTransfer.types.includes('Files')) event.preventDefault();
       }} onDrop={drop}>
@@ -128,6 +136,8 @@ export default function ProductModelEditor({ productName, status, model, poster,
           <ProductModelViewer files={files} model={shownModel ?? undefined} productName={productName} poster={poster}
             onPreview={files ? onPreview : undefined} />
         </Suspense>
+      )}
+        </details>
       )}
     </section>
   );
