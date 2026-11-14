@@ -29,16 +29,21 @@ const maxGlbBytes = 48 * 1024 * 1024;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // This URL and bearer token are server-only Supabase Edge Function secrets.
 // Never accept worker addresses from user input.
-const workerUrl = Deno.env.get("BRUTTI_3D_WORKER_URL")?.replace(/\\/$/, "");
+const rawWorkerUrl = Deno.env.get("BRUTTI_3D_WORKER_URL")?.trim() ?? "";
+const workerUrl = rawWorkerUrl.endsWith("/") ? rawWorkerUrl.slice(0, -1) : rawWorkerUrl;
 const workerToken = Deno.env.get("BRUTTI_3D_WORKER_TOKEN")?.trim();
 function workerConfigured(): boolean {
   if (!workerUrl || !workerToken || workerToken.length < 24) return false;
   try {
     const address = new URL(workerUrl);
-    return address.protocol === "https:" &&
+    const host = address.hostname.toLowerCase();
+    const local = host === "localhost" || host.endsWith(".local") ||
+      host.endsWith(".localhost") || host.includes(":") ||
+      ["127.", "10.", "192.168.", "169.254."].some(prefix => host.startsWith(prefix));
+    return address.protocol === "https:" && !local &&
       !address.username && !address.password && !address.port &&
-      !/(^localhost$|\\.localhost$|\\.local$|^127\\.|^10\\.|^192\\.168\\.|^169\\.254\\.)/i.test(address.hostname) &&
-      !/^[0-9.]+$/.test(address.hostname) && !address.search && !address.hash;
+      !/^[0-9.]+$/.test(host) && !address.search && !address.hash &&
+      address.pathname === "/";
   } catch { return false; }
 }
 async function workerFetch(path: string, options: RequestInit = {}, timeoutMs = 16000): Promise<Response> {
