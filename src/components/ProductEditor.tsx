@@ -10,6 +10,7 @@ import {
   LoaderCircle,
   CheckCircle2,
   Circle,
+  Upload,
 } from "lucide-react";
 import type { Product, Category, ProductImage } from "../lib/types";
 import { uploadImage, validateProduct, cleanupAbandonedImages } from "../lib/catalog";
@@ -34,6 +35,7 @@ export default function ProductEditor({
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const isEditing = Boolean(product.name);
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadLock = useRef(false);
   const uploadedImages = useRef(new Map<string, ProductImage>());
@@ -133,29 +135,76 @@ export default function ProductEditor({
     { label: "All dimensions", done: draft.width > 0 && draft.depth > 0 && draft.height > 0 },
   ];
   const readyCount = publishChecks.filter((item) => item.done).length;
-  const jumpTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  function jumpTo(id: string) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth", block: "start" });
+  }
+  const UploadIcon = isEditing ? Upload : ImagePlus;
+  const cover = draft.images[0];
+  const previewDescription = draft.description || (isEditing ? "" : "Your thoughtful product story will appear here.");
+  const previewCard = (
+    <article className="editor-preview">
+      {cover ? (
+        <SafeImage key={cover.url} src={cover.url} alt={cover.alt || draft.name} />
+      ) : (
+        <div className="preview-placeholder">
+          <ImagePlus aria-hidden="true" />
+          {isEditing && <span>No cover photo</span>}
+        </div>
+      )}
+      <span className="eyebrow">
+        {categories.find((category) => category.id === draft.categoryId)?.name || "Your category"}
+      </span>
+      <h3>{draft.name || "Your product name"}</h3>
+      <p>
+        {draft.price === null ? "Price on enquiry" : formatProductPrice(draft, 'editor')}
+      </p>
+      {previewDescription && <p className="preview-description tiny muted">{previewDescription}</p>}
+    </article>
+  );
   return (
     <Modal
-      title={product.name ? "Edit product" : "Create product"}
+      title={isEditing ? "Edit product" : "Create product"}
       wide
-      className="product-editor-dialog"
+      className={isEditing ? "product-editor-dialog product-editor-dialog--editing" : "product-editor-dialog"}
       onClose={() => void requestClose()}
     >
       <form onSubmit={submit} className="editor-form product-editor-v2">
         <div className="product-editor-intro">
           <div>
             <span className="product-editor-kicker">PRODUCT WORKSPACE</span>
-            <p>Complete the essentials, then save a draft or prepare the product for publishing.</p>
+            <p>
+              {isEditing
+                ? "Update the product details and check the preview before saving."
+                : "Complete the essentials, then save a draft or prepare the product for publishing."}
+            </p>
           </div>
           <span className={`product-editor-state product-editor-state--${draft.status}`}>
             {draft.status === "published" ? "Published" : draft.status === "archived" ? "Archived" : "Draft"}
           </span>
         </div>
         <nav className="product-editor-jump" aria-label="Jump to form section">
-          <button type="button" onClick={() => jumpTo("product-editor-basics")}>01 <span>Essentials</span></button>
-          <button type="button" onClick={() => jumpTo("product-editor-photos")}>02 <span>Photos</span></button>
-          <button type="button" onClick={() => jumpTo("product-editor-specs")}>03 <span>Specifications</span></button>
-          <button type="button" onClick={() => jumpTo("product-editor-publish")}>04 <span>Publishing</span></button>
+          <button type="button" onClick={() => jumpTo("product-editor-basics")}>
+            <span className="product-editor-jump-number" aria-hidden="true">01</span>
+            <span>Essentials</span>
+          </button>
+          <button type="button" onClick={() => jumpTo("product-editor-photos")}>
+            <span className="product-editor-jump-number" aria-hidden="true">02</span>
+            <span>Photos</span>
+          </button>
+          <button type="button" onClick={() => jumpTo("product-editor-specs")}>
+            <span className="product-editor-jump-number" aria-hidden="true">03</span>
+            <span>Specifications</span>
+          </button>
+          {isEditing && (
+            <button type="button" onClick={() => jumpTo("product-editor-preview")}>
+              <span>Preview</span>
+            </button>
+          )}
+          <button type="button" onClick={() => jumpTo("product-editor-publish")}>
+            <span className="product-editor-jump-number" aria-hidden="true">04</span>
+            <span>Publishing</span>
+          </button>
         </nav>
         <div className="editor-columns">
           <div className="editor-primary">
@@ -236,15 +285,15 @@ export default function ProductEditor({
                   if (!busy && !uploading) void addImages(event.dataTransfer.files);
                 }}
               >
-                {uploading ? (
-                  <LoaderCircle className="spin" />
-                ) : (
-                  <ImagePlus size={27} />
-                )}
+                {uploading ? <LoaderCircle className="spin" /> : <UploadIcon size={27} />}
                 <strong>
-                  {uploading ? "Uploading photos…" : draft.images.length >= 8 ? "Maximum 8 photos added" : "Add product photos"}
+                  {uploading
+                    ? "Uploading photos…"
+                    : draft.images.length >= 8
+                      ? "Maximum 8 photos added"
+                      : isEditing ? "Drop photos or click to upload" : "Add product photos"}
                 </strong>
-                <span>Choose files or drag photos here · JPG, PNG, WebP</span>
+                <span>{isEditing ? "JPG, PNG or WebP" : "Choose files or drag photos here · JPG, PNG, WebP"}</span>
               </button>
               <div className="image-editor-grid">
                 {draft.images.map((img, index) => (
@@ -376,8 +425,18 @@ export default function ProductEditor({
               </label>
             </section>
           </div>
-          <aside className="editor-side product-editor-aside" id="product-editor-publish">
-            <div className="product-editor-aside-heading">
+          <aside className="editor-side product-editor-aside">
+            {isEditing && (
+              <section
+                className="product-editor-live-preview"
+                id="product-editor-preview"
+                aria-labelledby="product-editor-preview-label"
+              >
+                <p id="product-editor-preview-label" className="product-editor-preview-label">Live preview</p>
+                {previewCard}
+              </section>
+            )}
+            <div className="product-editor-aside-heading" id="product-editor-publish">
               <span className="product-editor-step">04</span>
               <div>
                 <h3>Publishing</h3>
@@ -469,39 +528,19 @@ export default function ProductEditor({
               <h3>Drafts stay private</h3>
               <p>Save now and finish the listing later. Only published products appear in the public catalogue.</p>
             </section>
-            <button
-              type="button"
-              className="button secondary full"
-              onClick={() => setPreview(!preview)}
-            >
-              <Eye size={16} />
-              {preview ? "Hide preview" : "Preview product"}
-            </button>
-            {preview && (
-              <article className="editor-preview">
-                {draft.images[0] ? (
-                  <SafeImage
-                    src={draft.images[0].url}
-                    alt={draft.images[0].alt || draft.name}
-                  />
-                ) : (
-                  <div className="preview-placeholder">
-                    <ImagePlus />
-                  </div>
-                )}
-                <span className="eyebrow">
-                  {categories.find((c) => c.id === draft.categoryId)?.name ||
-                    "YOUR CATEGORY"}
-                </span>
-                <h3>{draft.name || "Your product name"}</h3>
-                <p>
-                  {draft.price === null ? "Price on enquiry" : formatProductPrice(draft, 'editor')}
-                </p>
-                <p className="tiny muted">
-                  {draft.description ||
-                    "Your thoughtful product story will appear here."}
-                </p>
-              </article>
+            {!isEditing && (
+              <>
+                <button
+                  type="button"
+                  className="button secondary full"
+                  aria-expanded={preview}
+                  onClick={() => setPreview((open) => !open)}
+                >
+                  <Eye size={16} />
+                  {preview ? "Hide preview" : "Preview product"}
+                </button>
+                {preview && previewCard}
+              </>
             )}
           </aside>
         </div>

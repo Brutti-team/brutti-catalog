@@ -101,7 +101,7 @@
   letter-spacing: .07em;
   transition: color .16s, border-color .16s;
 }
-.admin-app .product-editor-v2 .product-editor-jump button span {
+.admin-app .product-editor-v2 .product-editor-jump button span:not(.product-editor-jump-number) {
   font-size: 12px;
   font-weight: 650;
   letter-spacing: 0;
@@ -466,6 +466,106 @@
   font-weight: 690;
 }
 .admin-app .product-editor-v2 .editor-preview { margin-top: 14px; }
+.admin-app:not([data-theme="dark"]) .product-editor-dialog--editing {
+  --editor-photo-surface: #f8f5ef;
+  --editor-photo-border: #c8bdad;
+}
+.admin-app[data-theme="dark"] .product-editor-dialog--editing {
+  --admin-accent: var(--admin-focus);
+}
+.admin-app .product-editor-dialog--editing .product-editor-v2 .upload-zone {
+  border-color: var(--editor-photo-border, var(--admin-muted));
+  border-radius: 13px;
+  background: var(--editor-photo-surface, var(--admin-surface-soft));
+  color: var(--admin-muted);
+}
+.admin-app .product-editor-dialog--editing .product-editor-v2 .upload-zone:not(:disabled):is(:hover, .is-dragging) {
+  border-color: var(--admin-accent);
+  background: var(--admin-selected);
+  color: var(--admin-accent);
+}
+.admin-app .product-editor-dialog--editing .product-editor-v2 .image-editor-grid {
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+}
+.admin-app .product-editor-dialog--editing .image-editor-photo {
+  border-radius: 12px;
+}
+.admin-app .product-editor-dialog--editing .image-remove {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  outline-offset: 2px;
+}
+.admin-app .product-editor-dialog--editing .product-editor-section :is(input:not([type="file"]), select, textarea) {
+  border-radius: 11px;
+}
+.admin-app .product-editor-dialog--editing .product-editor-section textarea {
+  min-height: 120px;
+}
+.admin-app .product-editor-live-preview {
+  margin-bottom: 24px;
+  padding-bottom: 23px;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-app .product-editor-dialog--editing .product-editor-v2 :is(.product-editor-section, .product-editor-live-preview, .product-editor-aside-heading) {
+  scroll-margin-top: 100px;
+}
+.admin-app .product-editor-preview-label {
+  color: var(--admin-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.admin-app .product-editor-v2 .product-editor-live-preview .editor-preview {
+  display: block;
+  margin: 13px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow-wrap: anywhere;
+}
+.admin-app .product-editor-live-preview .editor-preview :is(img, .preview-placeholder) {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 13px;
+  background: var(--editor-photo-surface, var(--admin-surface));
+}
+.admin-app .product-editor-live-preview .preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--admin-border);
+  font-size: 12px;
+  color: var(--admin-muted);
+}
+.admin-app .product-editor-live-preview .editor-preview .eyebrow {
+  display: block;
+  margin: 15px 0 5px;
+  color: var(--admin-muted);
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.admin-app .product-editor-live-preview .editor-preview h3 {
+  margin: 0;
+  color: var(--admin-text);
+  font: 400 23px/1.2 Georgia, "Times New Roman", serif;
+}
+.admin-app .product-editor-live-preview .editor-preview p {
+  margin: 7px 0 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+.admin-app .product-editor-live-preview .preview-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
 .admin-app .product-editor-v2 .editor-form > .notice { margin: 0 34px 16px; }
 .admin-app .product-editor-v2 .editor-footer {
   position: sticky;
@@ -547,6 +647,18 @@
   .admin-app .product-editor-v2 .editor-form > .notice { margin: 0 18px 16px; }
   .admin-app .product-editor-v2 .editor-note { display: block; }
   .admin-app .product-editor-v2 .image-editor-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .admin-app .product-editor-dialog--editing .product-editor-jump {
+    flex-wrap: wrap;
+    column-gap: 13px;
+  }
+  .admin-app .product-editor-dialog--editing .product-editor-jump button {
+    margin-right: 0;
+    padding-right: 0;
+  }
+  .admin-app .product-editor-dialog--editing .product-editor-jump-number { display: none; }
+  .admin-app .product-editor-v2 .product-editor-live-preview .editor-preview {
+    max-width: 400px;
+  }
 }
 @media (max-width: 420px) {
   .admin-app .product-editor-v2 .field-pair { grid-template-columns: minmax(0,1fr); gap: 0; }

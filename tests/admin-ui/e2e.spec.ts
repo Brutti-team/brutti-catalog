@@ -747,8 +747,11 @@ test('dark theme covers table, navigation, product and category forms, and accou
     expect(actual.contrast, `${selector}: ${JSON.stringify(actual)}`).toBeGreaterThanOrEqual(3);
   }
   await page.getByRole('button', { name: `Edit ${fixtureProduct.name}`, exact: true }).click();
-  await expect(page.getByRole('dialog', { name: 'Edit product', exact: true })).toBeVisible();
-  await expectReadable(page, ['.modal-heading h2', '.editor-form label', '.editor-form input:not([type="checkbox"]):not([type="file"])', '.editor-form textarea', '.editor-form select', '.editor-note h3', '.editor-footer .muted'], true);
+  const editor = page.getByRole('dialog', { name: 'Edit product', exact: true });
+  await expect(editor).toBeVisible();
+  await expectReadable(page, ['.modal-heading h2', '.editor-form label', '.editor-form input:not([type="checkbox"]):not([type="file"])', '.editor-form textarea', '.editor-form select', '.editor-note h3', '.editor-footer .muted', '.product-editor-preview-label', '.editor-preview h3'], true);
+  const save = await colors(editor.getByRole('button', { name: 'Save product', exact: true }));
+  expect(save.contrast, `Save product: ${JSON.stringify(save)}`).toBeGreaterThanOrEqual(4.5);
   await page.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: 'Categories', exact: true }).click();
   await expectReadable(page, ['.category-card-body h2', '.category-card-body p', '.category-count'], true);
