@@ -412,3 +412,36 @@ body:has(.product-model-stage.is-expanded), .modal:has(.product-model-stage.is-e
   .product-ai3d-head h4 { font-size: 16px; }
   .admin-app .product-ai3d { padding: 13px; }
 }
+
+
+/* AI provider connection: plain, actionable admin instructions. */
+.product-ai3d-setup {
+  margin-top: 13px;
+  padding: 12px 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-surface);
+}
+.product-ai3d-setup .product-ai3d-note { margin: 0 0 6px; }
+.product-ai3d-setup .product-ai3d-tip { line-height: 1.6; }
+.product-ai3d-setup strong { font-weight: 700; }
+.product-ai3d-setup-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 15px;
+  align-items: center;
+  margin-top: 13px;
+}
+.product-ai3d-setup-links a,
+.product-ai3d-setup-links button {
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.product-ai3d-setup-links a:hover,
+.product-ai3d-setup-links button:hover { color: #376148; }
+.product-ai3d-setup-links a:focus-visible,
+.product-ai3d-setup-links button:focus-visible { outline: 2px solid var(--admin-focus); outline-offset: 3px; }
+.product-ai3d-setup-links button:disabled { opacity: .55; }
