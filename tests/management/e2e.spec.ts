@@ -123,6 +123,13 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.getByRole('button', { name: 'Interactive 3D', exact: true }).click();
   const wireframe = page.getByRole('button', { name: 'Wireframe' });
   await expect(wireframe).toBeEnabled({ timeout: 15_000 });
+  await expect(page.getByText('INTERACTIVE OBJECT', { exact: true })).toBeVisible();
+  await expect(page.getByText('Triangles', { exact: true })).toBeVisible();
+  const autoRotate = page.getByRole('button', { name: 'Auto rotate' });
+  await autoRotate.click();
+  await expect(page.getByRole('button', { name: 'Pause rotation' })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Pause rotation' }).click();
+  await expect(autoRotate).toHaveAttribute('aria-pressed', 'false');
   await wireframe.click();
   await expect(wireframe).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Original photos' }).click();
