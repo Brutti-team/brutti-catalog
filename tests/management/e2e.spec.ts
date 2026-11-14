@@ -107,7 +107,9 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Edit product' });
-  const section = dialog.getByRole('region', { name: '3D model', exact: true });
+  const section = dialog.getByRole('region', { name: 'Interactive product view', exact: true });
+  await expect(section.getByRole('img', { name: 'Fixture photo' })).toBeVisible();
+  await section.getByText('Add a true 3D model (optional)').click();
   await expect(section.getByRole('button', { name: 'Choose model files' })).toBeVisible();
   await section.locator('input[type=file]').setInputFiles({ name: 'pyramid.obj', mimeType: 'text/plain', buffer: Buffer.from('v -1 0 -1\nv 1 0 -1\nv 1 0 1\nv -1 0 1\nv 0 2 0\nf 1 5 2\nf 2 5 3\nf 3 5 4\nf 4 5 1\nf 1 2 3 4\n') });
   await expect(section.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 15_000 });
@@ -134,6 +136,7 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.goto('/#/admin');
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
+  await section.getByText('View or replace the existing true 3D model').click();
   await dialog.getByRole('button', { name: 'Remove model' }).click();
   await dialog.getByRole('button', { name: 'Save product' }).click();
   await expect(dialog).toHaveCount(0);
@@ -142,6 +145,8 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.goto(`/#/catalog/product/${id}`);
   await expect(page.getByRole('heading', { name: product.name, exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Interactive 3D', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Interactive photo view', exact: true }).click();
+  await expect(page.getByRole('img', { name: 'Fixture photo' })).toBeVisible();
 });
 
 test('Draft with unknown sizes persists; edit, upload, publish, public filters and archive use backend records', async ({ page }) => {
