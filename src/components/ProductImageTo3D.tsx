@@ -43,12 +43,14 @@ export default function ProductImageTo3D({
     return () => { cancelled = true; };
   }, [saved, productId]);
 
+  const jobId = job?.id;
+  const jobStatus = job?.status;
   useEffect(() => {
-    if (!job || !["creating", "processing"].includes(job.status)) return;
+    if (!jobId || !["creating", "processing"].includes(jobStatus || "")) return;
     let cancelled = false;
     const check = async () => {
       try {
-        const result = await photo3DRequest("status", productId, { jobId: job.id });
+        const result = await photo3DRequest("status", productId, { jobId });
         if (!cancelled && result.job) { setJob(result.job); setError(""); }
       } catch (cause) {
         if (!cancelled) setError(cause instanceof Error ? cause.message : "Could not check 3D progress.");
@@ -57,7 +59,7 @@ export default function ProductImageTo3D({
     void check();
     const interval = window.setInterval(() => { void check(); }, 8000);
     return () => { cancelled = true; window.clearInterval(interval); };
-  }, [job?.id, job?.status, productId]);
+  }, [jobId, jobStatus, productId]);
 
   const toggle = (id: string) => {
     setSelected(current => current.includes(id) ? current.filter(item => item !== id) :
