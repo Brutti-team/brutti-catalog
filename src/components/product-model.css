@@ -139,3 +139,85 @@ body:has(.product-model-stage.is-expanded), .modal:has(.product-model-stage.is-e
   .product-model-actions span { display: none; }
   .product-model-upload > span { flex-basis: 100%; }
 }
+
+
+/* Original-photo perspective: a view of the uploaded item, never a generated replacement. */
+.product-photo-viewer { width: 100%; min-width: 0; }
+.product-photo-stage { outline-offset: -3px; }
+.product-photo-stage:focus-visible { outline: 3px solid #7a6c58; }
+.product-photo-drag-area {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.product-photo-drag-area:active { cursor: grabbing; }
+.product-photo-picture {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.product-photo-picture img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+.product-photo-counter {
+  position: absolute;
+  inset: 14px auto auto 14px;
+  z-index: 2;
+  padding: 7px 9px;
+  border: 1px solid #ded3c4;
+  border-radius: 4px;
+  background: #fffcf6eb;
+  color: #493e32;
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+}
+.product-photo-explainer {
+  margin: 8px 0 0;
+  color: #6d6256;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.product-photo-empty { padding: 18px; border: 1px dashed var(--admin-border); color: var(--admin-muted); font-size: 12px; }
+.admin-app .product-true-model {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--admin-border);
+}
+.product-true-model > summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 650;
+  padding: 5px 0;
+}
+.product-model-option-note {
+  max-width: 65ch;
+  margin: 7px 0 11px;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.admin-app .product-photo-explainer { color: var(--admin-muted); }
+@media (max-width: 610px) {
+  .product-photo-counter { inset: 9px auto auto 9px; }
+  .product-photo-stage .product-model-actions { flex-wrap: wrap; max-width: calc(100% - 16px); }
+  .product-photo-stage .product-model-hint { max-width: 48%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-photo-picture { transition: none; }
+}
