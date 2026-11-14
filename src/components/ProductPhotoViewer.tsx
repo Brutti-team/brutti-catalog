@@ -19,12 +19,13 @@ export default function ProductPhotoViewer({ images, productName }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [fallbackFullscreen, setFallbackFullscreen] = useState(false);
   const active = images[Math.min(imageIndex, Math.max(0, images.length - 1))];
+  const firstImageId = images[0]?.id;
 
   useEffect(() => {
     setImageIndex(0);
     setTilt({ x: 0, y: 0 });
     setZoom(1);
-  }, [images[0]?.id]);
+  }, [firstImageId]);
 
   useEffect(() => {
     const sync = () => setExpanded(document.fullscreenElement === container.current);
@@ -128,7 +129,7 @@ export default function ProductPhotoViewer({ images, productName }: Props) {
           </div>
         </div>
         <span className="product-photo-counter">{imageIndex + 1} / {images.length} · Original product photo</span>
-        <p className="product-model-hint">{images.length > 1 ? 'Drag sideways to explore the available angles' : 'Drag to tilt · Pinch or use controls to zoom'}</p>
+        <p className="product-model-hint">{images.length > 1 ? 'Drag sideways to explore the available angles' : 'Drag to tilt · Use controls to zoom'}</p>
         <div className="product-model-actions" role="group" aria-label="Interactive photo controls">
           {images.length > 1 && (
             <>
