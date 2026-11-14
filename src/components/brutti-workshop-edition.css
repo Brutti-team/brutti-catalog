@@ -1833,3 +1833,276 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-app.brutti-staff-redesign[data-active-tab="overview"] .brutti-editorial-feature-art img { transition:none; transform:none; }
 }
+
+
+
+/* Brutti Catalog / Deep Forest Editorial Sidebar — 14 Nov 2026 */
+/* Inspired by the supplied editorial sidebar reference. Keep Brutti forest-green
+   identity and existing menu routes/permissions. Scope this to the admin rail. */
+.admin-app.brutti-staff-redesign[data-active-tab] {
+  --catalog-nav-width: 280px;
+  --brutti-rail: #173b2e;
+  --brutti-rail-hover: #244b39;
+  --brutti-rail-selected: #315943;
+  --brutti-rail-ink: #f5f2e9;
+  --brutti-rail-muted: #bdcbbf;
+}
+
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] > .sidebar,
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] > .sidebar.sidebar-open {
+  color: var(--brutti-rail-ink);
+  background: var(--brutti-rail);
+  background-image: none;
+  border-right: 1px solid #315643;
+  box-shadow: none;
+  padding: 27px 22px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: #43634f transparent;
+}
+
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar::before,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar::after {
+  display: none;
+}
+
+/* Recognisable official Brutti signature, now presented like an editorial lock-up. */
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 100%;
+  height: 133px;
+  min-height: 133px;
+  margin: 0 0 20px;
+  padding: 9px 12px 20px;
+  border: 0;
+  border-bottom: 1px solid rgba(240, 243, 229, .12);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand .brutti-official-logo,
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme="dark"] .sidebar > .brand .brutti-official-logo {
+  width: 148px;
+  max-width: 148px;
+  min-height: 0;
+  height: 65px;
+  max-height: 65px;
+  margin: 0 0 2px;
+  object-fit: contain;
+  object-position: left center;
+  filter: brightness(0) invert(1);
+  opacity: .98;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand::after {
+  content: "C O L L E C T I O N   S T U D I O";
+  position: static;
+  display: block;
+  width: auto;
+  margin: 0;
+  color: #d7c8a6;
+  font: 600 9px/1.4 "DM Sans", sans-serif;
+  letter-spacing: .055em;
+  opacity: .95;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .workspace-label {
+  display: none;
+}
+
+/* The reference uses one clean menu, with no duplicated headers or cards. */
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar > nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar > nav::-webkit-scrollbar {
+  display: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .nav-group-label,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .nav-group-second {
+  display: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 15px;
+  width: 100%;
+  min-height: 53px;
+  margin: 2px 0;
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--brutti-rail-muted);
+  font: 500 14px/1.35 "DM Sans", system-ui, sans-serif;
+  letter-spacing: -.012em;
+  text-align: left;
+  transition: background-color .16s ease, color .16s ease;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-icon,
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-icon {
+  display: inline-flex;
+  flex: 0 0 22px;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #bdc9be;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-icon svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.7;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item:hover:not(.active) {
+  color: #fcfbf6;
+  background: var(--brutti-rail-hover);
+  border-color: transparent;
+  transform: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item:hover:not(.active) .nav-icon {
+  color: #f4f1e8;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item.active,
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item.active:hover {
+  border: 1px solid rgba(223, 234, 216, .09);
+  border-radius: 999px;
+  background: var(--brutti-rail-selected);
+  box-shadow: none;
+  color: #fffdf7;
+  font-weight: 650;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-item.active::before {
+  display: none;
+  content: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item.active .nav-icon,
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item.active .nav-icon svg {
+  color: #fffdf7;
+  background: transparent;
+  border: 0;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-count,
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item.active .nav-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 29px;
+  height: 23px;
+  margin-left: auto;
+  padding: 3px 7px;
+  border: 0;
+  border-radius: 7px;
+  background: rgba(225, 237, 218, .12);
+  color: #f0f5e9;
+  font: 600 11px/1 "DM Sans", sans-serif;
+}
+
+/* Quiet text-only footer; still opens the real customer catalog. */
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar .sidebar-utility {
+  display: flex;
+  flex: 0 0 auto;
+  width: 100%;
+  margin: auto 0 0;
+  padding: 17px 0 0;
+  border-top: 1px solid rgba(240, 243, 229, .13);
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar .sidebar-public-link {
+  min-height: 56px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  color: #f5f2e9;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar .sidebar-public-link:hover {
+  background: var(--brutti-rail-hover);
+  border-color: transparent;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .sidebar-public-icon {
+  display: none;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar .sidebar-public-copy strong {
+  color: #fffdf6;
+  font: 650 13px/1.35 "DM Sans", sans-serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar .sidebar-public-copy small {
+  color: #bbcebf;
+  font: 500 11px/1.4 "DM Sans", sans-serif;
+}
+.admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar .sidebar-public-arrow {
+  color: #d1e4d2;
+}
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-item:focus-visible,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar .sidebar-public-link:focus-visible,
+.admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand:focus-visible {
+  outline: 2px solid #d4dfc8;
+  outline-offset: 3px;
+}
+
+@media (min-width: 801px) {
+  .admin-app.brutti-staff-redesign[data-active-tab] > .admin-main {
+    margin-left: var(--catalog-nav-width);
+    width: calc(100% - var(--catalog-nav-width));
+  }
+}
+@media (max-width: 800px) {
+  .admin-app.brutti-staff-redesign[data-active-tab][data-theme] > .sidebar,
+  .admin-app.brutti-staff-redesign[data-active-tab][data-theme] > .sidebar.sidebar-open {
+    width: min(280px, 88vw);
+    padding: 17px 16px 16px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand {
+    min-height: 115px;
+    height: 115px;
+    margin-bottom: 13px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] > .admin-main {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+@media (max-height: 640px) {
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand {
+    min-height: 86px;
+    height: 86px;
+    margin-bottom: 8px;
+    padding-block: 0 6px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar > .brand .brutti-official-logo {
+    height: 46px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar nav .nav-item {
+    min-height: 44px;
+    padding-block: 7px;
+  }
+  .admin-app.brutti-staff-redesign[data-active-tab][data-theme] .sidebar .sidebar-utility {
+    padding-top: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar nav .nav-item,
+  .admin-app.brutti-staff-redesign[data-active-tab] .sidebar .sidebar-public-link {
+    transition: none;
+  }
+}
