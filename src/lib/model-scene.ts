@@ -22,8 +22,11 @@ export function createModelScene(host: HTMLDivElement, name: string, onContextLo
   controls.enableDamping = !matchMedia('(prefers-reduced-motion: reduce)').matches;
   controls.dampingFactor = .095;
   controls.enablePan = false;
-  controls.minPolarAngle = Math.PI * .08;
-  controls.maxPolarAngle = Math.PI * .52;
+  // A real all-around model viewer needs to expose the underside too.
+  // Clamp only at the poles to avoid camera singularities.
+  controls.minPolarAngle = .01;
+  controls.maxPolarAngle = Math.PI - .01;
+  controls.autoRotateSpeed = 1.15;
   controls.rotateSpeed = .77;
   controls.zoomSpeed = .65;
 
@@ -59,6 +62,7 @@ export function createModelScene(host: HTMLDivElement, name: string, onContextLo
   const modelCenter = new THREE.Vector3();
   const defaultAngle = new THREE.Vector3(.94, .61, 1.48).normalize();
   const wireframeMaterials = new Set<THREE.Material & { wireframe: boolean }>();
+  let statistics = { triangles: 0, vertices: 0, meshes: 0 };
   const embeddedLights: THREE.Object3D[] = [];
 
   function requestDraw() {
@@ -67,6 +71,7 @@ export function createModelScene(host: HTMLDivElement, name: string, onContextLo
       frame = 0;
       controls.update();
       renderer.render(scene, camera);
+      if (controls.autoRotate) requestDraw();
     });
   }
   function resize() {
@@ -104,9 +109,18 @@ export function createModelScene(host: HTMLDivElement, name: string, onContextLo
     model.add(object);
     model.scale.setScalar(scale);
     model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
+    statistics = { triangles: 0, vertices: 0, meshes: 0 };
     object.traverse(part => {
       if (part instanceof THREE.Light) embeddedLights.push(part);
       if (part instanceof THREE.Mesh) {
+        const geometry = part.geometry;
+        if (geometry instanceof THREE.BufferGeometry) {
+          const positions = geometry.getAttribute('position');
+          const count = geometry.index?.count ?? positions?.count ?? 0;
+          statistics.triangles += Math.floor(count / 3);
+          statistics.vertices += positions?.count ?? 0;
+          statistics.meshes++;
+        }
         part.castShadow = true;
         part.receiveShadow = true;
         for (const material of [part.material].flat()) {
@@ -151,6 +165,11 @@ export function createModelScene(host: HTMLDivElement, name: string, onContextLo
   canvas.addEventListener('keydown', handleKeys);
   canvas.addEventListener('webglcontextlost', onContextLost);
   return { renderer, show, reset, zoom,
+    getStatistics: () => ({ ...statistics }),
+    setAutoRotate: (enabled: boolean) => {
+      controls.autoRotate = enabled;
+      requestDraw();
+    },
     wireframe: (enabled: boolean) => {
       for (const material of wireframeMaterials) material.wireframe = enabled;
       requestDraw();
