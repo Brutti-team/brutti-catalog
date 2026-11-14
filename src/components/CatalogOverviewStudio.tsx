@@ -248,7 +248,7 @@ export default function CatalogOverviewStudio({
       </div>
       <div className="brutti-review-strip atelier-checklist" aria-label="Missing draft product information">
         <div className="brutti-review-strip-title">
-          <span>DETAILS TO VERIFY</span>
+          <span>Details to verify</span>
           <strong>Draft review</strong>
         </div>
         <button type="button" onClick={() => onOpenProducts("draft")}>
