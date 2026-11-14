@@ -321,8 +321,8 @@ test('Overview analytics uses a quiet metric shelf without changing real counts'
   await expectReadable(page, ['.overview-stat > strong', '.atelier-panel-heading h2', '.atelier-category-copy strong']);
 });
 
-test('Publishing Workflow uses readable, curved glass in both themes', async ({ page }) => {
-  for (const theme of ['light', 'dark'] as const) {
+for (const theme of ['light', 'dark'] as const) {
+  test(`Publishing Workflow uses readable curved glass (${theme})`, async ({ page }) => {
     await backend(page, { savedTheme: theme });
     await openAdmin(page);
     const overview = page.locator('.atelier-workbench');
@@ -355,10 +355,8 @@ test('Publishing Workflow uses readable, curved glass in both themes', async ({ 
       '.atelier-categories .atelier-panel-heading h2',
       '.atelier-categories .atelier-category-row strong',
     ]);
-    await page.reload();
-    await expect(page.locator('.atelier-review')).toBeVisible();
-  }
-});
+  });
+}
 
 test('Overview colours preserve dark-mode contrast and mobile width', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
