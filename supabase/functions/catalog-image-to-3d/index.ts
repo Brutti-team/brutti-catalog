@@ -16,7 +16,7 @@ type RequestBody = {
 };
 type ProviderTask = {
   id?: string; status?: string; progress?: number;
-  model_urls?: { glb?: string }; task_error?: { message?: string };
+  error?: string; model_ready?: boolean;
 };
 
 const allowedOrigins = new Set([
@@ -27,7 +27,28 @@ const allowedOrigins = new Set([
 ]);
 const maxGlbBytes = 48 * 1024 * 1024;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const api = "https://api.meshy.ai/openapi/v1/multi-image-to-3d";
+// This URL and bearer token are server-only Supabase Edge Function secrets.
+// Never accept worker addresses from user input.
+const workerUrl = Deno.env.get("BRUTTI_3D_WORKER_URL")?.replace(/\\/$/, "");
+const workerToken = Deno.env.get("BRUTTI_3D_WORKER_TOKEN")?.trim();
+function workerConfigured(): boolean {
+  if (!workerUrl || !workerToken || workerToken.length < 24) return false;
+  try {
+    const address = new URL(workerUrl);
+    return address.protocol === "https:" &&
+      !address.username && !address.password && !address.port &&
+      !/(^localhost$|\\.localhost$|\\.local$|^127\\.|^10\\.|^192\\.168\\.|^169\\.254\\.)/i.test(address.hostname) &&
+      !/^[0-9.]+$/.test(address.hostname) && !address.search && !address.hash;
+  } catch { return false; }
+}
+async function workerFetch(path: string, options: RequestInit = {}, timeoutMs = 16000): Promise<Response> {
+  return await fetch(workerUrl + path, {
+    ...options,
+    redirect: "error",
+    headers: { Authorization: "Bearer " + workerToken, ...options.headers },
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+}
 
 function headers(origin: string | null) {
   return {
@@ -44,13 +65,11 @@ function json(data: unknown, status = 200, origin: string | null = null) {
 function failure(message: string, status: number, origin: string | null) {
   return json({ error: message }, status, origin);
 }
-function providerError(status: number) {
-  if (status === 402) return "Meshy has insufficient credits or requires a paid plan.";
-  if (status === 401) return "Meshy API key is invalid. Ask an administrator to check it.";
-  if (status === 429) return "Meshy rate limit reached. Try again later.";
-  if (status === 400) return "Meshy could not process these product photos. Try clearer front and side views.";
-  if (status === 403) return "Meshy rejected the selected photos.";
-  return "Meshy is temporarily unavailable. Please try again later.";
+function workerError(status: number): string {
+  if (status === 401 || status === 403) return "GPU worker access rejected. Check server token.";
+  if (status === 429 || status === 503) return "GPU worker is busy or offline.";
+  if (status === 422) return "The source product photo could not be processed.";
+  return "GPU worker could not finish the request. Check its logs.";
 }
 
 Deno.serve(async (req: Request) => {
@@ -64,7 +83,7 @@ Deno.serve(async (req: Request) => {
     || JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}").default;
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY")
     || JSON.parse(Deno.env.get("SUPABASE_PUBLISHABLE_KEYS") || "{}").default;
-  const providerKey = Deno.env.get("MESHY_API_KEY")?.trim();
+  const configured = workerConfigured();
   if (!endpoint || !serviceKey || !anonKey) return failure("3D service is not configured.", 503, origin);
   const token = /^Bearer\s+(.+)$/i.exec(req.headers.get("authorization") || "")?.[1];
   if (!token) return failure("Sign in to Brutti Catalog first.", 401, origin);
@@ -106,12 +125,20 @@ Deno.serve(async (req: Request) => {
   const latest = await getJob();
 
   if (body.action === "config") {
+    let online = false;
+    if (configured) {
+      try {
+        const reply = await workerFetch("/health", {}, 4500);
+        online = reply.ok && (await reply.json()).status === "healthy";
+      } catch { /* No GPU service reachable: fail closed, no billable work. */ }
+    }
     return json({
-      configured: Boolean(providerKey),
+      configured: configured && online,
+      engine: "TRELLIS.2 (self-hosted)",
       job: latest && { id: latest.id, status: latest.status, failureReason: latest.failure_reason },
     }, 200, origin);
   }
-  if (!providerKey) return failure("3D generation needs a Meshy API key configured by an administrator.", 503, origin);
+  if (!configured) return failure("Self-hosted GPU worker is not configured. Set BRUTTI_3D_WORKER_URL and BRUTTI_3D_WORKER_TOKEN in Supabase secrets.", 503, origin);
 
   const updateJob = async (id: string, values: Record<string, unknown>) => {
     await service.from("catalog_3d_jobs").update({
@@ -121,10 +148,10 @@ Deno.serve(async (req: Request) => {
 
   if (body.action === "start") {
     const imageIds = body.imageIds;
-    if (!Array.isArray(imageIds) || imageIds.length < 1 || imageIds.length > 4 ||
+    if (!Array.isArray(imageIds) || imageIds.length !== 1 ||
       imageIds.some(id => typeof id !== "string" || id.length > 100) ||
       new Set(imageIds).size !== imageIds.length) {
-      return failure("Select 1–4 existing product photos.", 400, origin);
+      return failure("Select exactly one saved product photo for TRELLIS.2.", 400, origin);
     }
     const photos = Array.isArray(product.images) ? product.images as Array<{
       id?: string; storagePath?: string
@@ -134,8 +161,7 @@ Deno.serve(async (req: Request) => {
       !photo.storagePath || photo.storagePath.length > 1024 || photo.storagePath.startsWith("/"))) {
       return failure("These photos must be uploaded and saved to the product first.", 400, origin);
     }
-    // Verify all saved images are publicly retrievable before reserving a billable
-    // generation attempt. A missing product photo must never trigger Meshy credits.
+    // Preflight the saved image to avoid running GPU inference for missing photos.
     const imageUrls = selected.map(photo => userClient.storage
       .from("product-images").getPublicUrl(photo!.storagePath!).data.publicUrl);
     const probes = await Promise.all(imageUrls.map(async url => {
@@ -145,23 +171,22 @@ Deno.serve(async (req: Request) => {
       } catch { return false; }
     }));
     if (probes.some(ok => !ok)) {
-      return failure("A selected product photo is unavailable. Save the photos again and retry. No 3D credits were used.", 422, origin);
+      return failure("Selected photo is unavailable. Save the photo again and retry. No GPU job was started.", 422, origin);
     }
     const { count, error: countError } = await service.from("catalog_3d_jobs")
       .select("id", { count: "exact", head: true }).eq("requested_by", userId)
       .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
     if (countError) return failure("Unable to check 3D generation quota.", 503, origin);
-    if ((count ?? 0) >= 3) return failure("Limit reached: maximum 3 generation attempts per staff member in 24 hours.", 429, origin);
+    if ((count ?? 0) >= 3) return failure("Limit reached: maximum 3 GPU jobs per staff member in 24 hours.", 429, origin);
     if (latest && ["creating", "processing"].includes(latest.status)) {
       const age = Date.now() - Date.parse(latest.created_at);
       if (age < 24 * 60 * 60 * 1000) {
         return json({ job: { id: latest.id, status: latest.status }, resumed: true }, 200, origin);
       }
-      await updateJob(latest.id, { status: "failed", failure_reason: "The previous task expired. Check Meshy before retrying." });
+      await updateJob(latest.id, { status: "failed", failure_reason: "The previous GPU job expired." });
     }
 
-    // Reserve a slot before calling the billable provider. The partial unique index
-    // serializes concurrent requests for the same product.
+    // Reserve one GPU job per product; the unique index handles parallel clicks.
     const { data: reserved, error: reserveError } = await service.from("catalog_3d_jobs").insert({
       product_id: product.id, requested_by: userId,
       image_ids: imageIds, status: "creating",
@@ -169,33 +194,25 @@ Deno.serve(async (req: Request) => {
     if (reserveError || !reserved) return failure("Another 3D task is already running for this product.", 409, origin);
 
     try {
-      const result = await fetch(api, {
+      const result = await workerFetch("/jobs", {
         method: "POST",
-        headers: { "Authorization": "Bearer " + providerKey, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image_urls: imageUrls,
-          ai_model: "meshy-7.1",
-          should_texture: true,
-          texture_resolution: "2k",
-          target_formats: ["glb"],
-          // Keep the uploaded product's original appearance; do not restyle it.
-          image_enhancement: false,
-          multi_view_thumbnails: true,
-        }),
-        signal: AbortSignal.timeout(25000),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ job_id: reserved.id, image_url: imageUrls[0] }),
+      }, 20000);
       if (!result.ok) {
-        const message = providerError(result.status);
+        const message = workerError(result.status);
         await updateJob(reserved.id, { status: "failed", failure_reason: message });
         return failure(message, result.status >= 500 ? 502 : 400, origin);
       }
-      const answer = await result.json() as { result?: string };
-      if (!answer?.result || answer.result.length > 200) throw new Error("Invalid provider response.");
-      await updateJob(reserved.id, { status: "processing", provider_task_id: answer.result });
+      const answer = await result.json() as { job_id?: string; status?: string };
+      if (answer.job_id !== reserved.id) throw new Error("Mismatched worker job id");
+      await updateJob(reserved.id, { status: "processing", provider_task_id: answer.job_id });
       return json({ job: { id: reserved.id, status: "processing" } }, 200, origin);
     } catch {
-      await updateJob(reserved.id, { status: "failed", failure_reason: "Request to Meshy could not finish. Check Meshy before retrying; credits might have been charged." });
-      return failure("Meshy request did not finish. Check the provider dashboard before retrying to avoid duplicate charges.", 502, origin);
+      // Worker accepts idempotent job IDs, so a connection timeout cannot
+      // create duplicate GPU work for this product.
+      await updateJob(reserved.id, { status: "failed", failure_reason: "GPU job could not be confirmed. Check worker logs before retrying." });
+      return failure("GPU worker could not confirm the job. Check its logs before retrying.", 502, origin);
     }
   }
 
@@ -209,58 +226,46 @@ Deno.serve(async (req: Request) => {
 
   let task: ProviderTask;
   try {
-    const result = await fetch(api + "/" + encodeURIComponent(latest.provider_task_id), {
-      headers: { Authorization: "Bearer " + providerKey },
-      signal: AbortSignal.timeout(18000),
-    });
-    if (!result.ok) return failure(providerError(result.status), result.status >= 500 ? 502 : 400, origin);
+    const result = await workerFetch("/jobs/" + encodeURIComponent(latest.provider_task_id), {}, 16000);
+    if (!result.ok) return failure(workerError(result.status), result.status >= 500 ? 502 : 400, origin);
     task = await result.json() as ProviderTask;
   } catch {
-    return failure("Could not check Meshy progress. Try refreshing the 3D task.", 502, origin);
+    return failure("Could not reach the GPU worker. Check its connection and retry.", 502, origin);
   }
-  const providerStatus = task.status || "";
-  if (providerStatus === "FAILED" || providerStatus === "CANCELED") {
-    const message = "Meshy could not generate this model. Try a clearer product photo.";
+  if (task.status === "failed" || task.status === "error") {
+    const message = "3D generation failed on the GPU worker. Try a clearer product photo.";
     await updateJob(latest.id, { status: "failed", failure_reason: message });
     return json({ job: { id: latest.id, status: "failed", error: message } }, 200, origin);
   }
-  if (providerStatus === "SUCCEEDED" && task.model_urls?.glb) {
+  if (task.status === "completed" && task.model_ready === true) {
     if (latest.status !== "ready") await updateJob(latest.id, { status: "ready" });
     if (body.action === "status") {
       return json({ job: { id: latest.id, status: "ready", progress: 100 } }, 200, origin);
     }
-    const url = task.model_urls.glb;
-    let parsed: URL;
-    try { parsed = new URL(url); } catch { return failure("Generated 3D file URL is invalid.", 502, origin); }
-    // Never proxy arbitrary URLs: a user cannot supply this URL and only the
-    // Meshy asset CDN is allowed.
-    if (parsed.protocol !== "https:" || parsed.hostname !== "assets.meshy.ai") {
-      return failure("Unexpected 3D file host.", 502, origin);
-    }
     try {
-      const asset = await fetch(url, { signal: AbortSignal.timeout(24000) });
-      if (!asset.ok) return failure("Generated file expired. Retry importing it.", 502, origin);
+      const asset = await workerFetch("/jobs/" + encodeURIComponent(latest.provider_task_id) + "/model", {}, 30000);
+      if (!asset.ok) return failure("The generated GLB is no longer available on the GPU worker.", 502, origin);
       const advertised = Number(asset.headers.get("content-length") || 0);
-      if (advertised > maxGlbBytes) return failure("Generated model is larger than 48 MB.", 413, origin);
+      if (advertised > maxGlbBytes) return failure("Generated model exceeds 48 MB. Reduce texture resolution.", 413, origin);
       const bytes = await asset.arrayBuffer();
       if (bytes.byteLength < 20 || bytes.byteLength > maxGlbBytes ||
         new TextDecoder().decode(bytes.slice(0, 4)) !== "glTF") {
-        return failure("Meshy returned an invalid or oversized GLB file.", 502, origin);
+        return failure("GPU worker returned an invalid or oversized GLB.", 502, origin);
       }
       return new Response(bytes, {
         headers: {
           ...headers(origin),
           "Content-Type": "application/octet-stream",
           "Content-Disposition": 'attachment; filename="generated-model.glb"',
-        }
+        },
       });
     } catch {
-      return failure("Unable to download the generated model. Try again.", 502, origin);
+      return failure("Could not fetch the generated GLB from the GPU worker.", 502, origin);
     }
   }
-  if (latest.status === "ready" && body.action === "download") {
-    return failure("The generated model is no longer available from Meshy.", 410, origin);
-  }
-  if (body.action === "download") return failure("The 3D model is still generating.", 409, origin);
-  return json({ job: { id: latest.id, status: "processing", progress: Math.max(0, Math.min(99, Number(task.progress) || 0)) } }, 200, origin);
+  if (body.action === "download") return failure("The model is still generating.", 409, origin);
+  return json({ job: {
+    id: latest.id, status: "processing",
+    progress: Math.max(0, Math.min(99, Number(task.progress) || 0)),
+  } }, 200, origin);
 });
