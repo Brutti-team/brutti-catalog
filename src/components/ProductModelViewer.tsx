@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Expand, Minimize, Minus, Plus, RotateCcw } from 'lucide-react';
+import { Box, Expand, Minimize, Minus, Pause, Play, Plus, RotateCcw } from 'lucide-react';
 import { publicAssetUrl } from '../lib/assets';
 import { downloadProductModel } from '../lib/catalog';
 import type { ProductModel } from '../lib/types';
@@ -22,6 +22,8 @@ export default function ProductModelViewer({ model, files, productName, poster, 
   const [error, setError] = useState('');
   const [warning, setWarning] = useState('');
   const [wireframe, setWireframe] = useState(false);
+  const [autoRotate, setAutoRotate] = useState(false);
+  const [statistics, setStatistics] = useState<{ triangles: number; vertices: number; meshes: number }>();
   const [canWireframe, setCanWireframe] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [fallbackFullscreen, setFallbackFullscreen] = useState(false);
@@ -39,6 +41,8 @@ export default function ProductModelViewer({ model, files, productName, poster, 
     setError('');
     setWarning('');
     setWireframe(false);
+    setAutoRotate(false);
+    setStatistics(undefined);
     setCanWireframe(false);
     onPreview?.('loading');
     async function load() {
@@ -61,7 +65,10 @@ export default function ProductModelViewer({ model, files, productName, poster, 
           disposeModel(result.object);
           throw new Error('The 3D canvas was interrupted. Try opening the model again.');
         }
-        try { setCanWireframe(view.show(result.object)); }
+        try {
+          setCanWireframe(view.show(result.object));
+          setStatistics(view.getStatistics());
+        }
         catch (cause) { disposeModel(result.object); throw cause; }
         setWarning(result.warning);
         setReady(true);
@@ -106,18 +113,32 @@ export default function ProductModelViewer({ model, files, productName, poster, 
   const isFullscreen = expanded || fallbackFullscreen;
   return (
     <div>
-      <div className={`product-model-stage${fallbackFullscreen ? ' is-expanded' : ''}`} ref={container}>
+      <div className={`product-model-stage product-model-stage--studio${fallbackFullscreen ? ' is-expanded' : ''}`} ref={container}>
         {poster && !ready && <img src={publicAssetUrl(poster)} className="product-model-poster" alt="" />}
         <div ref={host} className="product-model-canvas" />
         {!ready && !error && <p className="product-model-message" role="status">Loading 3D model…</p>}
         {error && <div className="product-model-message"><p role="alert">{error}</p><button type="button" onClick={() => setRetry(attempt => attempt + 1)}>Try again</button></div>}
         {ready && (
           <>
-            <p className="product-model-hint">Drag to rotate · Scroll or pinch to zoom</p>
+            <div className="product-model-studio-info" aria-label="3D model information">
+              <p className="product-model-studio-kicker">INTERACTIVE OBJECT</p>
+              <p className="product-model-studio-name">{productName}</p>
+              {statistics && <dl className="product-model-studio-stats">
+                <div><dt>Triangles</dt><dd>{statistics.triangles.toLocaleString()}</dd></div>
+                <div><dt>Vertices</dt><dd>{statistics.vertices.toLocaleString()}</dd></div>
+                <div><dt>Meshes</dt><dd>{statistics.meshes.toLocaleString()}</dd></div>
+              </dl>}
+            </div>
+            <p className="product-model-hint">Drag to rotate 360° · Scroll or pinch to zoom · Explore top and underside</p>
             <div className="product-model-actions" role="group" aria-label="3D model controls">
               <button type="button" onClick={() => sceneRef.current?.zoom(1.25)} aria-label="Zoom out" title="Zoom out"><Minus size={16} /></button>
               <button type="button" onClick={() => sceneRef.current?.zoom(.8)} aria-label="Zoom in" title="Zoom in"><Plus size={16} /></button>
               <button type="button" onClick={() => sceneRef.current?.reset()} aria-label="Reset view" title="Reset view"><RotateCcw size={15} /><span>Reset view</span></button>
+              <button type="button" aria-pressed={autoRotate} aria-label={autoRotate ? 'Pause rotation' : 'Auto rotate'} title={autoRotate ? 'Pause rotation' : 'Auto rotate'} onClick={() => {
+                const next = !autoRotate;
+                sceneRef.current?.setAutoRotate(next);
+                setAutoRotate(next);
+              }}>{autoRotate ? <Pause size={16} /> : <Play size={16} />}<span>{autoRotate ? 'Pause' : 'Auto rotate'}</span></button>
               <button type="button" disabled={!canWireframe} aria-pressed={wireframe} aria-label="Wireframe" title="Wireframe" onClick={() => {
                 sceneRef.current?.wireframe(!wireframe);
                 setWireframe(!wireframe);
