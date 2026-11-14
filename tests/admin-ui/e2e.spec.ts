@@ -327,6 +327,19 @@ for (const theme of ['light', 'dark'] as const) {
     const overview = page.locator('.atelier-workbench');
     const workflow = overview.locator('.atelier-review');
     const category = overview.locator('.atelier-categories');
+    // Workflow must use the same forest-green RGB as the branded sidebar,
+    // not the unrelated olive gradient that previously looked off-brand.
+    const matchingGreens = await page.evaluate(() => {
+      const workflowElement = document.querySelector('.atelier-review');
+      const sidebarElement = document.querySelector('.admin-app .sidebar');
+      if (!workflowElement || !sidebarElement) throw new Error('Brutti design surfaces missing');
+      return {
+        workflow: getComputedStyle(workflowElement).backgroundColor,
+        sidebar: getComputedStyle(sidebarElement).backgroundColor,
+      };
+    });
+    expect(matchingGreens.sidebar).toBe('rgb(23, 59, 46)');
+    expect(matchingGreens.workflow).toBe('rgba(23, 59, 46, 0.96)');
     for (const panel of [workflow, category]) {
       const appearance = await panel.evaluate(element => {
         const s = getComputedStyle(element);
