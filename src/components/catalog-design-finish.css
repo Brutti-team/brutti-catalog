@@ -457,3 +457,193 @@
     padding-top: 21px;
   }
 }
+
+
+/* Overview / workflow contrast and gentle glass material
+   Overrides the legacy solid forest block and the later light-theme
+   text overrides together. Background color remains a readable fallback
+   when backdrop blur is unavailable. */
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-workbench { gap: clamp(16px, 2.25vw, 28px); }
+
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-workbench > section.atelier-review {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(22px, 2.5vw, 32px);
+  border: 1px solid rgba(210, 237, 219, .38);
+  border-radius: 22px;
+  background-color: rgba(26, 67, 45, .94);
+  background-image: linear-gradient(135deg, rgba(66, 114, 79, .22), rgba(12, 42, 27, .16));
+  color: #f6faf5;
+  opacity: 1;
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  backdrop-filter: blur(18px) saturate(135%);
+  box-shadow: 0 14px 36px rgba(18, 52, 33, .13), inset 0 1px 0 rgba(255,255,255,.14);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-workbench > section.atelier-categories {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(22px, 2.5vw, 32px);
+  border: 1px solid rgba(201, 217, 201, .9);
+  border-radius: 22px;
+  background-color: rgba(255, 255, 251, .88);
+  background-image: linear-gradient(140deg, rgba(255,255,255,.34), rgba(228,238,227,.26));
+  color: #213e2e;
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  backdrop-filter: blur(18px) saturate(130%);
+  box-shadow: 0 12px 30px rgba(24, 54, 33, .07), inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+/* Force legible type on the dark glass regardless of older theme selectors. */
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-kicker {
+  color: #c5e4ce;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-panel-heading h2 {
+  color: #ffffff;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-panel-heading p {
+  color: #e2f0e4;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-inline-link {
+  color: #f7fbf5;
+  border-color: rgba(241, 250, 243, .65);
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-inline-link:hover { color: #ffffff; }
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-focus-number {
+  padding: 16px 20px;
+  border: 1px solid rgba(244, 252, 244, .20);
+  border-left: 2px solid rgba(232, 249, 233, .8);
+  border-radius: 15px;
+  background-color: rgba(245, 255, 246, .12);
+  color: #f7fff7;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-focus-number strong {
+  color: #ffffff;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-focus-number span {
+  color: #e5f1e7;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-progress-item > div span,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-progress-item > div strong {
+  color: #f0f8ef;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-progress-item progress,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-progress-item progress::-webkit-progress-bar {
+  background: rgba(255, 255, 255, .27);
+  border-radius: 100px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-progress-item progress::-webkit-progress-value {
+  background: #cfecd2;
+  border-radius: 100px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-progress-item progress::-moz-progress-bar {
+  background: #cfecd2;
+  border-radius: 100px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-checklist {
+  border-color: rgba(239, 251, 240, .30);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-checklist-heading {
+  color: #d3e9d7;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-checklist button {
+  border-color: rgba(239, 251, 240, .29);
+  border-radius: 9px;
+  background-color: rgba(250, 255, 252, .04);
+  color: #f5fbf5;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-checklist button:is(:hover, :focus-visible) {
+  background-color: rgba(251, 255, 252, .15);
+  color: #ffffff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-checklist button strong,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-checklist button svg {
+  color: #ffffff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-status-links button {
+  border: 1px solid rgba(243, 253, 244, .35);
+  border-radius: 11px;
+  background-color: rgba(251, 255, 250, .11);
+  color: #f3fbf3;
+  opacity: 1;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-status-links button:is(:hover, :focus-visible) {
+  background-color: rgba(252, 255, 252, .22);
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-review .atelier-status-links strong {
+  color: #ffffff;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-categories .atelier-kicker,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-categories .atelier-panel-heading p {
+  color: #4b6552;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-categories .atelier-panel-heading h2 {
+  color: #1e402a;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-categories .atelier-inline-link,
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-categories .atelier-category-row strong {
+  color: #244a30;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-categories .atelier-category-row {
+  border-color: rgba(40, 81, 51, .15);
+  border-radius: 8px;
+}
+.admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+  .atelier-categories .atelier-category-row:hover {
+  background-color: rgba(42, 99, 63, .07);
+}
+@media (max-width: 680px) {
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+    .atelier-workbench > section:is(.atelier-review, .atelier-categories) {
+    border-radius: 17px;
+    padding: 20px 17px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .admin-app.brutti-staff-redesign[data-active-tab="overview"][data-theme]
+    .atelier-workbench > :is(.atelier-review, .atelier-categories) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
