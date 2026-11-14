@@ -112,7 +112,14 @@ export default function ProductImageTo3D({
       if (!response.ok) throw new Error("Photo is not available.");
       const blob = await response.blob();
       if (!blob.type.startsWith("image/")) throw new Error("This file is not a product photo.");
-      const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : blob.type === "image/jpeg" ? "jpg" : "png";
+      const extensions: Record<string, string> = {
+        "image/png": "png", "image/webp": "webp", "image/jpeg": "jpg",
+        "image/avif": "avif", "image/bmp": "bmp", "image/gif": "gif",
+        "image/tiff": "tiff", "image/heic": "heic", "image/heif": "heif",
+      };
+      const extension = extensions[blob.type.toLowerCase()] ??
+        new URL(publicAssetUrl(sourcePhoto.url), window.location.href).pathname.match(/\\.(png|webp|jpe?g|avif|bmp|gif|tiff?|heic|heif)$/i)?.[1]?.toLowerCase() ??
+        "image";
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
