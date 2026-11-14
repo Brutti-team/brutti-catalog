@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlertCircle, Check, LoaderCircle, WandSparkles } from "lucide-react";
+import { Check, LoaderCircle, WandSparkles } from "lucide-react";
 import SafeImage from "./SafeImage";
 import { publicAssetUrl } from "../lib/assets";
 import type { ProductImage } from "../lib/types";
