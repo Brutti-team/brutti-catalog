@@ -150,7 +150,7 @@ export default function ProductImageTo3D({
         <div>
           <span className="product-ai3d-eyebrow">PHOTO TO 3D</span>
           <h4>Generate a real 3D model</h4>
-          <p>Choose an existing photo above and generate a true 3D mesh with the connected open-source GPU worker. No re-upload or fake tilt.</p>
+          <p>Start from a saved product photo. Generate through a connected GPU worker, or use the public demo and import its GLB. Only real 3D models are shown.</p>
         </div>
         <WandSparkles size={22} aria-hidden="true" />
       </div>
