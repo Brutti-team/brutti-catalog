@@ -134,6 +134,19 @@ Deno.serve(async (req: Request) => {
       !photo.storagePath || photo.storagePath.length > 1024 || photo.storagePath.startsWith("/"))) {
       return failure("These photos must be uploaded and saved to the product first.", 400, origin);
     }
+    // Verify all saved images are publicly retrievable before reserving a billable
+    // generation attempt. A missing product photo must never trigger Meshy credits.
+    const imageUrls = selected.map(photo => userClient.storage
+      .from("product-images").getPublicUrl(photo!.storagePath!).data.publicUrl);
+    const probes = await Promise.all(imageUrls.map(async url => {
+      try {
+        const response = await fetch(url, { method: "HEAD", redirect: "error", signal: AbortSignal.timeout(9000) });
+        return response.ok && (response.headers.get("content-type") || "").startsWith("image/");
+      } catch { return false; }
+    }));
+    if (probes.some(ok => !ok)) {
+      return failure("A selected product photo is unavailable. Save the photos again and retry. No 3D credits were used.", 422, origin);
+    }
     const { count, error: countError } = await service.from("catalog_3d_jobs")
       .select("id", { count: "exact", head: true }).eq("requested_by", userId)
       .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
@@ -156,8 +169,6 @@ Deno.serve(async (req: Request) => {
     if (reserveError || !reserved) return failure("Another 3D task is already running for this product.", 409, origin);
 
     try {
-      const imageUrls = selected.map(photo => userClient.storage
-        .from("product-images").getPublicUrl(photo!.storagePath!).data.publicUrl);
       const result = await fetch(api, {
         method: "POST",
         headers: { "Authorization": "Bearer " + providerKey, "Content-Type": "application/json" },
@@ -167,6 +178,8 @@ Deno.serve(async (req: Request) => {
           should_texture: true,
           texture_resolution: "2k",
           target_formats: ["glb"],
+          // Keep the uploaded product's original appearance; do not restyle it.
+          image_enhancement: false,
           multi_view_thumbnails: true,
         }),
         signal: AbortSignal.timeout(25000),
