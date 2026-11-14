@@ -111,7 +111,7 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await expect(section.getByText('Generate a real 3D model')).toBeVisible();
   await section.getByText('Or upload an existing 3D model file').click();
   await expect(section.getByRole('button', { name: 'Choose model files' })).toBeVisible();
-  await section.locator('input[type=file]').setInputFiles({ name: 'pyramid.obj', mimeType: 'text/plain', buffer: Buffer.from('v -1 0 -1\nv 1 0 -1\nv 1 0 1\nv -1 0 1\nv 0 2 0\nf 1 5 2\nf 2 5 3\nf 3 5 4\nf 4 5 1\nf 1 2 3 4\n') });
+  await section.locator('input[type=file][multiple]').setInputFiles({ name: 'pyramid.obj', mimeType: 'text/plain', buffer: Buffer.from('v -1 0 -1\nv 1 0 -1\nv 1 0 1\nv -1 0 1\nv 0 2 0\nf 1 5 2\nf 2 5 3\nf 3 5 4\nf 4 5 1\nf 1 2 3 4\n') });
   await expect(section.getByRole('button', { name: 'Wireframe' })).toBeEnabled({ timeout: 15_000 });
   await expect(section.getByText('pyramid.obj', { exact: true })).toBeVisible();
   expect(db.storedModels.size).toBe(0);
