@@ -303,8 +303,15 @@ test('Overview analytics uses a quiet metric shelf without changing real counts'
   await expect(metrics).toHaveCount(6);
   const values = await metrics.locator(':scope > strong').allTextContents();
   expect(values).toEqual(['1','1','0',String(bruttiCategories.length),'0','1']);
-  const backgrounds = await metrics.evaluateAll(items => items.map(el => getComputedStyle(el).backgroundColor));
-  expect(new Set(backgrounds).size).toBeGreaterThan(1);
+  const shelf = await metrics.evaluateAll(items => items.map(el => ({
+    background: getComputedStyle(el).backgroundColor,
+    borderRight: getComputedStyle(el).borderRightWidth,
+    radius: getComputedStyle(el).borderTopLeftRadius,
+  })));
+  expect(new Set(shelf.map(item => item.background)).size).toBe(1);
+  expect(shelf[0].borderRight).toBe('1px');
+  expect(shelf[shelf.length - 1].borderRight).toBe('0px');
+  expect(shelf.every(item => item.radius === '0px')).toBe(true);
   await expect(page.getByRole('heading', { name: 'Prepare your collection' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'By category' })).toBeVisible();
   await expect(page.getByRole('progressbar', { name: 'Products with photos' })).toHaveAttribute('value', '100');

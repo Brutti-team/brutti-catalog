@@ -107,6 +107,11 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Edit product' });
+  const toolsToggle = dialog.getByRole('button', { name: /3D tools/ });
+  await expect(toolsToggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(dialog.getByRole('region', { name: 'Real 3D model', exact: true })).toHaveCount(0);
+  await toolsToggle.click();
+  await expect(toolsToggle).toHaveAttribute('aria-expanded', 'true');
   const section = dialog.getByRole('region', { name: 'Real 3D model', exact: true });
   await expect(section.getByText('Generate a real 3D model')).toBeVisible();
   await section.getByText('Or upload an existing 3D model file').click();
@@ -143,6 +148,7 @@ test('a non-GLB model is previewed, saved and opened by customers, and can be re
   await page.goto('/#/admin');
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Model browser fixture', exact: true }).click();
+  await dialog.getByRole('button', { name: /3D tools/ }).click();
   await dialog.getByRole('button', { name: 'Remove model' }).click();
   await dialog.getByRole('button', { name: 'Save product' }).click();
   await expect(dialog).toHaveCount(0);
@@ -486,6 +492,11 @@ test('existing product photos generate a real GLB through the authenticated serv
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Photo to 3D fixture', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Edit product' });
+  const toolsToggle = dialog.getByRole('button', { name: /3D tools/ });
+  await expect(toolsToggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(dialog.getByRole('region', { name: 'Real 3D model', exact: true })).toHaveCount(0);
+  await toolsToggle.click();
+  await expect(toolsToggle).toHaveAttribute('aria-expanded', 'true');
   const section = dialog.getByRole('region', { name: 'Real 3D model', exact: true });
   await expect(section.getByRole('button', { name: 'Use photo 1 for 3D generation' })).toHaveAttribute('aria-pressed', 'true');
   await expect(section.getByRole('button', { name: 'Use photo 2 for 3D generation' })).toHaveAttribute('aria-pressed', 'false');
@@ -530,6 +541,7 @@ test('without a connected GPU, staff can use free TRELLIS demo and import a genu
   await page.getByRole('navigation', { name: 'Admin navigation' }).getByRole('button', { name: /Products/ }).click();
   await page.getByRole('button', { name: 'Edit Community 3D demo fixture', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Edit product' });
+  await dialog.getByRole('button', { name: /3D tools/ }).click();
   const region = dialog.getByRole('region', { name: 'Real 3D model', exact: true });
   const offline = region.getByRole('group', { name: 'Generate 3D without a GPU server' });
   await expect(offline.getByText('Try real 3D without Meshy or your own GPU')).toBeVisible();

@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Circle,
   Upload,
+  ChevronDown,
 } from "lucide-react";
 import type { Product, Category, ProductImage } from "../lib/types";
 import { uploadImage, validateProduct, cleanupAbandonedImages, type ProductModelChange } from "../lib/catalog";
@@ -37,6 +38,7 @@ export default function ProductEditor({
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [show3DTools, setShow3DTools] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [modelPending, setModelPending] = useState(false);
   const [modelInvalid, setModelInvalid] = useState(false);
@@ -213,7 +215,6 @@ export default function ProductEditor({
             <span className="product-editor-jump-number" aria-hidden="true">03</span>
             <span>Specifications</span>
           </button>
-          <button type="button" onClick={() => jumpTo("product-editor-model")}><span>Interactive view</span></button>
           {isEditing && (
             <button type="button" onClick={() => jumpTo("product-editor-preview")}>
               <span>Preview</span>
@@ -374,9 +375,6 @@ export default function ProductEditor({
                 Uploaded photos are public assets. Avoid confidential images; unused uploads can be removed from Supabase Storage.
               </p>
             </section>
-            <ProductModelEditor productName={draft.name || 'this product'} productId={product.id} saved={isEditing} status={draft.status} model={product.model}
-              photos={draft.images} savedPhotoIds={product.images.map(image => image.id)} modelEnabled={modelEditingEnabled} poster={cover?.url} disabled={busy}
-              onChange={setModelChange} onPending={setModelLoading} />
             <section className="form-section product-editor-section" id="product-editor-specs">
               <div className="product-editor-section-heading">
                 <span className="product-editor-step">03</span>
@@ -444,6 +442,29 @@ export default function ProductEditor({
                   />
                 </div>
               </label>
+            </section>
+            <section className="product-editor-deferred" aria-label="Optional 3D tools">
+              <button
+                type="button"
+                className="product-editor-deferred-toggle"
+                aria-expanded={show3DTools}
+                aria-controls="product-editor-deferred-content"
+                onClick={() => setShow3DTools(value => !value)}
+              >
+                <span>
+                  <strong>3D tools</strong>
+                  <small>On hold for now · optional</small>
+                </span>
+                <ChevronDown size={17} aria-hidden="true" />
+              </button>
+              {show3DTools && (
+                <div id="product-editor-deferred-content">
+                  <p className="product-editor-deferred-note">3D generation is paused while we refine the catalog. Existing model files can still be reviewed or managed here.</p>
+                  <ProductModelEditor productName={draft.name || 'this product'} productId={product.id} saved={isEditing} status={draft.status} model={product.model}
+                    photos={draft.images} savedPhotoIds={product.images.map(image => image.id)} modelEnabled={modelEditingEnabled} poster={cover?.url} disabled={busy}
+                    onChange={setModelChange} onPending={setModelLoading} />
+                </div>
+              )}
             </section>
           </div>
           <aside className="editor-side product-editor-aside">
